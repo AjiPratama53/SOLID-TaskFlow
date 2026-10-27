@@ -1,0 +1,128 @@
+openapi: 3.1.0
+info:
+  title: Overengineered To-do Appku
+  version: 0.1.0
+  description: |
+    Aplikasi manajeman tugas secara kolaboratif dan hierarkikal yang mengelola 
+    pembagian tugas dalam kelompok dan penyelesaiannya secara individu.
+
+servers:
+  - url: https://otaku.api/v1
+    description: Production
+  - url: http://localhost:3000/v1
+    description: Local development
+
+security:
+  - oauth2: [tasks:read]
+
+paths:
+  /users:
+  /tasks:
+  /groups:
+  /submissions:
+
+components:
+  parameters:
+  schemas:
+    User:
+
+    Task:
+
+    Group:
+
+    Submission:
+
+    Error:
+      type: object
+      required: [type, title, status, detail, instance]
+      properties:
+        type:
+          type: string
+          format: uri
+        title:
+          type: string
+        status:
+          type: integer
+        detail:
+          type: string
+        instance:
+          type: string
+
+  responses:
+    Unauthorized:
+      description: The token is absent, unverifiable, or expired.
+      headers:
+        WWW-Authenticate:
+          schema: { type: string }
+          example: 'Bearer error="invalid_token"'
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    Forbidden:
+      description: The token is valid but does not carry the scope this operation requires.
+      headers:
+        WWW-Authenticate:
+          schema: { type: string }
+          example: 'Bearer error="insufficient_scope", scope="submission:fulfil"'
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    
+    Conflict:
+      description: Request conflicts with the current state.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            type: errors/conflict
+            title: Task state conflict
+            status: 409
+            detail: The requested transition is not allowed from the current task status.
+            instance: /v1/tasks/tsk_001
+
+    ValidationError:
+      description: Invalid request.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            type: errors/validation-error
+            title: Request validation failed
+            status: 422
+            detail: Comment must not be empty.
+            instance: /v1/tasks/tsk_001/reject
+
+    NotFound:
+      description: |
+        The object does not exist, or it exists and is not accessible to this caller.
+        Both conditions are answered identically so identifiers cannot be enumerated.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            type: errors/not-found
+            title: Resource not found
+            status: 404
+            detail: The requested resource was not found.
+            instance: /v1/tasks/tsk_001
+      
+    InternalServerError:
+      description: Internal server error.
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            type: errors/internal-server-error
+            title: Internal server error
+            status: 500
+            detail: An unexpected error occurred on the server.
+            instance: /v1/tasks/tsk_001
+  
+  
