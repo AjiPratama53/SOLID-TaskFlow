@@ -1,13 +1,13 @@
 openapi: 3.1.0
 info:
-  title: Overengineered To-do Appku
+  title: SOLID TaskFlow
   version: 0.1.0
   description: |
     Aplikasi manajeman tugas secara kolaboratif dan hierarkikal yang mengelola 
-    pembagian tugas dalam kelompok dan penyelesaiannya secara individu.
+    pembuatan dan pembagian tugas, pengumpulan dan verifikasi hasil.
 
 servers:
-  - url: https://otaku.api/v1
+  - url: https://solid-taskflow.api/v1
     description: Production
   - url: http://localhost:3000/v1
     description: Local development
@@ -17,20 +17,437 @@ security:
 
 paths:
   /users:
+    get:
+      summary: Get users list
+      operationId: getUsers
+      parameters:
+        - $ref: "#/components/parameters/UserQuery"
+      responses:
+        "200":
+        "400":
+        "401":
+        "403":
+        "500":
+
+  /users/{userId}:
+    get:
+      summary: Get user detail
+      operationId: getUser
+      parameters:
+        - $ref: "#/components/parameters/UserId"
+      responses:
+        "200":
+        "400":
+        "401":
+        "403":
+        "500":
+
   /tasks:
-  /groups:
+    get:
+      summary: Get tasks list
+      operationId: getTasks
+      parameters:
+        - $ref: "#/components/parameters/UserQuery"
+
+        - name: search
+          in: query
+          schema:
+            type: string
+
+        - name: deadlineBefore
+          in: query
+          schema:
+            type: string
+            format: date-time
+
+        - name: status
+          in: query
+          schema:
+            $ref: "#/components/schemas/TaskStatus"
+
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 10
+            default: 3
+
+        - name: cursor
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+
+    post:
+      summary: Create new task
+      operationId: createTask
+      requestBody: 
+        $ref: "#/components/schemas/CreateNewTask"
+      responses:
+        "201": 
+
+  /tasks/{taskId}:
+    get:
+      summary: Get task detail
+      operationId: getTask
+      parameters:
+        - $ref: "#/components/parameters/TaskId"
+      responses:
+        "200": 
+
+    patch:
+      summary: Edit task
+      operationId: editTask
+      parameters:
+        - $ref: "#/components/parameters/TaskId"
+      requestBody:
+        $ref: "#/components/schemas/UpdateTask"
+      responses:
+        ""
+
+    # delete:
+    #   summary: 
+    #   operationId: 
+    #   parameters:
+    #     - $ref: "#/components/parameters/TaskId"
+    #   responses:
+
+  /tasks/{taskId}/proceed:
+    post:
+      summary: Proceed task
+      operationId: proceedTask
+      requestBody: 
+        $ref: "#/components/schemas/ProceedTask"
+      parameters:
+        - $ref: "#/components/parameters/TaskId"
+      responses:
+
+  /tasks/{taskId}/submit:
+    post:
+      summary: Submit task
+      operationId: submitTask
+      parameters:
+        - $ref: "#/components/parameters/TaskId"
+      responses:
+
+  /tasks/{taskId}/complete:
+    post:
+      summary: Complete task
+      operationId: completeTask
+      parameters:
+        - $ref: "#/components/parameters/TaskId"
+      responses:
+
+  /tasks/{taskId}/cancel:
+    post:
+    #   summary: 
+    #   operationId: 
+    #   parameters:
+    #     - $ref: "#/components/parameters/TaskId"
+    #   responses:
+      summary: Cancel task
+      operationId: cancelTask
+      parameters:
+        - $ref: "#/components/parameters/TaskId"
+      responses:
+
+
   /submissions:
+    get:
+      summary: Get submissions
+      operationId: getSubmissions
+      parameters:
+        - $ref: "#/components/parameters/TaskQuery"
+      responses:
+        "200":
+
+    post:
+      summary: Create new submission
+      operationId: createSubmission
+      requestBody: 
+        $ref: "#/components/schemas/CreateNewSubmission"
+      responses:
+        "201":
+
+  # /submissions/{submissionId}:
+  #   get:
+  #     summary: 
+  #     operationId: 
+  #     parameters:
+  #       - $ref: "#/components/parameters/SubmissionId"
+  #     responses:
+
+  /submissions/{submissionId}/submit:
+    post:
+      summary: Submit submission
+      operationId: submitSubmission
+      parameters:
+        - $ref: "#/components/parameters/SubmissionId"
+      responses:
+
+  /submissions/{submissionId}/accept:
+    post:
+      summary: Accept submission
+      operationId: acceptSubmission
+      parameters:
+        - $ref: "#/components/parameters/SubmissionId"
+      responses:
+
+  /submissions/{submissionId}/reject:
+    post:
+      summary: Reject submission
+      operationId: rejectSubmission
+      parameters:
+        - $ref: "#/components/parameters/SubmissionId"
+      responses:
+
+  /attachments:
+    get:
+      summary: Get attachments
+      operationId: getAttachments
+      parameters:
+        - $ref: "#/components/parameters/SubmissionQuery"
+      responses:
+        "200":
+
+    post:
+      summary: Create new attachment
+      operationId: createAttachment
+      requestBody:
+        $ref: "#/components/schemas/CreateNewAttachment"
+      responses:
+        "201":
+
+  /attachments/{attachmentId}:
+    delete:
+      summary: Delete attachment
+      operationId: deleteAttachment
+      parameters:
+        - $ref: "#/components/parameters/AttachmentId"
+      responses:
+        "204":
 
 components:
   parameters:
+    UserId:
+      name: taskId
+      in: path
+      required: true
+      schema:
+        type: string
+
+    TaskId:
+      name: taskId
+      in: path
+      required: true
+      schema:
+        type: string
+
+    SubmissionId:
+      name: submissionId
+      in: path
+      required: true
+      schema:
+        type: string
+
+    AttachmentId:
+      name: attachmentId
+      in: path
+      required: true
+      schema:
+        type: string
+
+    UserQuery:
+      name: userId
+      in: query
+      schema:
+        type: string
+
+    SubmissionQuery:
+      name: submissionId
+      in: query
+      schema:
+        type: string
+
   schemas:
     User:
+      type: object
+      required: [id, name, avatar]
+      properties: 
+        id:
+          type: string
+          example: usr_001
+        name:
+          type: string
+          example: Bambang Setiawan
+        avatar:
+          type: string
+          format: link
 
     Task:
+      type: object
+      required: [id, proposerId, createdAt, status, title, description]
+      properties: 
+        id:
+          type: string
+          example: tsk_001
+        userId:
+          type: [string, "null"]
+          example: usr_001
+        proposerID:
+          type: string
+          example: usr_002
+        createdAt:
+          type: string
+          format: date-time
+          example: "2026-10-31T10:00:00Z"
+        editedAt:
+          type: [string, "null"]
+          format: date-time
+          example: "2026-10-31T10:00:00Z"
+        status:
+          allOf:
+            - $ref: "#/components/schemas/TaskStatus"
+          example: proposed
+        title:
+          type: string
+          example: Buat dokumen proposal pengesahan
+        deadline:
+          type: [string, "null"]
+          example: "2026-11-01T10:00:00Z"
+        description:
+          type: string  
+          example: 
+        sources:
+          type: [array, "null"]
+          items:
+            type: string
+            format: link
+        subtaskIds:
+          type: [array, "null"]
+          items:
+            type: string
+            example: tsk_002
+        submissionIds:
+          type: [array, "null"]
+          items:
+            type: string
+            example: sbm_001
 
-    Group:
+    TaskStatus:
+      type: string
+      enum:
+        - proposed
+        - in_progress
+        - pending_approval
+        - completed
+        - cancelled
+
+    CreateNewTask:
+      type: object
+      required: [title, description]
+      properties: 
+        title:
+          type: string
+        description:
+          type: string
+        deadline:
+          type: [string, "null"]
+        sources:
+          type: [array, "null"]
+          items:
+            type: string
+            format: link
+
+    UpdateTask:
+      type: object
+      properties: 
+        title:
+          type: [string, "null"]
+        description:
+          type: [string, "null"]
+        deadline:
+          type: [string, "null"]
+
+    ProceedTask:
+      type: object
+      required: [userId]
+      properties: 
+        userId:
+          type: string
 
     Submission:
+      type: object
+      required: [id, date, status]
+      properties: 
+        id:
+          type: string
+          example: sbm_001
+        date:
+          type: string
+          format: date-time
+        status:
+          allOf:
+            - $ref: "#/components/schemas/SubmissionStatus"
+        attachmentIds:
+          type: [array, "null"]
+          items:
+            type: string
+        comment:
+          type: [string, "null"]
+
+    SubmissionStatus:
+      type: string
+      enum:
+        - created
+        - pending_approval
+        - accepted
+        - rejected
+
+    CreateNewSubmission:
+      type: object
+      required: [date]
+      properties: 
+        date: 
+          type: string
+          format: date-time
+        sources:
+          type: [array, "null"]
+          items:
+            type: string
+            format: link
+
+    Attachment:
+      type: object
+      required: [id, type, source]
+      properties: 
+        id:
+          type: string
+        type: 
+          allOf:
+            - $ref: "#/components/schemas/AttachmentType"
+        source:
+          type: string
+          format: link
+
+    AttachmentType:
+      type: string
+      enum:
+        - file
+        - link
+
+    CreateNewAttachment:
+      type: object
+      required: [type, source]
+      properties: 
+        type: 
+          allOf:
+            - $ref: "#/components/schemas/AttachmentType"
+        source:
+          type: string
+          format: link      
 
     Error:
       type: object
