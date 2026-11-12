@@ -21,7 +21,7 @@
               >
                 <v-icon :icon="`mdi-${feature.icon}`" />
               </div>
-              <h3>{{ feature.text }}</h3>
+              <h4>{{ feature.text }}</h4>
             </v-card>
           </div>
         </div>
@@ -56,7 +56,7 @@
             <v-btn
               rounded="none"
               elevation="0"
-              class="bg-indigo-600 text-purple-50"
+              class="bg-indigo-600 text-indigo-50"
               icon="mdi-login"
               @click="handleInput"
             />
@@ -65,7 +65,7 @@
         <!-- Provider options -->
         <div class="flex flex-col gap-1">
           <v-btn
-            class="bg-indigo-600 text-purple-50"
+            class="bg-indigo-600 text-indigo-50"
             block
             size="large"
             elevation="0"

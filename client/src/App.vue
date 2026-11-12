@@ -1,8 +1,9 @@
 <template>
   <v-app class="bg-indigo-50">
     <login />
+    <!-- <home /> -->
     <!-- <v-main> -->
-      <!-- <HelloWorld />
+    <!-- <HelloWorld />
       <v-btn
         class="m-2"
         icon="mdi-theme-light-dark"
@@ -15,6 +16,7 @@
 </template>
 
 <script lang="ts" setup>
-  import HelloWorld from '@/components/HelloWorld.vue'
-import Login from './views/Login.vue';
+import HelloWorld from '@/components/HelloWorld.vue'
+import Login from './views/Login.vue'
+import Home from './views/Home.vue'
 </script>
