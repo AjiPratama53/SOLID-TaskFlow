@@ -1,10 +1,10 @@
-# OTAku
+# SOLID TaskFlow
 
-## Overengineered To-do Appku: Sistem Manajeman dan Pembagian Tugas secara Hierarkis
+Sistem Manajeman dan Pembagian Tugas secara Hierarkis, berbasis SOLID untuk penyimpanan data
 
 ### Members
 
-- Muhammad Dzaky Ar-Rasyid
+- Muhammad Dzaky Ar-Rasyid (24/543165/PA/23067)
 - Pratama Nanindra Aji (24/533677/PA/22604)
 
 ---
@@ -12,7 +12,6 @@
 ### Tech Stack:
 
 - Frontend: Vue, Vuetify, Tailwindcss, Typescript
-- Backend: Go
 - Database: SOLID
 
 ### Project Structure:
@@ -20,11 +19,6 @@
 ```
 root/
 |- clients/
-|  |- web
-|- services/
-   |- microservice_1
-   |- microservice_2
-|- tests/
 |- openapi.yaml
 |- CHANGELOG.md
 ```
