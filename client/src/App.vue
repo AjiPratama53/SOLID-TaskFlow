@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app class="bg-indigo-50">
     <login />
     <!-- <v-main> -->
       <!-- <HelloWorld />
