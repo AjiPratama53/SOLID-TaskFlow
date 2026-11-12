@@ -9,28 +9,92 @@
     <!-- Content -->
     <div class="flex flex-2 flex-col gap-4">
       <!-- Filter -->
-      <v-card class="flex p-2 gap-2">Filter</v-card>
+      <v-card class="flex p-2 gap-2">
+        <!-- Status -->
+        <v-select
+          hide-details
+          clearable
+          label="Status"
+          :items="taskStatuses"
+          variant="outlined"
+        ></v-select>
+
+        <!-- Deadline -->
+        <input
+          class="p-4 border-1 border-gray-400 rounded-sm"
+          type="datetime-local"
+          name="deadline"
+          id="deadline"
+          placeholder="Tenggat"
+        />
+
+        <!-- Search -->
+        <v-text-field
+          hide-details
+          clearable
+          placeholder="Cari tugas"
+          variant="outlined"
+          append-inner-icon="mdi-magnify"
+        />
+      </v-card>
 
       <!-- Tasks container -->
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-2 items-start">
         <!-- New task button -->
-        <v-btn prepend-icon="mdi-plus" class="bg-indigo-600 text-indigo-50"
+        <v-btn
+          @click="isCreateTask = !isCreateTask"
+          prepend-icon="mdi-plus"
+          class="bg-indigo-600 text-indigo-50"
           >Tugas baru</v-btn
         >
 
         <!-- New task -->
-        <card>
-          <div class="flex flex-col gap-4">
+        <card v-if="isCreateTask">
+          <div class="flex flex-col gap-4 items-start">
             <!-- Inputs -->
-            <div class="flex flex-col gap-2"></div>
-            <input type="text" name="title" id="title" placeholder="Judul" />
-            <input type="image" src="" alt="" />
-            <input
-              type="datetime-local"
-              name="deadline"
-              id="deadline"
-              placeholder="Tenggat"
-            />
+            <div class="flex flex-col gap-2 w-full">
+              <v-text-field
+                hide-details="auto"
+                class="w-full"
+                clearable
+                placeholder="Judul"
+                variant="outlined"
+              />
+              <v-textarea
+                hide-details="auto"
+                class="w-full"
+                clearable
+                placeholder="Deskripsi"
+                variant="outlined"
+              />
+              <div class="flex gap-2 items-center">
+                <p>Tenggat:</p>
+                <input
+                  class="p-4 border-1 border-gray-400 rounded-sm"
+                  type="datetime-local"
+                  name="deadline"
+                  id="deadline"
+                  placeholder="Tenggat"
+                />
+              </div>
+              <!-- <v-date-input class="w-100" label="Tenggat" variant="outlined" /> -->
+              <!-- <v-time-input class="w-100" label="Tenggat" variant="outlined" /> -->
+            </div>
+
+            <!-- Attachments -->
+            <!-- Actions -->
+            <div class="flex w-full justify-between">
+              <div class="flex gap-1">
+                <v-btn rounded="none" elevation="0" icon="mdi-upload"></v-btn>
+                <v-btn rounded="none" elevation="0" icon="mdi-link"></v-btn>
+              </div>
+              <div class="flex gap-1">
+                <v-btn elevation="0" @click="isCreateTask = false">Batal</v-btn>
+                <v-btn elevation="0" class="bg-indigo-600 text-indigo-50"
+                  >Buat</v-btn
+                >
+              </div>
+            </div>
           </div>
         </card>
 
@@ -71,4 +135,14 @@
 
 <script setup lang="ts">
 import Card from '@/components/Card.vue'
+import { ref } from 'vue'
+
+const isCreateTask = ref(false)
+
+const taskStatuses = [
+  'Ditugaskan',
+  'Sedang dikerjakan',
+  'Menunggu verifikasi',
+  'Selesai',
+]
 </script>

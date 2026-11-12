@@ -1,7 +1,7 @@
 <template>
   <v-app class="bg-indigo-50">
-    <login />
-    <!-- <home /> -->
+    <!-- <login /> -->
+    <home />
     <!-- <v-main> -->
     <!-- <HelloWorld />
       <v-btn
