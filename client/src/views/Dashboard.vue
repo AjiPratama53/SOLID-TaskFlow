@@ -56,6 +56,7 @@
             <!-- Inputs -->
             <div class="flex flex-col gap-2 w-full">
               <v-text-field
+                density="compact"
                 hide-details="auto"
                 class="w-full"
                 clearable
@@ -63,6 +64,7 @@
                 variant="outlined"
               />
               <v-textarea
+                density="compact"
                 hide-details="auto"
                 class="w-full"
                 clearable
@@ -72,7 +74,7 @@
               <div class="flex gap-2 items-center">
                 <p>Tenggat:</p>
                 <input
-                  class="p-4 border-1 border-gray-400 rounded-sm"
+                  class="px-4 py-1 border-1 border-gray-400 rounded-sm"
                   type="datetime-local"
                   name="deadline"
                   id="deadline"
@@ -115,7 +117,12 @@
             </div>
           </div>
 
-          <h2>[Judul]</h2>
+          <!-- Title -->
+          <a href="">
+            <h2>[Judul]</h2>
+          </a>
+
+          <!-- Deadline -->
           <div class="flex gap-1">
             <v-icon icon="mdi-clock-outline" />
             <p>Tenggat: <strong>[deadline]</strong></p>
@@ -129,24 +136,43 @@
       <card>
         <div class="flex flex-col gap-6">
           <!-- Incoming tasks -->
-          <div class="flex justify-between items-start">
-            <h3>Mendatang</h3>
-            <div
-              class="flex px-2 py-0.5 rounded-2xl gap-1 bg-amber-200 text-amber-800 text-sm"
-            >
-              3 Tugas
+          <div class="flex flex-col gap-4">
+            <div class="flex justify-between items-start">
+              <h3>Mendatang</h3>
+              <div
+                class="flex px-2 py-0.5 rounded-2xl gap-1 bg-amber-200 text-amber-800 text-sm"
+              >
+                3 Tugas
+              </div>
+            </div>
+
+            <!-- Incoming task items -->
+            <div class="flex flex-col gap-2">
+              <div v-for="value in 3" class="flex flex-col gap-0.5">
+                <p class="text-red-600">• Tenggat: [deadline]</p>
+                <a href=""><h4>[Judul]</h4></a>
+              </div>
             </div>
           </div>
 
           <v-divider></v-divider>
 
           <!-- No deadline tasks -->
-          <div class="flex justify-between items-start">
-            <h3>Tanpa Batas Waktu</h3>
-            <div
-              class="flex px-2 py-0.5 rounded-2xl gap-1 bg-amber-200 text-amber-800 text-sm"
-            >
-              3 Tugas
+          <div class="flex flex-col gap-4">
+            <div class="flex justify-between items-start">
+              <h3>Tanpa Batas Waktu</h3>
+              <div
+                class="flex px-2 py-0.5 rounded-2xl gap-1 bg-amber-200 text-amber-800 text-sm"
+              >
+                3 Tugas
+              </div>
+            </div>
+
+            <!-- No deadline task items -->
+            <div class="flex flex-col gap-2">
+              <div v-for="value in 3" class="flex flex-col gap-0.5">
+                <a href=""><h4>[Judul]</h4></a>
+              </div>
             </div>
           </div>
         </div>

@@ -5,7 +5,9 @@
       <v-icon icon="mdi-account-plus-outline" />
       <h4>Undang rekan</h4>
     </div>
-    <p>Delegasikan subtugas lebih cepat dengan follow rekan Anda.</p>
+    <p class="font-light text-sm">
+      Delegasikan subtugas lebih cepat dengan follow rekan Anda.
+    </p>
     <v-text-field
       v-if="isInputting"
       density="compact"
