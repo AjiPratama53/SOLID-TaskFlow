@@ -12,6 +12,7 @@
       <v-card class="flex p-2 gap-2">
         <!-- Status -->
         <v-select
+          density="compact"
           hide-details
           clearable
           label="Status"
@@ -21,7 +22,7 @@
 
         <!-- Deadline -->
         <input
-          class="p-4 border-1 border-gray-400 rounded-sm"
+          class="px-4 border-1 border-gray-400 rounded-sm"
           type="datetime-local"
           name="deadline"
           id="deadline"
@@ -30,6 +31,7 @@
 
         <!-- Search -->
         <v-text-field
+          density="compact"
           hide-details
           clearable
           placeholder="Cari tugas"
