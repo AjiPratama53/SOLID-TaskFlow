@@ -84,7 +84,7 @@ import debounce from 'debounce'
 import { ref, watch } from 'vue'
 
 const features = [
-  { icon: 'share-variant', text: 'Pembagian Tugas' },
+  { icon: 'share-variant', text: 'Pembagian Subtugas' },
   { icon: 'check-decagram', text: 'Verifikasi Pengumpulan' },
   { icon: 'shield-check', text: 'Data Milik Pribadi' },
 ]
@@ -98,17 +98,16 @@ const solidProviders = [
 
 const input = ref('')
 
-function handleInput() {
-  if (!input.value) return
+const handleInput = debounce(() => {
+  try {
+    if (!input.value) throw Error('Input is empty')
 
-  // handle login input
-  alert(`Login dengan ${input.value}`)
-}
+    // Handle input here
+    alert(`Input ${input.value}`)
+  } catch (error) {
+    alert(error)
+  }
+}, 1000)
 
-watch(
-  () => input.value,
-  debounce(() => {
-    handleInput()
-  }, 1000),
-)
+watch(() => input.value, handleInput)
 </script>
