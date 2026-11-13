@@ -2,7 +2,7 @@
   <!-- Header -->
   <Header title="Dasbor Tugas" subtitle="Buat dan kelola tugas-tugasmu." />
 
-  <div class="flex gap-4">
+  <div class="flex gap-4 w-full">
     <!-- Content -->
     <div class="flex flex-2 flex-col gap-4">
       <!-- Filter -->
