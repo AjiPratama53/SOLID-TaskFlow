@@ -124,9 +124,11 @@
 
           <div class="flex gap-2 w-full">
             <!-- Cancel -->
-            <v-btn class="flex flex-1 bg-red-200 text-red-800" elevation="0"
+            <!-- <v-btn class="flex flex-1 bg-red-200 text-red-800" elevation="0"
               >Batalkan Penugasan</v-btn
-            >
+            > -->
+            <DialogButton text="Batalkan Penugasan" bg-color="red-200" text-color="red-800" elevation="0"/>
+
             <!-- Delegate -->
             <v-btn
               class="flex flex-1 bg-gray-600 text-gray-50"
@@ -175,9 +177,14 @@
             >
 
             <!-- Cancel submission -->
-            <v-btn class="bg-red-200 text-red-800" elevation="0"
+            <!-- <v-btn class="bg-red-200 text-red-800" elevation="0"
               >Batalkan Pengumpulan</v-btn
-            >
+            > -->
+            <DialogButton text="Batalkan Pengumpulan" bg-color="red-200" text-color="red-800" elevation="0" block>
+              <v-card elevation="0">
+                hello
+              </v-card>
+            </DialogButton>
           </div>
         </div>
       </Card>
@@ -220,6 +227,7 @@
 
 <script setup lang="ts">
 import Card from '@/components/Card.vue'
+import DialogButton from '@/components/DialogButton.vue'
 import Header from '@/components/Header.vue'
 import NewTask from '@/components/NewTask.vue'
 import UserItem from '@/components/UserItem.vue'
