@@ -1,5 +1,5 @@
 <template>
-  <aside class="flex-1 flex flex-col justify-between h-full">
+  <aside class="flex-1 flex flex-col justify-between gap-8 h-full">
     <div class="flex flex-col gap-4">
       <!-- Account -->
       <div class="flex flex-col gap-2 items-start">

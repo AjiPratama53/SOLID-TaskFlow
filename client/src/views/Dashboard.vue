@@ -40,7 +40,7 @@
           <div class="flex justify-between items-start">
             <div class="flex flex-col">
               <h5>Diposting oleh <strong>[proposer.name]</strong></h5>
-              <h5>[createdAt]</h5>
+              <h5>[createdAt], Diedit [editedAt]</h5>
             </div>
 
             <!-- Task status -->
