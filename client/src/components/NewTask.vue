@@ -30,13 +30,7 @@
         />
         <div class="flex gap-2 items-center">
           <p>Tenggat:</p>
-          <input
-            class="px-4 py-1 border-1 border-gray-400 rounded-sm"
-            type="datetime-local"
-            name="deadline"
-            id="deadline"
-            placeholder="Tenggat"
-          />
+          <DateTimePicker />
         </div>
         <!-- <v-date-input class="w-100" label="Tenggat" variant="outlined" /> -->
         <!-- <v-time-input class="w-100" label="Tenggat" variant="outlined" /> -->
@@ -61,6 +55,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import Card from './Card.vue'
+import DateTimePicker from './DateTimePicker.vue'
 
 defineProps<{
   isSubtask?: boolean

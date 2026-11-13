@@ -21,14 +21,7 @@
         ></v-select>
 
         <!-- Deadline -->
-        <input
-          class="px-4 border-1 border-gray-400 rounded-sm"
-          type="datetime-local"
-          name="deadline"
-          id="deadline"
-          placeholder="Tenggat"
-        />
-
+        <date-time-picker />
         <!-- Search -->
         <v-text-field
           density="compact"
@@ -125,6 +118,7 @@
 
 <script setup lang="ts">
 import Card from '@/components/Card.vue'
+import DateTimePicker from '@/components/DateTimePicker.vue'
 import NewTask from '@/components/NewTask.vue'
 
 const taskStatuses = [
