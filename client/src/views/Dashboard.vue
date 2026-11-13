@@ -1,9 +1,6 @@
 <template>
   <!-- Header -->
-  <header>
-    <h1>Dasbor Tugas</h1>
-    <p>Buat dan kelola tugas-tugasmu.</p>
-  </header>
+  <Header title="Dasbor Tugas" subtitle="Buat dan kelola tugas-tugasmu." />
 
   <div class="flex gap-4">
     <!-- Content -->
@@ -119,6 +116,7 @@
 <script setup lang="ts">
 import Card from '@/components/Card.vue'
 import DateTimePicker from '@/components/DateTimePicker.vue'
+import Header from '@/components/Header.vue'
 import NewTask from '@/components/NewTask.vue'
 
 const taskStatuses = [

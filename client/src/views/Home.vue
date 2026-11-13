@@ -5,6 +5,7 @@
     <!-- Main page -->
     <main class="flex-8 flex flex-col h-full gap-4">
       <Dashboard />
+      <!-- <TaskDetail /> -->
     </main>
   </div>
 </template>
@@ -12,4 +13,5 @@
 <script setup lang="ts">
 import Aside from '@/components/Aside.vue'
 import Dashboard from './Dashboard.vue'
+import TaskDetail from './TaskDetail.vue'
 </script>
