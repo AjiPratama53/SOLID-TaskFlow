@@ -2,6 +2,7 @@
   <!-- Back button -->
   <v-btn
     class="bg-indigo-600 text-indigo-50"
+    elevation="0"
     prepend-icon="mdi-arrow-left"
     text="Kembali ke dasbor"
   />
@@ -30,9 +31,7 @@
         </div>
 
         <!-- Title -->
-        <a href="">
-          <h2>[Judul]</h2>
-        </a>
+        <h2>[Judul]</h2>
 
         <!-- Deadline -->
         <div class="flex gap-1">
@@ -124,10 +123,10 @@
 
           <div class="flex gap-2 w-full">
             <!-- Cancel -->
-            <!-- <v-btn class="flex flex-1 bg-red-200 text-red-800" elevation="0"
+            <v-btn class="flex flex-1 bg-red-200 text-red-800" elevation="0"
               >Batalkan Penugasan</v-btn
-            > -->
-            <DialogButton text="Batalkan Penugasan" bg-color="red-200" text-color="red-800" elevation="0"/>
+            >
+            <!-- <DialogButton text="Batalkan Penugasan" bg-color="red-200" text-color="red-800" elevation="0"/> -->
 
             <!-- Delegate -->
             <v-btn
@@ -177,14 +176,14 @@
             >
 
             <!-- Cancel submission -->
-            <!-- <v-btn class="bg-red-200 text-red-800" elevation="0"
+            <v-btn class="bg-red-200 text-red-800" elevation="0"
               >Batalkan Pengumpulan</v-btn
-            > -->
-            <DialogButton text="Batalkan Pengumpulan" bg-color="red-200" text-color="red-800" elevation="0" block>
+            >
+            <!-- <DialogButton text="Batalkan Pengumpulan" bg-color="red-200" text-color="red-800" elevation="0" block>
               <v-card elevation="0">
                 hello
               </v-card>
-            </DialogButton>
+            </DialogButton> -->
           </div>
         </div>
       </Card>
