@@ -27,7 +27,7 @@
     </div>
 
     <!-- Brand -->
-    <a href="http://localhost:3000/">
+    <a href="">
       <img src="@/assets/brand.svg" alt="SOLID TaskFlow" />
     </a>
   </aside>

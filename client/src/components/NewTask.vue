@@ -14,6 +14,7 @@
       <div class="flex flex-col gap-2 w-full">
         <v-text-field
           density="compact"
+          autofocus
           hide-details="auto"
           class="w-full"
           clearable
