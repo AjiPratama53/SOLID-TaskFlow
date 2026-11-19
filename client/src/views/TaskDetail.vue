@@ -138,8 +138,9 @@
                     prepend-icon="mdi-swap-horizontal"
                     class="bg-indigo-600 text-indigo-50"
                     elevation="0"
-                    >Alihkan</v-btn
-                  >
+                    >Alihkan
+                    <DelegateDialog :action="() => console.log('Delegated')" />
+                  </v-btn>
                 </div>
               </div>
             </v-card>
@@ -158,23 +159,25 @@
               id="cancel-task"
               class="flex flex-1 bg-red-200 text-red-800"
               elevation="0"
-              >Batalkan Penugasan</v-btn
             >
+              Batalkan Penugasan
+              <CriticalDialog
+                text="Batalkan penugasan?"
+                color="red"
+                :action="() => console.log('Cancelled')"
+              />
+            </v-btn>
             <!-- <DialogButton text="Batalkan Penugasan" bg-color="red-200" text-color="red-800" elevation="0"/> -->
-            <CriticalDialog
-              activator="#cancel-task"
-              text="Batalkan penugasan?"
-              color="red"
-              :action="() => console.log('Cancelled')"
-            />
 
             <!-- Delegate -->
             <v-btn
-              class="flex flex-1 bg-gray-600 text-gray-50"
+              id="delegate"
+              class="delegate flex flex-1 bg-gray-600 text-gray-50"
               elevation="0"
               prepend-icon="mdi-account-plus-outline"
-              >Delegasikan</v-btn
-            >
+              >Delegasikan
+              <DelegateDialog :action="() => console.log('Delegated')" />
+            </v-btn>
           </div>
         </div>
       </Card>
@@ -216,23 +219,19 @@
             >
 
             <!-- Cancel submission -->
-            <v-btn
-              id="cancel-submission"
-              class="bg-red-200 text-red-800"
-              elevation="0"
-              >Batalkan Pengumpulan</v-btn
-            >
+            <v-btn class="bg-red-200 text-red-800" elevation="0"
+              >Batalkan Pengumpulan
+              <CriticalDialog
+                text="Batalkan pengumpulan?"
+                :action="() => console.log('Cancelled')"
+                color="red"
+              />
+            </v-btn>
             <!-- <DialogButton text="Batalkan Pengumpulan" bg-color="red-200" text-color="red-800" elevation="0" block>
               <v-card elevation="0">
                 hello
               </v-card>
             </DialogButton> -->
-            <CriticalDialog
-              activator="#cancel-submission"
-              text="Batalkan pengumpulan?"
-              :action="() => console.log('Cancelled')"
-              color="red"
-            />
           </div>
         </div>
       </Card>
@@ -266,6 +265,7 @@
 <script setup lang="ts">
 import Card from '@/components/Card.vue'
 import CriticalDialog from '@/components/CriticalDialog.vue'
+import DelegateDialog from '@/components/DelegateDialog.vue'
 import DialogButton from '@/components/DialogButton.vue'
 import Header from '@/components/Header.vue'
 import InputTask from '@/components/InputTask.vue'

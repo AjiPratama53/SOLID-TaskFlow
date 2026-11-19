@@ -1,6 +1,7 @@
 <template>
-  <v-dialog :activator max-width="320" v-slot:default="{ isActive }">
+  <v-dialog activator="parent" max-width="320" v-slot:default="{ isActive }">
     <v-card>
+      <!-- Header -->
       <div class="flex justify-center px-8 py-4">
         <h3>{{ text }}</h3>
       </div>
@@ -33,7 +34,7 @@
 
 <script setup lang="ts">
 defineProps<{
-  activator: string
+  // activator: string
   text: string
   action: Function
   inverseAction?: boolean
