@@ -36,7 +36,7 @@ defineProps<{
   activator: string
   text: string
   action: Function
-  inverseAction: boolean
+  inverseAction?: boolean
   color: string
 }>()
 </script>

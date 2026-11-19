@@ -30,7 +30,7 @@
 
     <!-- Attachments -->
     <!-- Actions -->
-    <div class="flex w-full justify-between">
+    <div class="flex w-full items-end justify-between">
       <div class="flex gap-1">
         <v-btn
           rounded="none"
@@ -46,10 +46,20 @@
         ></v-btn>
       </div>
       <div class="flex gap-1">
-        <v-btn elevation="0" variant="text">Batal</v-btn>
-        <v-btn elevation="0" class="bg-indigo-600 text-indigo-50">{{
-          isEdit ? 'Edit' : 'Buat'
-        }}</v-btn>
+        <v-btn @click="$emit('close')" elevation="0" variant="text"
+          >Batal</v-btn
+        >
+        <v-btn
+          @click="
+            () => {
+              action()
+              $emit('close')
+            }
+          "
+          elevation="0"
+          class="bg-indigo-600 text-indigo-50"
+          >{{ isEdit ? 'Edit' : 'Buat' }}</v-btn
+        >
       </div>
     </div>
   </div>
@@ -60,5 +70,8 @@ import DateTimePicker from './DateTimePicker.vue'
 
 defineProps<{
   isEdit?: boolean
+  action: Function
 }>()
+
+defineEmits(['close'])
 </script>

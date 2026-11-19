@@ -42,7 +42,10 @@
         />
 
         <Card v-if="isCreateTask">
-          <InputTask />
+          <InputTask
+            @close="isCreateTask = false"
+            :action="() => console.log('Task created')"
+          />
         </Card>
         <!-- Tasks items -->
         <TaskItem v-for="value in 3" />

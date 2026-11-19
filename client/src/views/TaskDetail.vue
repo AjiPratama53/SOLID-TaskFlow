@@ -29,24 +29,43 @@
             <h4>• [Status]</h4>
           </div>
         </div>
+        <!-- Edit field -->
+        <InputTask
+          v-if="isEditing"
+          is-edit
+          @close="isEditing = false"
+          :action="() => console.log('Edited')"
+        />
 
-        <!-- Title -->
-        <h2>[Judul]</h2>
+        <!-- Task field -->
+        <div v-else class="flex flex-col gap-4">
+          <!-- Title and edit button -->
+          <div v class="flex items-center justify-between gap-4">
+            <h2>[Judul]</h2>
+            <v-btn
+              icon="mdi-square-edit-outline"
+              variant="text"
+              density="compact"
+              rounded
+              @click="isEditing = !isEditing"
+            />
+          </div>
 
-        <!-- Deadline -->
-        <div class="flex gap-1">
-          <v-icon icon="mdi-clock-outline" />
-          <p>Tenggat: <strong>[deadline]</strong></p>
+          <!-- Deadline -->
+          <div class="flex gap-1">
+            <v-icon icon="mdi-clock-outline" />
+            <p>Tenggat: <strong>[deadline]</strong></p>
+          </div>
+
+          <!-- Description -->
+          <p>
+            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean
+            commodo ligula eget dolor. Aenean massa. Cum sociis natoque
+            penatibus et.
+          </p>
+
+          <!-- Attachments -->
         </div>
-
-        <!-- Description -->
-        <p>
-          Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean
-          commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus
-          et.
-        </p>
-
-        <!-- Attachments -->
 
         <!-- Subtasks -->
         <div class="flex flex-col gap-2">
@@ -70,7 +89,10 @@
               @click="isCreateSubtask = !isCreateSubtask"
             />
             <Card v-if="isCreateSubtask">
-              <InputTask />
+              <InputTask
+                @close="isCreateSubtask = false"
+                :action="() => console.log('Subtask created')"
+              />
             </Card>
 
             <!-- Subtask item -->
@@ -232,17 +254,7 @@
             <!-- History container -->
             <div class="flex flex-col gap-4 w-full">
               <!-- History item -->
-              <div v-for="value in 3" class="flex justify-between gap-8">
-                <div class="flex gap-4">
-                  <v-icon
-                    class="bg-green-200 text-green-800 rounded-2xl p-3"
-                    icon="mdi-check"
-                    size="xsmall"
-                  />
-                  <p>Diterima</p>
-                </div>
-                <p>[date-time]</p>
-              </div>
+              <SubmissionItem v-for="value in 3" />
             </div>
           </div>
         </div>
@@ -257,9 +269,11 @@ import CriticalDialog from '@/components/CriticalDialog.vue'
 import DialogButton from '@/components/DialogButton.vue'
 import Header from '@/components/Header.vue'
 import InputTask from '@/components/InputTask.vue'
+import SubmissionItem from '@/components/SubmissionItem.vue'
 import UserItem from '@/components/UserItem.vue'
 import { ref } from 'vue'
 
+const isEditing = ref(false)
 const isCreateSubtask = ref(false)
 
 const submissions = [{}]
