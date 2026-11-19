@@ -8,9 +8,7 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{
-  id?: string
-  name: string
-  avatar?: string
-}>()
+import type { User } from '@/models/user'
+
+defineProps<User>()
 </script>

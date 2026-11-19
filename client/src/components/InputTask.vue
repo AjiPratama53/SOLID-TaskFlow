@@ -52,7 +52,7 @@
         <v-btn
           @click="
             () => {
-              action()
+              handlePost()
               $emit('close')
             }
           "
@@ -66,12 +66,20 @@
 </template>
 
 <script setup lang="ts">
+import type { InputTask } from '@/models/task.ts'
 import DateTimePicker from './DateTimePicker.vue'
+import { ref } from 'vue'
 
-defineProps<{
+const props = defineProps<{
   isEdit?: boolean
-  action: Function
+  // action: Function
 }>()
 
+const input = props.isEdit ? defineModel<InputTask>('input') : ref<InputTask>()
+
 defineEmits(['close'])
+
+function handlePost() {
+  console.log(input.value)
+}
 </script>
