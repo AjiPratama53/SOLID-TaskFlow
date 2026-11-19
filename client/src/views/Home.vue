@@ -4,9 +4,9 @@
     <Aside />
     <!-- Main page -->
     <main class="flex-8 flex flex-col h-full gap-4 items-start">
-      <!-- <Dashboard /> -->
+      <Dashboard />
       <!-- <TaskDetail /> -->
-      <ValidateSubmission />
+      <!-- <ValidateSubmission /> -->
     </main>
   </div>
 </template>
@@ -15,5 +15,5 @@
 import Aside from '@/components/Aside.vue'
 import Dashboard from './Dashboard.vue'
 import TaskDetail from './TaskDetail.vue'
-import ValidateSubmission from './ValidateSubmission.vue';
+import ValidateSubmission from './ValidateSubmission.vue'
 </script>
