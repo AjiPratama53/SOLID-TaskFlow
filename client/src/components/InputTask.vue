@@ -11,6 +11,7 @@
         clearable
         placeholder="Judul"
         variant="outlined"
+        v-model="title"
       />
       <v-textarea
         density="compact"
@@ -19,10 +20,11 @@
         clearable
         placeholder="Deskripsi"
         variant="outlined"
+        v-model="description"
       />
       <div class="flex gap-2 items-center">
         <p>Tenggat:</p>
-        <DateTimePicker />
+        <DateTimePicker v-model="deadline" />
       </div>
       <!-- <v-date-input class="w-100" label="Tenggat" variant="outlined" /> -->
       <!-- <v-time-input class="w-100" label="Tenggat" variant="outlined" /> -->
@@ -66,8 +68,8 @@
 </template>
 
 <script setup lang="ts">
-import type { InputTask } from '@/schemas/task.ts'
 import DateTimePicker from './DateTimePicker.vue'
+import { useTasksStore } from '@/stores/tasks.ts'
 import { ref } from 'vue'
 
 const props = defineProps<{
@@ -75,11 +77,26 @@ const props = defineProps<{
   // action: Function
 }>()
 
-const input = props.isEdit ? defineModel<InputTask>('input') : ref<InputTask>()
+// Input task data
+const title = ref('')
+const description = ref('')
+const deadline = ref('')
+
+const tasks = useTasksStore()
 
 defineEmits(['close'])
 
 function handlePost() {
-  console.log(input.value)
+  if (!title.value || !description.value) return
+
+  tasks.postTask({
+    id: `tsk_${Math.round(Math.random() * 1000)}`,
+    proposerId: `usr_${Math.round(Math.random() * 1000)}`,
+    status: 'proposed',
+    createdAt: new Date(),
+    title: title.value,
+    description: description.value,
+    deadline: deadline.value !== '' ? new Date(deadline.value) : undefined,
+  })
 }
 </script>

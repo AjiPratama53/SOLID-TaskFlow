@@ -18,7 +18,15 @@
         ></v-select>
 
         <!-- Deadline -->
-        <date-time-picker />
+        <v-date-input
+          clearable
+          label="Tenggat sebelum"
+          variant="outlined"
+          hide-details
+          density="compact"
+          prepend-icon=""
+        />
+
         <!-- Search -->
         <v-text-field
           density="compact"
@@ -48,7 +56,7 @@
           />
         </Card>
         <!-- Tasks items -->
-        <TaskItem v-for="value in 3" />
+        <TaskItem v-for="task in tasks.getTasks" v-bind="task" />
       </div>
     </div>
 
@@ -108,14 +116,10 @@ import DateTimePicker from '@/components/DateTimePicker.vue'
 import Header from '@/components/Header.vue'
 import InputTask from '@/components/InputTask.vue'
 import TaskItem from '@/components/TaskItem.vue'
+import { useTasksStore } from '@/stores/tasks'
 import { ref } from 'vue'
 
 const isCreateTask = ref(false)
 
-const taskStatuses = [
-  'Ditugaskan',
-  'Sedang dikerjakan',
-  'Menunggu verifikasi',
-  'Selesai',
-]
+const tasks = useTasksStore()
 </script>

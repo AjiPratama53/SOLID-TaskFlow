@@ -3,7 +3,7 @@
     <div class="flex flex-col gap-4">
       <!-- Account -->
       <div class="flex flex-col gap-2 items-start">
-        <user-item :name="'[User]'" />
+        <user-item v-bind="user" />
         <v-btn
           prepend-icon="mdi-logout"
           text="Keluar"
@@ -21,9 +21,20 @@
           <p>Rekan anda</p>
 
           <!-- Colleagues item -->
-          <user-item v-for="value in 3" :name="`[Rekan ${value}]`" />
+          <user-item
+            v-for="colleague in colleagues.getUsers"
+            v-bind="colleague"
+          />
         </div>
-        <invite-card />
+        <invite-card
+          @invite="
+            (e) =>
+              colleagues.inviteUser({
+                id: `usr_${Math.round(Math.random() * 1000)}`,
+                name: e,
+              })
+          "
+        />
       </div>
     </div>
 
@@ -35,6 +46,15 @@
 </template>
 
 <script setup lang="ts">
+import { useUsersStore } from '@/stores/users.ts'
 import InviteCard from './InviteCard.vue'
 import UserItem from './UserItem.vue'
+import type { User } from '@/schemas/user.ts'
+
+const colleagues = useUsersStore()
+
+const user: User = {
+  id: 'usr_001',
+  name: 'Admin',
+}
 </script>

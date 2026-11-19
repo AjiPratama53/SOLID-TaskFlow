@@ -10,18 +10,21 @@
     </p>
     <v-text-field
       v-if="isInputting"
+      autofocus
       density="compact"
       class="bg-white"
       hide-details
       clearable
       placeholder="WebID"
       variant="outlined"
+      v-model="input"
+      @keyup.enter="handleInput"
     />
 
     <v-btn
       elevation="0"
       class="bg-indigo-600 text-indigo-50"
-      @click="isInputting = !isInputting"
+      @click="handleInput"
       >Undang</v-btn
     >
   </v-card>
@@ -31,4 +34,17 @@
 import { ref } from 'vue'
 
 const isInputting = ref(false)
+const input = ref('')
+
+const emit = defineEmits<{
+  invite: [value: string]
+}>()
+
+function handleInput() {
+  isInputting.value = !isInputting.value
+
+  if (!input.value) return
+  emit('invite', input.value)
+  input.value = ''
+}
 </script>

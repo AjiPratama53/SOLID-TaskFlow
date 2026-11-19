@@ -1,34 +1,54 @@
 <template>
-  <Card class="flex flex-col gap-2 border-l-6 border-indigo-600">
+  <Card :class="`flex flex-col gap-2 border-l-6 border-${statusColor}-600`">
     <!-- Task header -->
     <div class="flex justify-between items-start">
       <div class="flex flex-col">
-        <h5>Diposting oleh <strong>[proposer.name]</strong></h5>
-        <h5>[createdAt], Diedit [editedAt]</h5>
+        <h5>
+          Diposting oleh <strong>{{ proposerId }}</strong>
+        </h5>
+        <h5>
+          {{ formatDate(createdAt)
+          }}{{ editedAt ? `, Diedit ${formatDate(editedAt)}` : '' }}
+        </h5>
       </div>
 
       <!-- Task status -->
-      <div class="px-4 py-0.5 bg-green-200 text-green-800 rounded-2xl">
-        <h4>• [Status]</h4>
+      <div
+        :class="`px-4 py-0.5 bg-${statusColor}-200 text-${statusColor}-600 rounded-2xl`"
+      >
+        <h4>• {{ statusMessage }}</h4>
       </div>
     </div>
 
     <!-- Title -->
     <a href="">
-      <h2>[Judul]</h2>
+      <h2>{{ title }}</h2>
     </a>
 
     <!-- Deadline -->
     <div class="flex gap-1">
       <v-icon icon="mdi-clock-outline" />
-      <p>Tenggat: <strong>[deadline]</strong></p>
+      <p>
+        Tenggat:
+        <strong>{{
+          deadline ? `${formatDate(deadline)} • ${formatTime(deadline)}` : '--'
+        }}</strong>
+      </p>
     </div>
   </Card>
 </template>
 
 <script setup lang="ts">
-import type { Task } from '@/schemas/task.ts'
+import {
+  taskStatusColor,
+  taskStatusMessage,
+  type Task,
+} from '@/schemas/task.ts'
 import Card from './Card.vue'
+import { formatDate, formatTime } from '@/utils/formatDateTime.ts'
 
-// const model = defineModel<Task>();
+const props = defineProps<Task>()
+
+const statusMessage = taskStatusMessage[props.status]
+const statusColor = taskStatusColor[props.status]
 </script>

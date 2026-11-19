@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center justify-center w-full h-full">
     <!-- Card -->
-    <v-card class="flex bg-gray-50">
+    <v-card class="flex bg-gray-50" max-width="50rem">
       <div class="flex flex-1 p-8 bg-indigo-100">
         <!-- Left panel -->
         <div class="flex flex-col gap-4">
@@ -28,7 +28,7 @@
       </div>
 
       <!-- Right Panel -->
-      <div class="flex flex-2 p-8 flex-col gap-4">
+      <div class="flex flex-1 p-8 flex-col gap-4">
         <!-- Heading -->
         <div class="flex flex-col">
           <h1>Login dengan SOLID</h1>
@@ -44,7 +44,7 @@
             v-model="input"
             messages=""
           /> -->
-          <div class="flex flex-1 border-1 rounded-md overflow-hidden">
+          <div class="flex flex-1 border rounded-md overflow-hidden">
             <input
               class="flex-1 px-4"
               type="text"
@@ -82,6 +82,7 @@
 <script setup lang="ts">
 import debounce from 'debounce'
 import { ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 
 const features = [
   { icon: 'share-variant', text: 'Pembagian Subtugas' },
@@ -97,13 +98,15 @@ const solidProviders = [
 ]
 
 const input = ref('')
+const router = useRouter()
 
 const handleInput = debounce(() => {
   try {
     if (!input.value) throw Error('Input is empty')
 
     // Handle input here
-    alert(`Input ${input.value}`)
+    // alert(`Input ${input.value}`)
+    router.push('/dashboard')
   } catch (error) {
     alert(error)
   }

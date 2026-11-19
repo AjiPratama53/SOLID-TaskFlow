@@ -2,7 +2,7 @@ import type { InputTask, Task } from "@/schemas/task";
 import { defineStore } from "pinia";
 import { computed, ref, type Ref } from "vue";
 
-export const useUsersStore = defineStore('tasks', () => {
+export const useTasksStore = defineStore('tasks', () => {
     // States
     const tasks: Ref<Task[]> = ref([])
 
@@ -14,8 +14,8 @@ export const useUsersStore = defineStore('tasks', () => {
     function getTaskById(id:string): Task | undefined
         {return tasks.value.find(task => task.id === id)}
 
-    function addTask(newUser: Task){
-        tasks.value.push(newUser)
+    function postTask(newTask: Task){
+        tasks.value.push(newTask)
     }
 
     function editTask(id: string, editedTask: InputTask){
@@ -29,6 +29,6 @@ export const useUsersStore = defineStore('tasks', () => {
     }
 
     return {
-        getTasks, getTaskById, addTask, editTask
+        getTasks, getTaskById, postTask, editTask
     }
 })

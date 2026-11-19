@@ -2,7 +2,7 @@ import type { Submission } from "@/schemas/submission";
 import { defineStore } from "pinia";
 import { computed, ref, type Ref } from "vue";
 
-export const useUsersStore = defineStore('users', () => {
+export const useSubmissionsStore = defineStore('users', () => {
     // States
     const submissions: Ref<Submission[]> = ref([])
 
