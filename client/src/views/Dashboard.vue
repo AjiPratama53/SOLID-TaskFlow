@@ -33,7 +33,17 @@
       <!-- Tasks container -->
       <div class="flex flex-col gap-2 items-start">
         <!-- New task -->
-        <new-task />
+        <v-btn
+          elevation="0"
+          class="bg-indigo-600 text-indigo-50"
+          text="Tugas baru"
+          prepend-icon="mdi-plus"
+          @click="isCreateTask = !isCreateTask"
+        />
+
+        <Card v-if="isCreateTask">
+          <InputTask />
+        </Card>
         <!-- Tasks items -->
         <TaskItem v-for="value in 3" />
       </div>
@@ -93,8 +103,11 @@
 import Card from '@/components/Card.vue'
 import DateTimePicker from '@/components/DateTimePicker.vue'
 import Header from '@/components/Header.vue'
-import NewTask from '@/components/NewTask.vue'
+import InputTask from '@/components/InputTask.vue'
 import TaskItem from '@/components/TaskItem.vue'
+import { ref } from 'vue'
+
+const isCreateTask = ref(false)
 
 const taskStatuses = [
   'Ditugaskan',

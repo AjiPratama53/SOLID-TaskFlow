@@ -62,7 +62,16 @@
           <!-- Subtask container -->
           <div class="flex flex-col items-start gap-2 w-full">
             <!-- New subtask -->
-            <NewTask is-subtask />
+            <v-btn
+              elevation="0"
+              class="bg-indigo-600 text-indigo-50"
+              text="Subtugas baru"
+              prepend-icon="mdi-plus"
+              @click="isCreateSubtask = !isCreateSubtask"
+            />
+            <Card v-if="isCreateSubtask">
+              <InputTask />
+            </Card>
 
             <!-- Subtask item -->
             <v-card
@@ -247,8 +256,11 @@ import Card from '@/components/Card.vue'
 import CriticalDialog from '@/components/CriticalDialog.vue'
 import DialogButton from '@/components/DialogButton.vue'
 import Header from '@/components/Header.vue'
-import NewTask from '@/components/NewTask.vue'
+import InputTask from '@/components/InputTask.vue'
 import UserItem from '@/components/UserItem.vue'
+import { ref } from 'vue'
+
+const isCreateSubtask = ref(false)
 
 const submissions = [{}]
 </script>
