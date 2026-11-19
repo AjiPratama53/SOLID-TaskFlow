@@ -20,7 +20,7 @@
           }
         "
       >
-        <user-item name="[Rekan]" />
+        <user-item :name="`[Rekan ${value}]`" />
       </v-btn>
 
       <!-- Publish button -->
