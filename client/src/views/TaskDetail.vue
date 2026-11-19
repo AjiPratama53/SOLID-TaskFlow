@@ -123,10 +123,19 @@
 
           <div class="flex gap-2 w-full">
             <!-- Cancel -->
-            <v-btn class="flex flex-1 bg-red-200 text-red-800" elevation="0"
+            <v-btn
+              id="cancel-task"
+              class="flex flex-1 bg-red-200 text-red-800"
+              elevation="0"
               >Batalkan Penugasan</v-btn
             >
             <!-- <DialogButton text="Batalkan Penugasan" bg-color="red-200" text-color="red-800" elevation="0"/> -->
+            <CriticalDialog
+              activator="#cancel-task"
+              text="Batalkan penugasan?"
+              color="red"
+              :action="() => console.log('Cancelled')"
+            />
 
             <!-- Delegate -->
             <v-btn
@@ -176,7 +185,10 @@
             >
 
             <!-- Cancel submission -->
-            <v-btn class="bg-red-200 text-red-800" elevation="0"
+            <v-btn
+              id="cancel-submission"
+              class="bg-red-200 text-red-800"
+              elevation="0"
               >Batalkan Pengumpulan</v-btn
             >
             <!-- <DialogButton text="Batalkan Pengumpulan" bg-color="red-200" text-color="red-800" elevation="0" block>
@@ -184,6 +196,12 @@
                 hello
               </v-card>
             </DialogButton> -->
+            <CriticalDialog
+              activator="#cancel-submission"
+              text="Batalkan pengumpulan?"
+              :action="() => console.log('Cancelled')"
+              color="red"
+            />
           </div>
         </div>
       </Card>
@@ -226,6 +244,7 @@
 
 <script setup lang="ts">
 import Card from '@/components/Card.vue'
+import CriticalDialog from '@/components/CriticalDialog.vue'
 import DialogButton from '@/components/DialogButton.vue'
 import Header from '@/components/Header.vue'
 import NewTask from '@/components/NewTask.vue'

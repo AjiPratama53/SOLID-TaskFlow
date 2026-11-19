@@ -85,18 +85,36 @@
             </p>
           </div>
 
-          <!-- Attachments -->
-          <div class="flex flex-col gap-2"></div>
+          <!-- Comments -->
+          <div class="flex flex-col gap-2">
+            <h4>Komentar</h4>
+            <v-textarea
+              density="compact"
+              hide-details="auto"
+              class="w-full"
+              clearable
+              placeholder="Tulis catatan review atau instruksi revisi"
+              variant="outlined"
+            />
+          </div>
 
           <!-- Actions -->
           <div class="flex flex-col gap-2">
             <!-- Accept -->
             <v-btn
+              id="accept-submission"
               prepend-icon="mdi-check-circle-outline"
               class="bg-green-600 text-green-50"
               elevation="0"
               >Terima dan Setujui</v-btn
             >
+            <CriticalDialog
+              activator="#accept-submission"
+              text="Terima pengumpulan?"
+              :action="() => console.log('Accepted')"
+              color="green"
+              inverse-action
+            />
 
             <!-- Cancel submission -->
             <v-btn
@@ -119,5 +137,6 @@
 
 <script setup lang="ts">
 import Card from '@/components/Card.vue'
+import CriticalDialog from '@/components/CriticalDialog.vue'
 import Header from '@/components/Header.vue'
 </script>

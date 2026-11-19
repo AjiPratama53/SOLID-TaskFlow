@@ -4,8 +4,8 @@
     <Aside />
     <!-- Main page -->
     <main class="flex-8 flex flex-col h-full gap-4 items-start">
-      <Dashboard />
-      <!-- <TaskDetail /> -->
+      <!-- <Dashboard /> -->
+      <TaskDetail />
       <!-- <ValidateSubmission /> -->
     </main>
   </div>
