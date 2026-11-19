@@ -66,7 +66,7 @@
 </template>
 
 <script setup lang="ts">
-import type { InputTask } from '@/models/task.ts'
+import type { InputTask } from '@/schemas/task.ts'
 import DateTimePicker from './DateTimePicker.vue'
 import { ref } from 'vue'
 

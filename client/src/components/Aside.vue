@@ -9,6 +9,7 @@
           text="Keluar"
           variant="text"
           density="compact"
+          @click="$router.push('/login')"
         />
       </div>
       <v-divider />

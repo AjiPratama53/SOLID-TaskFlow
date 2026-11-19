@@ -7,8 +7,8 @@ export type TaskStatus =
 
 export interface Task {
     id: string
-    userId?: string
-    proposerId: string
+    userId: string
+    proposerId?: string
     createdAt: Date
     editedAt?: Date
     status: TaskStatus

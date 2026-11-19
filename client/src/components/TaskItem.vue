@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Task } from '@/models/task.ts'
+import type { Task } from '@/schemas/task.ts'
 import Card from './Card.vue'
 
 // const model = defineModel<Task>();

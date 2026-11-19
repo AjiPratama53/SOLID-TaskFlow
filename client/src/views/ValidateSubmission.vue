@@ -5,6 +5,7 @@
     elevation="0"
     prepend-icon="mdi-arrow-left"
     text="Kembali ke detail tugas"
+    @click="$router.push('/tasks/12')"
   />
 
   <!-- Header -->

@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-import type { User } from '@/models/user'
+import type { User } from '@/schemas/user'
 
 defineProps<User>()
 </script>

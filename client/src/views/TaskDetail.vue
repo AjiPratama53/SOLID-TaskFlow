@@ -5,6 +5,7 @@
     elevation="0"
     prepend-icon="mdi-arrow-left"
     text="Kembali ke dasbor"
+    @click="$router.push('/dashboard')"
   />
 
   <!-- Header -->
