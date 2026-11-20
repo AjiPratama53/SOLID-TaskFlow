@@ -17,7 +17,7 @@
       <!-- Colleagues -->
       <div class="flex flex-col gap-4">
         <!-- Colleagues list -->
-        <div class="flex flex-col gap-2">
+        <div v-if="colleagues.getUsers.length > 0" class="flex flex-col gap-2">
           <p>Rekan anda</p>
 
           <!-- Colleagues item -->

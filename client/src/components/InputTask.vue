@@ -87,7 +87,13 @@ const tasks = useTasksStore()
 defineEmits(['close'])
 
 function handlePost() {
-  if (!title.value || !description.value) return
+  // return jika title dan deskripsi kosong, deadline ada tapi tanggal sudah lewat
+  if (
+    !title.value ||
+    !description.value ||
+    (deadline.value && new Date(deadline.value) <= new Date())
+  )
+    return
 
   tasks.postTask({
     id: `tsk_${Math.round(Math.random() * 1000)}`,

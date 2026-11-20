@@ -84,7 +84,9 @@
                 <p class="text-red-600">
                   • Tenggat: {{ formatDateTime(task.deadline) }}
                 </p>
-                <a class="self-start" :href="`/tasks/${task.id}`"
+                <a
+                  @click="$router.push(`/tasks/${task.id}`)"
+                  class="self-start cursor-pointer"
                   ><h4>{{ task.title }}</h4></a
                 >
               </div>
@@ -111,7 +113,9 @@
                 v-bind="task"
                 class="flex flex-col gap-0.5"
               >
-                <a class="self-start" :href="`/tasks/${task.id}`"
+                <a
+                  class="self-start cursor-pointer"
+                  @click="$router.push(`/tasks/${task.id}`)"
                   ><h4>{{ task.title }}</h4></a
                 >
               </div>

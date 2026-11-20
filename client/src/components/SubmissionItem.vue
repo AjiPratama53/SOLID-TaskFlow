@@ -9,7 +9,7 @@
       <!-- Status and date -->
       <div class="flex w-full justify-between gap-8">
         <p>{{ statusMessage }}</p>
-        <p>{{ formatDate(props.date) }} • {{ formatTime(props.date) }}</p>
+        <p>{{ formatDateTime(props.date) }}</p>
       </div>
 
       <!-- Comment -->
@@ -27,7 +27,7 @@ import {
   type Submission,
   submissionStatusMessage,
 } from '@/schemas/submission'
-import { formatDate, formatTime } from '@/utils/formatDateTime'
+import { formatDateTime } from '@/utils/formatDateTime'
 
 const props = defineProps<Submission>()
 

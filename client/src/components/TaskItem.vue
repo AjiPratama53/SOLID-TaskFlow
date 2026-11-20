@@ -21,7 +21,7 @@
     </div>
 
     <!-- Title -->
-    <a class="self-start" :href="`/tasks/${id}`">
+    <a class="self-start cursor-pointer" @click="$router.push(`/tasks/${id}`)">
       <h2>{{ title }}</h2>
     </a>
 

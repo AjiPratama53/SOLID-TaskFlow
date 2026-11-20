@@ -5,7 +5,7 @@
     elevation="0"
     prepend-icon="mdi-arrow-left"
     text="Kembali ke detail tugas"
-    @click="$router.push('/tasks/12')"
+    @click="$router.back()"
   />
 
   <!-- Header -->
@@ -14,7 +14,7 @@
     subtitle="Evaluasi hasil kerja kiriman rekan Anda."
   />
 
-  <div class="flex gap-4 flex-1">
+  <div class="flex gap-4 flex-1 w-full">
     <!-- Content -->
     <div class="flex flex-2 flex-col gap-4">
       <Card class="flex flex-col gap-4">
@@ -23,29 +23,31 @@
           <h5>Dikirim oleh <strong>[proposer.name]</strong></h5>
 
           <!-- Task status -->
-          <h4 class="px-4 py-0.5 bg-green-200 text-green-800 rounded-2xl">
-            • [Status]
+          <h4
+            :class="`px-4 py-0.5 bg-${statusColor}-200 text-${statusColor}-800 rounded-2xl`"
+          >
+            • {{ statusMessage }}
           </h4>
         </div>
 
         <!-- Title -->
-        <h2>[Judul]</h2>
+        <!-- <h2>{{ submission. }}</h2> -->
 
         <!-- Deadline -->
         <div class="flex gap-1">
           <v-icon icon="mdi-clock-outline" />
           <span class="flex gap-1 items-center">
             <p>Waktu Pengumpulan: <strong>Tepat Waktu</strong></p>
-            <h5>(Diserahkan pada [createdAt])</h5>
+            <h5>(Diserahkan pada {{ formatDateTime(submission?.date) }})</h5>
           </span>
         </div>
 
         <!-- Description -->
-        <p>
+        <!-- <p>
           Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean
           commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus
           et.
-        </p>
+        </p> -->
 
         <!-- Attachments -->
         <div class="flex flex-col gap-2">
@@ -140,4 +142,18 @@
 import Card from '@/components/Card.vue'
 import CriticalDialog from '@/components/CriticalDialog.vue'
 import Header from '@/components/Header.vue'
+import {
+  submissionStatusColor,
+  submissionStatusMessage,
+  type Submission,
+} from '@/schemas/submission'
+import { formatDateTime } from '@/utils/formatDateTime'
+import { ref } from 'vue'
+
+const submission = ref<Submission>()
+
+const statusMessage =
+  submissionStatusMessage[submission.value?.status ?? 'pending_approval']
+const statusColor =
+  submissionStatusColor[submission.value?.status ?? 'pending_approval']
 </script>

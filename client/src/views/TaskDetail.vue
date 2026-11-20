@@ -5,7 +5,7 @@
     elevation="0"
     prepend-icon="mdi-arrow-left"
     text="Kembali ke dasbor"
-    @click="$router.push('/dashboard')"
+    @click="$router.back()"
   />
 
   <!-- Header -->
@@ -22,14 +22,12 @@
         <div class="flex justify-between items-start">
           <div class="flex flex-col">
             <h5>
-              Diposting oleh <strong>{{ selectedTask?.proposerId }}</strong>
+              Diposting oleh <strong>{{ task?.proposerId }}</strong>
             </h5>
             <h5>
-              {{ formatDate(selectedTask?.createdAt)
+              {{ formatDate(task?.createdAt)
               }}{{
-                selectedTask?.editedAt
-                  ? `, Diedit ${formatDate(selectedTask?.editedAt)}`
-                  : ''
+                task?.editedAt ? `, Diedit ${formatDate(task?.editedAt)}` : ''
               }}
             </h5>
           </div>
@@ -53,7 +51,7 @@
         <div v-else class="flex flex-col gap-4">
           <!-- Title and edit button -->
           <div v class="flex items-center justify-between gap-4">
-            <h2>{{ selectedTask?.title }}</h2>
+            <h2>{{ task?.title }}</h2>
             <v-btn
               icon="mdi-square-edit-outline"
               variant="text"
@@ -67,12 +65,12 @@
           <div class="flex gap-1">
             <v-icon icon="mdi-clock-outline" />
             <p>
-              Tenggat: <strong>{{ formatDate(selectedTask?.deadline) }}</strong>
+              Tenggat: <strong>{{ formatDate(task?.deadline) }}</strong>
             </p>
           </div>
 
           <!-- Description -->
-          <p>{{ selectedTask?.description }}</p>
+          <p>{{ task?.description }}</p>
 
           <!-- Attachments -->
         </div>
@@ -103,7 +101,7 @@
             </Card>
 
             <!-- Subtask item -->
-            <SubtaskItem v-for="task in tasks.getTasks" v-bind="task" />
+            <SubtaskItem v-for="subtask in tasks.getTasks" v-bind="subtask" />
           </div>
         </div>
         <!-- Actions -->
@@ -247,10 +245,10 @@ const isCreateSubtask = ref(false)
 const route = useRouter()
 const tasks = useTasksStore()
 
-let selectedTask: Task | undefined
+const task = ref<Task>()
 
-const statusMessage = taskStatusMessage[selectedTask?.status || 'proposed']
-const statusColor = taskStatusColor[selectedTask?.status || 'proposed']
+const statusMessage = taskStatusMessage[task.value?.status || 'proposed']
+const statusColor = taskStatusColor[task.value?.status || 'proposed']
 
 const submissions = useSubmissionsStore()
 
@@ -270,10 +268,10 @@ function handleSubmit() {
   })
 }
 
-// onUnmounted(
-//   () =>
-//     (selectedTask = tasks.getTaskById(
-//       route.currentRoute.value.params.id as string,
-//     )),
-// )
+onUnmounted(
+  () =>
+    (task.value = tasks.getTaskById(
+      route.currentRoute.value.params.id as string,
+    )),
+)
 </script>

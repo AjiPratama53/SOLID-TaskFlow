@@ -13,20 +13,26 @@ const month: Record<number, string> = {
     11: 'Des'   
 }
 
-export function daysInterval(date:Date | undefined): number | undefined{ 
-    if (!date) return
-
-    return Math.ceil((date.getTime() - Date.now()) / (1000 * 3600 * 24))
-}
-
 export function formatDate(date: Date | undefined): string | undefined {
     if (!date) return
 
-    switch (daysInterval(date)){
-        case 0: return 'Hari ini'
-        case 1: return 'Besok'
-        case -1: return 'Kemarin'
+    // Switch time to tomorrow, today, or yesterday
+    const today = new Date()
+    const tomorrow = new Date(today)
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    const yesterday = new Date(today)
+    yesterday.setDate(yesterday.getDate() - 1)
+
+    if (date.toDateString() === today.toDateString()) {
+        return 'Hari ini'
     }
+    if (date.toDateString() === tomorrow.toDateString()) {
+        return 'Besok'
+    }
+    if (date.toDateString() === yesterday.toDateString()) {
+        return 'Kemarin'
+    }
+
     return `${date.getDate()} ${month[date.getMonth()]} ${date.getFullYear()}`
 }
 
