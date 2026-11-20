@@ -1,4 +1,5 @@
 import type { InputTask, Task } from "@/schemas/task";
+import { daysInterval } from "@/utils/formatDateTime";
 import { defineStore } from "pinia";
 import { computed, ref, type Ref } from "vue";
 
@@ -9,10 +10,9 @@ export const useTasksStore = defineStore('tasks', () => {
     // Getters
     const getTasks = computed(() => tasks.value)
 
-    const incomingTasks = computed(() => tasks.value.filter(task => {
-        
-    }))
+    const incomingTasks = computed(() => tasks.value.filter(task => task.deadline && daysInterval(task.deadline)! <= 7 && (task.status === "in_progress" || task.status === "proposed")))
 
+    const noDeadlineTasks = computed(() => tasks.value.filter(task => !task.deadline && (task.status === "in_progress" || task.status === "proposed")))
     
     // Actions
     function getTaskById(id:string): Task | undefined
@@ -33,6 +33,6 @@ export const useTasksStore = defineStore('tasks', () => {
     }
 
     return {
-        getTasks, getTaskById, postTask, editTask
+        getTasks, incomingTasks, noDeadlineTasks, getTaskById, postTask, editTask
     }
 })

@@ -70,15 +70,23 @@
               <div
                 class="flex px-2 py-0.5 rounded-2xl gap-1 bg-amber-200 text-amber-800 text-sm"
               >
-                3 Tugas
+                {{ tasks.incomingTasks.length }} Tugas
               </div>
             </div>
 
             <!-- Incoming task items -->
             <div class="flex flex-col gap-2">
-              <div v-for="value in 3" class="flex flex-col gap-0.5">
-                <p class="text-red-600">• Tenggat: [deadline]</p>
-                <a class="self-start" href=""><h4>[Judul]</h4></a>
+              <div
+                v-for="task in tasks.incomingTasks"
+                v-bind="task"
+                class="flex flex-col gap-0.5"
+              >
+                <p class="text-red-600">
+                  • Tenggat: {{ formatDateTime(task.deadline) }}
+                </p>
+                <a class="self-start" :href="`/tasks/${task.id}`"
+                  ><h4>{{ task.title }}</h4></a
+                >
               </div>
             </div>
           </div>
@@ -92,14 +100,20 @@
               <div
                 class="flex px-2 py-0.5 rounded-2xl gap-1 bg-amber-200 text-amber-800 text-sm"
               >
-                3 Tugas
+                {{ tasks.noDeadlineTasks.length }} Tugas
               </div>
             </div>
 
             <!-- No deadline task items -->
             <div class="flex flex-col gap-2">
-              <div v-for="value in 3" class="flex flex-col gap-0.5">
-                <a class="self-start" href=""><h4>[Judul]</h4></a>
+              <div
+                v-for="task in tasks.noDeadlineTasks"
+                v-bind="task"
+                class="flex flex-col gap-0.5"
+              >
+                <a class="self-start" :href="`/tasks/${task.id}`"
+                  ><h4>{{ task.title }}</h4></a
+                >
               </div>
             </div>
           </div>
@@ -115,6 +129,7 @@ import Header from '@/components/Header.vue'
 import InputTask from '@/components/InputTask.vue'
 import TaskItem from '@/components/TaskItem.vue'
 import { useTasksStore } from '@/stores/tasks'
+import { formatDateTime } from '@/utils/formatDateTime'
 import { ref } from 'vue'
 
 const isCreateTask = ref(false)

@@ -13,7 +13,11 @@ const month: Record<number, string> = {
     11: 'Des'   
 }
 
-const daysInterval = (date:Date) => Math.floor(date.getTime() - Date.now()) / (1000 * 3600 * 24)
+export function daysInterval(date:Date | undefined): number | undefined{ 
+    if (!date) return
+
+    return Math.ceil((date.getTime() - Date.now()) / (1000 * 3600 * 24))
+}
 
 export function formatDate(date: Date | undefined): string | undefined {
     if (!date) return
@@ -30,4 +34,10 @@ export function formatTime(date: Date | undefined): string | undefined {
     if (!date) return
 
     return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
+}
+
+export function formatDateTime(date: Date | undefined): string | undefined {
+    if (!date) return
+
+    return `${formatDate(date)} • ${formatTime(date)}`
 }

@@ -30,9 +30,7 @@
       <v-icon icon="mdi-clock-outline" />
       <p>
         Tenggat:
-        <strong>{{
-          deadline ? `${formatDate(deadline)} • ${formatTime(deadline)}` : '--'
-        }}</strong>
+        <strong>{{ deadline ? formatDateTime(deadline) : '--' }}</strong>
       </p>
     </div>
   </Card>
@@ -45,7 +43,7 @@ import {
   type Task,
 } from '@/schemas/task.ts'
 import Card from './Card.vue'
-import { formatDate, formatTime } from '@/utils/formatDateTime.ts'
+import { formatDate, formatDateTime } from '@/utils/formatDateTime.ts'
 
 const props = defineProps<Task>()
 
