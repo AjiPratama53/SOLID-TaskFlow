@@ -85,7 +85,7 @@
               <v-icon icon="mdi-text" class="text-indigo-600" />
               <h3>Daftar Subtugas</h3>
             </div>
-            <h5>4 Subtugas aktif</h5>
+            <h5>{{ tasks.getTasks.length }} Subtugas aktif</h5>
           </div>
 
           <!-- Subtask container -->
@@ -99,62 +99,11 @@
               @click="isCreateSubtask = !isCreateSubtask"
             />
             <Card v-if="isCreateSubtask">
-              <InputTask
-                @close="isCreateSubtask = false"
-                :action="() => console.log('Subtask created')"
-              />
+              <InputTask @close="isCreateSubtask = false" />
             </Card>
 
             <!-- Subtask item -->
-            <v-card
-              v-for="value in 3"
-              class="flex flex-col w-full gap-2 p-4 bg-indigo-100"
-              elevation="0"
-            >
-              <!-- header -->
-              <div class="flex items-center justify-between">
-                <div class="flex gap-1 items-center">
-                  <v-icon
-                    icon="mdi-check"
-                    size="small"
-                    class="bg-green-200 text-green-700 rounded-2xl p-4"
-                  />
-                  <h4>[judul]</h4>
-                </div>
-                <div
-                  class="px-4 py-0.5 bg-green-200 text-green-800 rounded-2xl"
-                >
-                  <h5>• [Status]</h5>
-                </div>
-              </div>
-
-              <!-- body -->
-              <div class="flex items-center justify-between">
-                <!-- deadline -->
-                <div class="flex gap-1 items-center">
-                  <v-icon icon="mdi-clock-outline" size="small" />
-                  <p>Tenggat: [deadline]</p>
-                </div>
-
-                <!-- detail & action -->
-                <div class="flex gap-1 items-center">
-                  <!-- colleagues -->
-                  <card class="flex px-2.5 py-1 rounded-2xl" elevation="0">
-                    <!-- <UserItem name="[Rekan 1]" /> -->
-                  </card>
-
-                  <!-- action -->
-                  <v-btn
-                    prepend-icon="mdi-swap-horizontal"
-                    class="bg-indigo-600 text-indigo-50"
-                    elevation="0"
-                    rounded
-                    >Alihkan
-                    <DelegateDialog />
-                  </v-btn>
-                </div>
-              </div>
-            </v-card>
+            <SubtaskItem v-for="task in tasks.getTasks" v-bind="task" />
           </div>
         </div>
         <!-- Actions -->
@@ -284,7 +233,7 @@ import DelegateDialog from '@/components/DelegateDialog.vue'
 import Header from '@/components/Header.vue'
 import InputTask from '@/components/InputTask.vue'
 import SubmissionItem from '@/components/SubmissionItem.vue'
-import UserItem from '@/components/UserItem.vue'
+import SubtaskItem from '@/components/SubtaskItem.vue'
 import { taskStatusColor, taskStatusMessage, type Task } from '@/schemas/task'
 import { useSubmissionsStore } from '@/stores/submissions'
 import { useTasksStore } from '@/stores/tasks'
@@ -321,10 +270,10 @@ function handleSubmit() {
   })
 }
 
-onUnmounted(
-  () =>
-    (selectedTask = tasks.getTaskById(
-      route.currentRoute.value.params.id as string,
-    )),
-)
+// onUnmounted(
+//   () =>
+//     (selectedTask = tasks.getTaskById(
+//       route.currentRoute.value.params.id as string,
+//     )),
+// )
 </script>
