@@ -2,7 +2,7 @@ import type { Submission } from "@/schemas/submission";
 import { defineStore } from "pinia";
 import { computed, ref, type Ref } from "vue";
 
-export const useSubmissionsStore = defineStore('users', () => {
+export const useSubmissionsStore = defineStore('submissions', () => {
     // States
     const submissions: Ref<Submission[]> = ref([])
 
@@ -10,8 +10,8 @@ export const useSubmissionsStore = defineStore('users', () => {
     const getSubmissions = computed(() => submissions.value)
 
     // Actions
-    function postSubmission(newUser: Submission){
-        submissions.value.push(newUser)
+    function postSubmission(newSubmission: Submission){
+        submissions.value.push(newSubmission)
     }
 
     return {

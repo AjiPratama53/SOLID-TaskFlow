@@ -79,7 +79,7 @@
             <div class="flex flex-col gap-2">
               <div v-for="value in 3" class="flex flex-col gap-0.5">
                 <p class="text-red-600">• Tenggat: [deadline]</p>
-                <a href=""><h4>[Judul]</h4></a>
+                <a class="self-start" href=""><h4>[Judul]</h4></a>
               </div>
             </div>
           </div>
@@ -100,7 +100,7 @@
             <!-- No deadline task items -->
             <div class="flex flex-col gap-2">
               <div v-for="value in 3" class="flex flex-col gap-0.5">
-                <a href=""><h4>[Judul]</h4></a>
+                <a class="self-start" href=""><h4>[Judul]</h4></a>
               </div>
             </div>
           </div>
@@ -112,7 +112,6 @@
 
 <script setup lang="ts">
 import Card from '@/components/Card.vue'
-import DateTimePicker from '@/components/DateTimePicker.vue'
 import Header from '@/components/Header.vue'
 import InputTask from '@/components/InputTask.vue'
 import TaskItem from '@/components/TaskItem.vue'

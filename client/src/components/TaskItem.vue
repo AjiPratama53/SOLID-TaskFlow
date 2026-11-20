@@ -21,7 +21,7 @@
     </div>
 
     <!-- Title -->
-    <a href="">
+    <a class="self-start" :href="`/tasks/${id}`">
       <h2>{{ title }}</h2>
     </a>
 

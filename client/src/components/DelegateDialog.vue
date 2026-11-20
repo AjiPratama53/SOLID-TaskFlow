@@ -46,8 +46,6 @@ import type { User } from '@/schemas/user.ts'
 import UserItem from './UserItem.vue'
 import { useUsersStore } from '@/stores/users.ts'
 
-const props = defineProps<User>()
-
 const users = useUsersStore()
 
 function handleDelegate(user: User) {

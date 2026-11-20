@@ -23,5 +23,6 @@ export function formatDate(date: Date | undefined): string | undefined {
 
 export function formatTime(date: Date | undefined): string | undefined {
     if (!date) return
-    return `${date.getHours()}:${date.getMinutes()}`
+
+    return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
 }

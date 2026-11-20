@@ -21,13 +21,24 @@
         <!-- Task header -->
         <div class="flex justify-between items-start">
           <div class="flex flex-col">
-            <h5>Diposting oleh <strong>[proposer.name]</strong></h5>
-            <h5>[createdAt], Diedit [editedAt]</h5>
+            <h5>
+              Diposting oleh <strong>{{ selectedTask?.proposerId }}</strong>
+            </h5>
+            <h5>
+              {{ formatDate(selectedTask?.createdAt)
+              }}{{
+                selectedTask?.editedAt
+                  ? `, Diedit ${formatDate(selectedTask?.editedAt)}`
+                  : ''
+              }}
+            </h5>
           </div>
 
           <!-- Task status -->
-          <div class="px-4 py-0.5 bg-green-200 text-green-800 rounded-2xl">
-            <h4>• [Status]</h4>
+          <div
+            :class="`px-4 py-0.5 bg-${statusColor}-200 text-${statusColor}-800 rounded-2xl`"
+          >
+            <h4>• {{ statusMessage }}</h4>
           </div>
         </div>
         <!-- Edit field -->
@@ -42,7 +53,7 @@
         <div v-else class="flex flex-col gap-4">
           <!-- Title and edit button -->
           <div v class="flex items-center justify-between gap-4">
-            <h2>[Judul]</h2>
+            <h2>{{ selectedTask?.title }}</h2>
             <v-btn
               icon="mdi-square-edit-outline"
               variant="text"
@@ -55,15 +66,13 @@
           <!-- Deadline -->
           <div class="flex gap-1">
             <v-icon icon="mdi-clock-outline" />
-            <p>Tenggat: <strong>[deadline]</strong></p>
+            <p>
+              Tenggat: <strong>{{ formatDate(selectedTask?.deadline) }}</strong>
+            </p>
           </div>
 
           <!-- Description -->
-          <p>
-            Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean
-            commodo ligula eget dolor. Aenean massa. Cum sociis natoque
-            penatibus et.
-          </p>
+          <p>{{ selectedTask?.description }}</p>
 
           <!-- Attachments -->
         </div>
@@ -139,8 +148,9 @@
                     prepend-icon="mdi-swap-horizontal"
                     class="bg-indigo-600 text-indigo-50"
                     elevation="0"
+                    rounded
                     >Alihkan
-                    <DelegateDialog :action="() => console.log('Delegated')" />
+                    <DelegateDialog />
                   </v-btn>
                 </div>
               </div>
@@ -165,7 +175,7 @@
               <CriticalDialog
                 text="Batalkan penugasan?"
                 color="red"
-                :action="() => console.log('Cancelled')"
+                :action="handleCancelTask"
               />
             </v-btn>
             <!-- <DialogButton text="Batalkan Penugasan" bg-color="red-200" text-color="red-800" elevation="0"/> -->
@@ -177,7 +187,7 @@
               elevation="0"
               prepend-icon="mdi-account-plus-outline"
               >Delegasikan
-              <DelegateDialog :action="() => console.log('Delegated')" />
+              <DelegateDialog />
             </v-btn>
           </div>
         </div>
@@ -216,6 +226,7 @@
               class="bg-indigo-600 text-indigo-50"
               variant="text"
               elevation="0"
+              @click="handleSubmit"
               >Kumpulkan</v-btn
             >
 
@@ -224,7 +235,7 @@
               >Batalkan Pengumpulan
               <CriticalDialog
                 text="Batalkan pengumpulan?"
-                :action="() => console.log('Cancelled')"
+                :action="handleCancelSubmission"
                 color="red"
               />
             </v-btn>
@@ -254,7 +265,10 @@
             <!-- History container -->
             <div class="flex flex-col gap-4 w-full">
               <!-- History item -->
-              <SubmissionItem v-for="value in 3" />
+              <SubmissionItem
+                v-for="submission in submissions.getSubmissions"
+                v-bind="submission"
+              />
             </div>
           </div>
         </div>
@@ -271,11 +285,46 @@ import Header from '@/components/Header.vue'
 import InputTask from '@/components/InputTask.vue'
 import SubmissionItem from '@/components/SubmissionItem.vue'
 import UserItem from '@/components/UserItem.vue'
+import { taskStatusColor, taskStatusMessage, type Task } from '@/schemas/task'
 import { useSubmissionsStore } from '@/stores/submissions'
-import { ref } from 'vue'
+import { useTasksStore } from '@/stores/tasks'
+import { formatDate } from '@/utils/formatDateTime'
+import { onUnmounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 const isEditing = ref(false)
 const isCreateSubtask = ref(false)
 
+const route = useRouter()
+const tasks = useTasksStore()
+
+let selectedTask: Task | undefined
+
+const statusMessage = taskStatusMessage[selectedTask?.status || 'proposed']
+const statusColor = taskStatusColor[selectedTask?.status || 'proposed']
+
 const submissions = useSubmissionsStore()
+
+function handleCancelTask() {
+  alert('Penugasan dibatalkan')
+}
+
+function handleCancelSubmission() {
+  alert('Pengumpulan dibatalkan')
+}
+
+function handleSubmit() {
+  submissions.postSubmission({
+    id: `sbm_${Math.floor(Math.random() * 1000)}`,
+    date: new Date(),
+    status: 'pending_approval',
+  })
+}
+
+onUnmounted(
+  () =>
+    (selectedTask = tasks.getTaskById(
+      route.currentRoute.value.params.id as string,
+    )),
+)
 </script>
