@@ -10,17 +10,17 @@
       <v-btn
         rounded="none"
         elevation="0"
-        v-for="value in 3"
+        v-for="user in users.getUsers"
         class="flex justify-start px-4 py-6"
         density="default"
         @click="
           () => {
-            action()
+            handleDelegate(user)
             isActive.value = false
           }
         "
       >
-        <user-item :name="`[Rekan ${value}]`" />
+        <user-item v-bind="user" />
       </v-btn>
 
       <!-- Publish button -->
@@ -31,7 +31,7 @@
         prepend-icon="mdi-tray-arrow-up"
         @click="
           () => {
-            action()
+            handlePublish()
             isActive.value = false
           }
         "
@@ -42,9 +42,19 @@
 </template>
 
 <script setup lang="ts">
+import type { User } from '@/schemas/user.ts'
 import UserItem from './UserItem.vue'
+import { useUsersStore } from '@/stores/users.ts'
 
-defineProps<{
-  action: Function
-}>()
+const props = defineProps<User>()
+
+const users = useUsersStore()
+
+function handleDelegate(user: User) {
+  alert('Tugas didelegasikan ke ' + user.name)
+}
+
+function handlePublish() {
+  alert('Tugas dipublikasikan')
+}
 </script>

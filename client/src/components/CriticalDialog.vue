@@ -34,7 +34,6 @@
 
 <script setup lang="ts">
 defineProps<{
-  // activator: string
   text: string
   action: Function
   inverseAction?: boolean

@@ -13,12 +13,12 @@ const month: Record<number, string> = {
     11: 'Des'   
 }
 
-const isTomorrow = (date:Date) => date.getDate() - new Date().getDate()
+const isTomorrow = (date:Date) => date.getDate() - new Date().getDate() === 1 
 
 export function formatDate(date: Date | undefined): string | undefined {
     if (!date) return
 
-    return isTomorrow(date) === 1 ? 'Besok' : `${date.getDate()} ${month[date.getMonth()]} ${date.getFullYear()}`
+    return isTomorrow(date) ? 'Besok' : `${date.getDate()} ${month[date.getMonth()]} ${date.getFullYear()}`
 }
 
 export function formatTime(date: Date | undefined): string | undefined {

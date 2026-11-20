@@ -267,15 +267,15 @@
 import Card from '@/components/Card.vue'
 import CriticalDialog from '@/components/CriticalDialog.vue'
 import DelegateDialog from '@/components/DelegateDialog.vue'
-import DialogButton from '@/components/DialogButton.vue'
 import Header from '@/components/Header.vue'
 import InputTask from '@/components/InputTask.vue'
 import SubmissionItem from '@/components/SubmissionItem.vue'
 import UserItem from '@/components/UserItem.vue'
+import { useSubmissionsStore } from '@/stores/submissions'
 import { ref } from 'vue'
 
 const isEditing = ref(false)
 const isCreateSubtask = ref(false)
 
-const submissions = [{}]
+const submissions = useSubmissionsStore()
 </script>
