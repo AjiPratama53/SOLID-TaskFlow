@@ -9,13 +9,24 @@ export const useTasksStore = defineStore('tasks', () => {
     // Getters
     const getTasks = computed(() => tasks.value)
 
-    const incomingTasks = computed(() => tasks.value.filter(task => task.deadline && (task.status === "in_progress" || task.status === "proposed") && new Date(task.deadline) >= new Date() && new Date(task.deadline) <= new Date(new Date().setDate(new Date().getDate() + 7))))
+    const incomingTasks = computed(() => 
+        tasks.value.filter(task => 
+            task.deadline && 
+            (task.status === "in_progress" || task.status === "proposed") && 
+            new Date(task.deadline) >= new Date() 
+            && new Date(task.deadline) <= new Date(new Date().setDate(new Date().getDate() + 7))
+        )
+    )
 
-    const noDeadlineTasks = computed(() => tasks.value.filter(task => !task.deadline && (task.status === "in_progress" || task.status === "proposed")))
+    const noDeadlineTasks = computed(() => 
+        tasks.value.filter(task => 
+            !task.deadline && 
+            (task.status === "in_progress" || task.status === "proposed")))
     
     // Actions
-    function getTaskById(id:string): Task | undefined
-        {return tasks.value.find(task => task.id === id)}
+    function setTasks(newTasks: Task[]){
+        tasks.value = newTasks
+    }
 
     function postTask(newTask: Task){
         tasks.value.push(newTask)
@@ -32,6 +43,11 @@ export const useTasksStore = defineStore('tasks', () => {
     }
 
     return {
-        getTasks, incomingTasks, noDeadlineTasks, getTaskById, postTask, editTask
+        getTasks, 
+        incomingTasks, 
+        noDeadlineTasks, 
+        setTasks, 
+        postTask, 
+        editTask
     }
 })

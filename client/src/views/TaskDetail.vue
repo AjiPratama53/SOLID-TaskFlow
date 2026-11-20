@@ -268,10 +268,5 @@ function handleSubmit() {
   })
 }
 
-onUnmounted(
-  () =>
-    (task.value = tasks.getTaskById(
-      route.currentRoute.value.params.id as string,
-    )),
-)
+onUnmounted(() => {})
 </script>

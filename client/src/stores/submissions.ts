@@ -12,11 +12,15 @@ export const useSubmissionsStore = defineStore('submissions', () => {
     // const getActiveSubmission = computed(() => submissions.value)
 
     // Actions
+    function setSubmissions(newSubmissions: Submission[]) {
+        submissions.value = newSubmissions
+    }
+
     function postSubmission(newSubmission: Submission){
         submissions.value.push(newSubmission)
     }
 
     return {
-        getSubmissions, postSubmission
+        getSubmissions, setSubmissions, postSubmission
     }
 })
