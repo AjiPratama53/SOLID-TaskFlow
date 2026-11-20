@@ -1,7 +1,7 @@
 <template>
-  <div class="flex gap-4">
+  <div class="flex items-center gap-4">
     <v-icon
-      :class="`bg-${statusColor}-200 text-${statusColor}-800 rounded-2xl p-3`"
+      :class="`bg-${statusColor}-200 text-${statusColor}-600 rounded-2xl p-4`"
       :icon="`mdi-${statusIcon}`"
       size="xsmall"
     />

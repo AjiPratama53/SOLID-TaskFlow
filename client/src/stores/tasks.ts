@@ -9,6 +9,10 @@ export const useTasksStore = defineStore('tasks', () => {
     // Getters
     const getTasks = computed(() => tasks.value)
 
+    const incomingTasks = computed(() => tasks.value.filter(task => {
+        
+    }))
+
     
     // Actions
     function getTaskById(id:string): Task | undefined

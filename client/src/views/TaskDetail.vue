@@ -140,7 +140,7 @@
                 <div class="flex gap-1 items-center">
                   <!-- colleagues -->
                   <card class="flex px-2.5 py-1 rounded-2xl" elevation="0">
-                    <UserItem name="[Rekan 1]" />
+                    <!-- <UserItem name="[Rekan 1]" /> -->
                   </card>
 
                   <!-- action -->

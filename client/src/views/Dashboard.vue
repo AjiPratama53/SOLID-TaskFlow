@@ -13,7 +13,6 @@
           hide-details
           clearable
           label="Status"
-          :items="taskStatuses"
           variant="outlined"
         ></v-select>
 

@@ -13,12 +13,17 @@ const month: Record<number, string> = {
     11: 'Des'   
 }
 
-const isTomorrow = (date:Date) => date.getDate() - new Date().getDate() === 1 
+const daysInterval = (date:Date) => Math.floor(date.getTime() - Date.now()) / (1000 * 3600 * 24)
 
 export function formatDate(date: Date | undefined): string | undefined {
     if (!date) return
 
-    return isTomorrow(date) ? 'Besok' : `${date.getDate()} ${month[date.getMonth()]} ${date.getFullYear()}`
+    switch (daysInterval(date)){
+        case 0: return 'Hari ini'
+        case 1: return 'Besok'
+        case -1: return 'Kemarin'
+    }
+    return `${date.getDate()} ${month[date.getMonth()]} ${date.getFullYear()}`
 }
 
 export function formatTime(date: Date | undefined): string | undefined {
