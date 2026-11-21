@@ -268,5 +268,8 @@ function handleSubmit() {
   })
 }
 
-onUnmounted(() => {})
+onUnmounted(() => {
+  tasks.fetchTasks()
+  submissions.fetchSubmissions()
+})
 </script>

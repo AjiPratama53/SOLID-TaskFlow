@@ -25,6 +25,7 @@ export const useUsersStore = defineStore('users', () => {
     async function postUser(user: User) {
         try {
             await api.user.post(user)
+            await fetchUsers()
         } catch (error) {
             
         }

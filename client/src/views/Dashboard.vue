@@ -134,9 +134,11 @@ import InputTask from '@/components/InputTask.vue'
 import TaskItem from '@/components/TaskItem.vue'
 import { useTasksStore } from '@/stores/tasks'
 import { formatDateTime } from '@/utils/formatDateTime'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
 const isCreateTask = ref(false)
 
 const tasks = useTasksStore()
+
+onMounted(() => tasks.fetchTasks())
 </script>

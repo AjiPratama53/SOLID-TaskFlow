@@ -27,6 +27,7 @@ export const useSubmissionsStore = defineStore('submissions', () => {
     async function postSubmission(submission: Submission){
         try {
             await api.submission.post(submission)
+            await fetchSubmissions()
         } catch (error) {
             throw error
         }
