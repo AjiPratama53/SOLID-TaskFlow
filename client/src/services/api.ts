@@ -8,51 +8,55 @@ import { tasks } from "@/.local/tasks";
 import { submissions } from "@/.local/submissions";
 
 import type { User } from "@/schemas/user";
-import type { Task } from "@/schemas/task";
+import type { InputTask, Task } from "@/schemas/task";
 import type { Submission } from "@/schemas/submission";
 
 export const api = {
     user: {
-        get: async () => {
+        get: async (): Promise<User[]> => {
             // GET users
-            await setTimeout(() => {
-                return tasks
-            }, 3000);
+            try {
+                await new Promise(resolve => setTimeout(resolve, 3000));
+                return users
+            } catch (error) {
+                throw error
+            }
         },
         post: async (user: User) => {
             // POST user
-            await setTimeout(() => {
+            try {
+                await new Promise(resolve => setTimeout(resolve, 3000));
                 users.push(user)
-            }, 3000);
-        },
-        patch: async (id: string, user: User) => {
-            // PATCH user
-            await setTimeout(() => {
-                const selectedUser = users.find(u => u.id === id)
-                
-                if (!selectedUser) return
-                selectedUser.name = user.name
-                selectedUser.avatar = user.avatar
-            }, 3000);
+            } catch (error) {
+                throw error
+            }
         },
     },
 
     task: {
         get: async () => {
             // GET tasks
-            await setTimeout(() => {
+            try {
+                await new Promise(resolve => setTimeout(resolve, 3000));
                 return tasks
-            }, 3000);
+            } catch (error) {
+                throw error
+            }
         },
         post: async (task: Task) => {
             // POST task
-            await setTimeout(() => {
+            try {
+                await new Promise(resolve => setTimeout(resolve, 3000));
                 tasks.push(task)
-            }, 3000);
+            } catch (error) {
+                throw error
+            }
         },
-        patch: async (id: string, task: Task) => {
+        patch: async (id: string, task: InputTask) => {
             // PATCH task
-            await setTimeout(() => {
+            try {
+                await new Promise(resolve => setTimeout(resolve, 3000));
+                
                 const selectedTask = tasks.find(t => t.id === id)
     
                 if (!selectedTask) return
@@ -60,22 +64,30 @@ export const api = {
                 selectedTask.description = task.description
                 selectedTask.deadline = task.deadline
                 selectedTask.editedAt = new Date()
-            }, 3000);
+            } catch (error) {
+                throw error
+            }
         },
     },
 
     submission: {
         get: async () => {
             // GET submissions
-            await setTimeout(() => {
+            try {
+                await new Promise(resolve => setTimeout(resolve, 3000));
                 return submissions
-            }, 3000);
+            } catch (error) {
+                throw error
+            }
         },
         post: async (submission: Submission) => {
             // POST submission
-            await setTimeout(() => {
+            try {
+                await new Promise(resolve => setTimeout(resolve, 3000));
                 submissions.push(submission)
-            }, 3000);
+            } catch (error) {
+                throw error
+            }
         },
     },
 }

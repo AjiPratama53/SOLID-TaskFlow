@@ -1,4 +1,5 @@
 import type { InputTask, Task } from "@/schemas/task";
+import { api } from "@/services/api";
 import { defineStore } from "pinia";
 import { computed, ref, type Ref } from "vue";
 
@@ -24,29 +25,44 @@ export const useTasksStore = defineStore('tasks', () => {
             (task.status === "in_progress" || task.status === "proposed")))
     
     // Actions
-    function setTasks(newTasks: Task[]){
-        tasks.value = newTasks
+    async function fetchTasks(){
+        try {
+            const data = await api.task.get()
+    
+            if (!data) return
+            tasks.value = data
+        } catch (error) {
+            throw error
+        }
     }
 
-    function postTask(newTask: Task){
-        tasks.value.push(newTask)
+    async function postTask(newTask: InputTask){
+        try {
+            await api.task.post({
+                id: `tsk_${Math.round(Math.random() * 1000)}`,
+                proposerId: 'usr_001',
+                createdAt: new Date(),
+                status: "proposed",
+                ...newTask
+            })
+        } catch (error) {
+            throw error
+        }
     }
 
-    function editTask(id: string, editedTask: InputTask){
-        const selectedTask = tasks.value.find(task => task.id === id);
-        
-        if (!selectedTask) return
-
-        selectedTask.title = editedTask.title
-        selectedTask.deadline = editedTask.deadline
-        selectedTask.description = editedTask.description
+    async function editTask(id: string, editedTask: InputTask){
+        try {
+            await api.task.patch(id, editedTask)
+        } catch (error) {
+            throw error
+        }
     }
 
     return {
         getTasks, 
         incomingTasks, 
         noDeadlineTasks, 
-        setTasks, 
+        fetchTasks, 
         postTask, 
         editTask
     }

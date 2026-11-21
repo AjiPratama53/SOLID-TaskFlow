@@ -1,4 +1,5 @@
 import type { User } from "@/schemas/user";
+import { api } from "@/services/api";
 import { defineStore } from "pinia";
 import { computed, ref, type Ref } from "vue";
 
@@ -10,11 +11,26 @@ export const useUsersStore = defineStore('users', () => {
     const getUsers = computed(() => users.value)
 
     // Actions
-    function inviteUser(newUser: User){
-        users.value.push(newUser)
+    async function fetchUsers() {
+        try {
+            const data = await api.user.get()
+
+            if (!data) return
+            users.value = data
+        } catch (error) {
+            throw error
+        }
+    }
+
+    async function postUser(user: User) {
+        try {
+            await api.user.post(user)
+        } catch (error) {
+            
+        }
     }
 
     return {
-        getUsers, inviteUser
+        getUsers, fetchUsers, postUser
     }
 })

@@ -1,4 +1,5 @@
 import type { Submission } from "@/schemas/submission";
+import { api } from "@/services/api";
 import { defineStore } from "pinia";
 import { computed, ref, type Ref } from "vue";
 
@@ -12,15 +13,26 @@ export const useSubmissionsStore = defineStore('submissions', () => {
     // const getActiveSubmission = computed(() => submissions.value)
 
     // Actions
-    function setSubmissions(newSubmissions: Submission[]) {
-        submissions.value = newSubmissions
+    async function fetchSubmissions() {
+        try {
+            const data = await api.submission.get()
+
+            if (!data) return
+            submissions.value = data
+        } catch (error) {
+            throw error
+        }
     }
 
-    function postSubmission(newSubmission: Submission){
-        submissions.value.push(newSubmission)
+    async function postSubmission(submission: Submission){
+        try {
+            await api.submission.post(submission)
+        } catch (error) {
+            throw error
+        }
     }
 
     return {
-        getSubmissions, setSubmissions, postSubmission
+        getSubmissions, fetchSubmissions, postSubmission
     }
 })
