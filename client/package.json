@@ -15,8 +15,10 @@
     "@fontsource/roboto": "^5.2.10",
     "@fontsource/roboto-mono": "^5.2.8",
     "@mdi/font": "7.4.47",
+    "@solid/solid-auth-oidc": "^0.6.1",
     "debounce": "^3.0.0",
     "pinia": "^4.1.0",
+    "solid": "^0.2.1",
     "vue": "^3.5.30",
     "vue-router": "^5.5.1",
     "vuetify": "^4.0.2"
