@@ -71,7 +71,7 @@
 
   <!-- Upload dialogs -->
   <InputFileDialog activator="#file-upload" v-model="files" />
-  <InputLinkDialog activator="#link-upload" @upload="(e) => links.push(e)" />
+  <InputLinkDialog activator="#link-upload" v-model="links" />
 </template>
 
 <script setup lang="ts">
@@ -81,11 +81,14 @@ import { useTasksStore } from '@/stores/tasks.ts'
 import { ref } from 'vue'
 import InputFileDialog from './InputFileDialog.vue'
 import AttachmentList from './AttachmentList.vue'
+import type { Task } from '@/schemas/task.ts'
 
 const props = defineProps<{
   isEdit?: boolean
-  // action: Function
+  task?: Task
 }>()
+
+const task = defineModel<Task>('task')
 
 // Input task data
 const title = ref('')

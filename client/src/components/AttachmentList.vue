@@ -4,7 +4,7 @@
     <v-card
       v-for="(file, index) in files"
       :key="index"
-      class="flex gap-8 p-4 justify-between items-center bg-indigo-100 w-full"
+      class="flex gap-8 px-4 py-2 justify-between items-center bg-indigo-100 w-full"
       elevation="0"
     >
       <div class="flex flex-col">
@@ -24,7 +24,7 @@
     <v-card
       v-for="(link, index) in links"
       :key="index"
-      class="flex gap-8 p-4 justify-between items-center bg-indigo-100 w-full"
+      class="flex gap-8 px-4 py-2 justify-between items-center bg-indigo-100 w-full"
       elevation="0"
     >
       <a :href="link"

@@ -50,12 +50,17 @@ import { useUsersStore } from '@/stores/users.ts'
 import InviteCard from './InviteCard.vue'
 import UserItem from './UserItem.vue'
 import type { User } from '@/schemas/user.ts'
+import { onMounted } from 'vue'
 
 const colleagues = useUsersStore()
 
 const user: User = {
   id: 'usr_001',
   name: 'Admin',
-  avatar: 'logo.svg',
+  // avatar: 'logo.svg',
 }
+
+onMounted(() => {
+  colleagues.fetchUsers()
+})
 </script>

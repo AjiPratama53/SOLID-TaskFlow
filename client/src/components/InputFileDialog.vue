@@ -28,5 +28,5 @@ defineProps<{
   activator: Element | (string & {}) | 'parent' | ComponentPublicInstance
 }>()
 
-const files = defineModel<File[]>()
+const files = defineModel<File[]>({ required: true })
 </script>
