@@ -16,7 +16,7 @@ export const useUsersStore = defineStore('users', () => {
             const data = await api.user.get()
 
             if (!data) return
-            users.value = data
+            users.value = [...data]
         } catch (error) {
             throw error
         }
@@ -25,7 +25,8 @@ export const useUsersStore = defineStore('users', () => {
     async function postUser(user: User) {
         try {
             await api.user.post(user)
-            await fetchUsers()
+
+            if (!users.value) await fetchUsers()
         } catch (error) {
             
         }

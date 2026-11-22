@@ -29,7 +29,7 @@
         <invite-card
           @invite="
             (e) =>
-              colleagues.inviteUser({
+              colleagues.postUser({
                 id: `usr_${Math.round(Math.random() * 1000)}`,
                 name: e,
               })

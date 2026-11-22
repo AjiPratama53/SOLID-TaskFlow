@@ -30,7 +30,7 @@ export const useTasksStore = defineStore('tasks', () => {
             const data = await api.task.get()
     
             if (!data) return
-            tasks.value = data
+            tasks.value = [...data]
         } catch (error) {
             throw error
         }
@@ -45,7 +45,8 @@ export const useTasksStore = defineStore('tasks', () => {
                 status: "proposed",
                 ...newTask
             })
-            await fetchTasks()
+
+            if (!tasks.value) await fetchTasks()
         } catch (error) {
             throw error
         }
@@ -54,7 +55,8 @@ export const useTasksStore = defineStore('tasks', () => {
     async function editTask(id: string, editedTask: InputTask){
         try {
             await api.task.patch(id, editedTask)
-            await fetchTasks()
+
+            if (!tasks.value) await fetchTasks()
         } catch (error) {
             throw error
         }

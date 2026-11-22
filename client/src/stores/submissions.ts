@@ -18,7 +18,7 @@ export const useSubmissionsStore = defineStore('submissions', () => {
             const data = await api.submission.get()
 
             if (!data) return
-            submissions.value = data
+            submissions.value = [...data]
         } catch (error) {
             throw error
         }
@@ -27,7 +27,7 @@ export const useSubmissionsStore = defineStore('submissions', () => {
     async function postSubmission(submission: Submission){
         try {
             await api.submission.post(submission)
-            await fetchSubmissions()
+            if (!submissions.value) await fetchSubmissions()
         } catch (error) {
             throw error
         }
