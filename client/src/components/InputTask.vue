@@ -31,44 +31,7 @@
     </div>
 
     <!-- Attachments -->
-    <div class="flex flex-col gap-2 w-full">
-      <!-- File items -->
-      <v-card
-        v-for="(file, index) in files"
-        :key="index"
-        class="flex gap-8 p-4 justify-between items-center bg-indigo-100 w-full"
-        elevation="0"
-      >
-        <div class="flex flex-col">
-          <h4>{{ file.name }}</h4>
-          <!-- File size (kin B, MB, or GB) -->
-          <p>{{ formatFileSize(file.size) }}</p>
-        </div>
-        <v-icon-btn
-          @click="files.splice(index, 1)"
-          icon="mdi-close"
-          variant="text"
-        />
-      </v-card>
-
-      <!-- Link items -->
-      <v-card
-        v-for="(link, index) in links"
-        :key="index"
-        class="flex gap-8 p-4 justify-between items-center bg-indigo-100 w-full"
-        elevation="0"
-      >
-        <a :href="link"
-          ><h4>{{ link }}</h4></a
-        >
-        <v-icon-btn
-          @click="links.splice(index, 1)"
-          icon="mdi-close"
-          variant="text"
-        />
-      </v-card>
-    </div>
-
+    <AttachmentList v-model:files="files" v-model:links="links" removeable />
     <!-- Actions -->
     <div class="flex w-full items-end justify-between">
       <div class="flex gap-1">
@@ -117,7 +80,7 @@ import InputLinkDialog from './InputLinkDialog.vue'
 import { useTasksStore } from '@/stores/tasks.ts'
 import { ref } from 'vue'
 import InputFileDialog from './InputFileDialog.vue'
-import { formatFileSize } from '@/utils/formatFileSize.ts'
+import AttachmentList from './AttachmentList.vue'
 
 const props = defineProps<{
   isEdit?: boolean
