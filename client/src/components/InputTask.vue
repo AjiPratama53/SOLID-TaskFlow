@@ -32,38 +32,54 @@
 
     <!-- Attachments -->
     <div class="flex flex-col gap-2 w-full">
+      <!-- File items -->
       <v-card
-        v-for="file in files"
-        class="flex gap-8 p-4 justify-between bg-indigo-100 w-full"
+        v-for="(file, index) in files"
+        :key="index"
+        class="flex gap-8 p-4 justify-between items-center bg-indigo-100 w-full"
         elevation="0"
       >
         <div class="flex flex-col">
           <h4>{{ file.name }}</h4>
-          <p>{{ file.size / 1000 }} kB</p>
+          <!-- File size (kin B, MB, or GB) -->
+          <p>{{ formatFileSize(file.size) }}</p>
         </div>
+        <v-icon-btn
+          @click="files.splice(index, 1)"
+          icon="mdi-close"
+          variant="text"
+        />
       </v-card>
+
+      <!-- Link items -->
       <v-card
-        v-for="link in links"
-        class="flex gap-8 p-4 justify-between bg-indigo-100 w-full"
+        v-for="(link, index) in links"
+        :key="index"
+        class="flex gap-8 p-4 justify-between items-center bg-indigo-100 w-full"
         elevation="0"
       >
         <a :href="link"
           ><h4>{{ link }}</h4></a
         >
+        <v-icon-btn
+          @click="links.splice(index, 1)"
+          icon="mdi-close"
+          variant="text"
+        />
       </v-card>
     </div>
 
     <!-- Actions -->
     <div class="flex w-full items-end justify-between">
       <div class="flex gap-1">
-        <v-btn
+        <v-icon-btn
           id="file-upload"
           rounded="none"
           elevation="0"
           variant="text"
           icon="mdi-tray-arrow-up"
         />
-        <v-btn
+        <v-icon-btn
           id="link-upload"
           rounded="none"
           elevation="0"
@@ -91,20 +107,17 @@
   </div>
 
   <!-- Upload dialogs -->
-  <v-dialog activator="#file-upload" max-width="640">
-    <Card>
-      <v-file-upload v-model="files" density="comfortable" multiple clearable />
-    </Card>
-  </v-dialog>
-  <InputLinkDialog activator="#link-upload" />
+  <InputFileDialog activator="#file-upload" v-model="files" />
+  <InputLinkDialog activator="#link-upload" @upload="(e) => links.push(e)" />
 </template>
 
 <script setup lang="ts">
 import DateTimePicker from './DateTimePicker.vue'
-import InputLinkDialog from './InputLinkDialog'
+import InputLinkDialog from './InputLinkDialog.vue'
 import { useTasksStore } from '@/stores/tasks.ts'
 import { ref } from 'vue'
-import Card from './Card.vue'
+import InputFileDialog from './InputFileDialog.vue'
+import { formatFileSize } from '@/utils/formatFileSize.ts'
 
 const props = defineProps<{
   isEdit?: boolean
@@ -118,7 +131,6 @@ const deadline = ref('')
 
 const files = ref<File[]>([])
 const links = ref<string[]>([])
-const inputLink = ref('')
 
 const tasks = useTasksStore()
 

@@ -11,7 +11,13 @@
           clearable
           placeholder="https://..."
           variant="outlined"
-          v-model="inputLink"
+          v-model="input"
+          @keyup.enter="
+            () => {
+              handleUpload()
+              isActive.value = false
+            }
+          "
         />
       </div>
       <div class="flex">
@@ -24,7 +30,7 @@
         <v-btn
           @click="
             () => {
-              links.push(inputLink)
+              handleUpload()
               isActive.value = false
             }
           "
@@ -38,7 +44,21 @@
 </template>
 
 <script setup lang="ts">
+import { ref, type ComponentPublicInstance } from 'vue'
+
+const emit = defineEmits(['upload'])
+
 defineProps<{
-  activator: string
+  activator: Element | (string & {}) | 'parent' | ComponentPublicInstance
 }>()
+
+const input = ref('')
+
+function handleUpload() {
+  emit(
+    'upload',
+    `${input.value.startsWith('https://') ? '' : 'https://'}${input.value}`,
+  )
+  input.value = ''
+}
 </script>
