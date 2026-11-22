@@ -31,7 +31,7 @@
     </div>
 
     <!-- Attachments -->
-    <AttachmentList v-model:files="files" v-model:links="links" removeable />
+    <AttachmentList v-model:files="files" v-model:links="links" removable />
     <!-- Actions -->
     <div class="flex w-full items-end justify-between">
       <div class="flex gap-1">

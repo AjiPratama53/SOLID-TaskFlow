@@ -13,9 +13,15 @@
         <p>{{ formatFileSize(file.size) }}</p>
       </div>
       <v-icon-btn
-        v-if="removeable"
+        v-if="removable"
         @click="removeFile(index)"
         icon="mdi-close"
+        variant="text"
+      />
+      <v-icon-btn
+        v-if="downloadable"
+        @click="downloadFile(index)"
+        icon="mdi-download"
         variant="text"
       />
     </v-card>
@@ -27,11 +33,11 @@
       class="flex gap-8 px-4 py-2 justify-between items-center bg-indigo-100 w-full"
       elevation="0"
     >
-      <a :href="link"
-        ><h4>{{ link }}</h4></a
-      >
+      <a :href="link" target="_blank" rel="noopener noreferrer">
+        <h4>{{ link }}</h4>
+      </a>
       <v-icon-btn
-        v-if="removeable"
+        v-if="removable"
         @click="removeLink(index)"
         icon="mdi-close"
         variant="text"
@@ -44,7 +50,8 @@
 import { formatFileSize } from '@/utils/formatFileSize'
 
 const props = defineProps<{
-  removeable?: boolean
+  removable?: boolean
+  downloadable?: boolean
 }>()
 
 const files = defineModel<File[]>('files', { required: true })
@@ -52,6 +59,16 @@ const links = defineModel<string[]>('links', { required: true })
 
 function removeFile(index: number) {
   files.value = files.value.filter((_, itemIndex) => itemIndex !== index)
+}
+
+function downloadFile(index: number) {
+  const file = files.value[index]
+  const url = URL.createObjectURL(file)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = file.name
+  link.click()
+  URL.revokeObjectURL(url)
 }
 
 function removeLink(index: number) {

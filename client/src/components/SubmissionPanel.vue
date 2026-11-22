@@ -12,7 +12,7 @@
       </div>
 
       <!-- Attachments -->
-      <AttachmentList v-model:files="files" v-model:links="links" removeable />
+      <AttachmentList v-model:files="files" v-model:links="links" removable />
 
       <!-- Actions -->
       <div class="flex flex-col gap-2">

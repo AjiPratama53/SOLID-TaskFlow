@@ -58,15 +58,31 @@
                 <v-icon icon="mdi-text" class="text-indigo-600" />
                 <h3>Daftar Lampiran</h3>
               </div>
-              <h5>[n] Lampiran</h5>
+              <h5>{{ files.length + links.length }} Lampiran</h5>
             </div>
-            <v-btn
+            <!-- <v-btn
               class="text-indigo-600"
               prepend-icon="mdi-check-underline"
               text="Unduh semua (.zip)"
               variant="text"
-            />
+            /> -->
           </div>
+
+          <!-- Attachment list -->
+          <AttachmentList
+            v-if="files.length > 0 || links.length > 0"
+            :files
+            :links
+            downloadable
+          />
+          <!-- <v-btn
+            >Link
+            <InputLinkDialog activator="parent" v-model="links" />
+          </v-btn>
+          <v-btn
+            >File
+            <InputFileDialog activator="parent" v-model="files" />
+          </v-btn> -->
         </div>
       </Card>
     </div>
@@ -102,14 +118,14 @@
           </div>
 
           <!-- Actions -->
-          <div class="flex flex-col gap-2">
+          <div class="flex gap-2">
             <!-- Accept -->
             <v-btn
               id="accept-submission"
               prepend-icon="mdi-check-circle-outline"
-              class="bg-green-600 text-green-50"
+              class="flex-1 bg-green-600 text-green-50"
               elevation="0"
-              >Terima dan Setujui</v-btn
+              >Terima</v-btn
             >
             <CriticalDialog
               activator="#accept-submission"
@@ -122,9 +138,9 @@
             <!-- Cancel submission -->
             <v-btn
               prepend-icon="mdi-close-circle-outline"
-              class="bg-red-600 text-red-50"
+              class="flex-1 bg-red-600 text-red-50"
               elevation="0"
-              >Tolak dan Minta Revisi</v-btn
+              >Minta Revisi</v-btn
             >
             <!-- <DialogButton text="Batalkan Pengumpulan" bg-color="red-200" text-color="red-800" elevation="0" block>
               <v-card elevation="0">
@@ -139,9 +155,12 @@
 </template>
 
 <script setup lang="ts">
+import AttachmentList from '@/components/AttachmentList.vue'
 import Card from '@/components/Card.vue'
 import CriticalDialog from '@/components/CriticalDialog.vue'
 import Header from '@/components/Header.vue'
+import InputFileDialog from '@/components/InputFileDialog.vue'
+import InputLinkDialog from '@/components/InputLinkDialog.vue'
 import {
   submissionStatusColor,
   submissionStatusMessage,
@@ -151,6 +170,8 @@ import { formatDateTime } from '@/utils/formatDateTime'
 import { ref } from 'vue'
 
 const submission = ref<Submission>()
+const files = ref<File[]>([])
+const links = ref<string[]>([])
 
 const statusMessage =
   submissionStatusMessage[submission.value?.status ?? 'pending_approval']
