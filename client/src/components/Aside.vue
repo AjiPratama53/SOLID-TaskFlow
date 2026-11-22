@@ -56,5 +56,6 @@ const colleagues = useUsersStore()
 const user: User = {
   id: 'usr_001',
   name: 'Admin',
+  avatar: 'logo.svg',
 }
 </script>
