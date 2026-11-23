@@ -8,7 +8,9 @@
       elevation="0"
     >
       <div class="flex flex-col">
-        <h4>{{ file.name }}</h4>
+        <a @click="openFile(index)" class="cursor-pointer">
+          <h4>{{ file.name }}</h4>
+        </a>
         <!-- File size (kin B, MB, or GB) -->
         <p>{{ formatFileSize(file.size) }}</p>
       </div>
@@ -54,8 +56,8 @@ const props = defineProps<{
   downloadable?: boolean
 }>()
 
-const files = defineModel<File[]>('files', { required: true })
-const links = defineModel<string[]>('links', { required: true })
+const files = defineModel<File[]>('files', { default: () => [] })
+const links = defineModel<string[]>('links', { default: () => [] })
 
 function removeFile(index: number) {
   files.value = files.value.filter((_, itemIndex) => itemIndex !== index)
@@ -69,6 +71,13 @@ function downloadFile(index: number) {
   link.download = file.name
   link.click()
   URL.revokeObjectURL(url)
+}
+
+function openFile(index: number) {
+  // Open file in a new tab
+  const file = files.value[index]
+  const url = URL.createObjectURL(file)
+  window.open(url, '_blank')
 }
 
 function removeLink(index: number) {
