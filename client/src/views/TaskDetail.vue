@@ -120,21 +120,31 @@
         <!-- Actions -->
         <div class="flex flex-col gap-2">
           <!-- Accept -->
-          <v-btn class="bg-gray-600 text-gray-50" elevation="0"
+          <v-btn
+            v-if="!task?.userId"
+            class="bg-gray-600 text-gray-50"
+            elevation="0"
             >Terima penugasan</v-btn
           >
 
           <!-- Verify -->
           <v-btn
+            v-if="task?.status === 'pending_approval'"
             class="bg-yellow-600 text-yellow-50"
             elevation="0"
             prepend-icon="mdi-check-circle-outline"
             @click="$router.push('/submissions/sbm_001')"
             >Verifikasi</v-btn
           >
-          <div class="flex gap-2 w-full">
+          <div
+            v-if="task?.userId === task?.proposerId"
+            class="flex gap-2 w-full"
+          >
             <!-- Cancel -->
             <v-btn
+              v-if="
+                task?.status === 'proposed' || task?.status === 'in_progress'
+              "
               id="cancel-task"
               class="flex flex-1 bg-red-200 text-red-800"
               elevation="0"
@@ -150,7 +160,7 @@
 
             <!-- Delegate -->
             <v-btn
-              id="delegate"
+              v-if="task?.status === 'proposed'"
               class="delegate flex flex-1 bg-gray-600 text-gray-50"
               elevation="0"
               prepend-icon="mdi-account-plus-outline"
@@ -160,7 +170,7 @@
 
             <!-- Altenate -->
             <v-btn
-              id="delegate"
+              v-if="task?.status === 'in_progress'"
               class="delegate flex flex-1 bg-indigo-600 text-indigo-50"
               elevation="0"
               prepend-icon="mdi-swap-horizontal"
@@ -203,7 +213,15 @@ const isCreateSubtask = ref(false)
 const route = useRouter()
 const tasks = useTasksStore()
 
-const task = ref<Task>()
+const task = ref<Task>({
+  id: 'tsk_001',
+  userId: 'usr_001',
+  proposerId: 'usr_001',
+  createdAt: new Date(),
+  status: 'proposed',
+  title: 'Testing',
+  description: 'blablabla',
+})
 const files = ref<File[]>([])
 const links = ref<string[]>([])
 

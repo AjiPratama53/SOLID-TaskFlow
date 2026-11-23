@@ -60,10 +60,13 @@ const files = defineModel<File[]>('files', { default: () => [] })
 const links = defineModel<string[]>('links', { default: () => [] })
 
 function removeFile(index: number) {
+  if (!props.removable) return
   files.value = files.value.filter((_, itemIndex) => itemIndex !== index)
 }
 
 function downloadFile(index: number) {
+  if (!props.downloadable) return
+
   const file = files.value[index]
   const url = URL.createObjectURL(file)
   const link = document.createElement('a')
@@ -81,6 +84,7 @@ function openFile(index: number) {
 }
 
 function removeLink(index: number) {
+  if (!props.removable) return
   links.value = links.value.filter((_, itemIndex) => itemIndex !== index)
 }
 </script>

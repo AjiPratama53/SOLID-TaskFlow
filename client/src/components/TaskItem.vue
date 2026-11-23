@@ -53,6 +53,7 @@
 
         <!-- Delegate -->
         <v-btn
+          v-if="props.status === 'proposed'"
           prepend-icon="mdi-account-plus-outline"
           class="bg-gray-600 text-gray-50"
           elevation="0"
@@ -63,6 +64,7 @@
 
         <!-- Alternate -->
         <v-btn
+          v-if="props.status === 'in_progress'"
           prepend-icon="mdi-swap-horizontal"
           class="bg-indigo-600 text-indigo-50"
           elevation="0"
@@ -73,6 +75,7 @@
 
         <!-- Verify -->
         <v-btn
+          v-if="props.status === 'pending_approval'"
           prepend-icon="mdi-check-circle-outline"
           class="bg-yellow-600 text-yellow-50"
           elevation="0"
