@@ -18,7 +18,7 @@
       <div class="flex flex-col gap-2">
         <!-- Add file -->
         <v-btn prepend-icon="mdi-plus" class="text-indigo-600" variant="text"
-          >Lampirkan File
+          >Lampirkan file
           <v-menu activator="parent">
             <v-list>
               <v-list-item @click="" prepend-icon="mdi-link"
@@ -35,9 +35,9 @@
 
         <!-- Submit -->
         <v-btn class="bg-indigo-600 text-indigo-50" variant="text" elevation="0"
-          >Kumpulkan
+          >{{ submitButtonMessage() }}
           <CriticalDialog
-            text="Kumpulkan?"
+            :text="`${submitButtonMessage()}?`"
             color="indigo"
             @proceed="handleSubmit"
           />
@@ -45,7 +45,7 @@
 
         <!-- Cancel submission -->
         <v-btn class="bg-red-200 text-red-800" elevation="0"
-          >Batalkan Pengumpulan
+          >Batalkan pengumpulan
           <CriticalDialog
             text="Batalkan pengumpulan?"
             @proceed="handleCancelSubmission"
@@ -102,6 +102,11 @@ const submissions = useSubmissionsStore()
 
 const files = ref<File[]>([])
 const links = ref<string[]>([])
+
+const submitButtonMessage = () =>
+  files.value.length || links.value.length
+    ? 'Kumpulkan'
+    : 'Tandai sebagai selesai'
 
 function handleCancelSubmission() {
   alert('Pengumpulan dibatalkan')

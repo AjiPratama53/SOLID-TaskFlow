@@ -29,8 +29,8 @@ export const taskStatusColor: Record<TaskStatus, string> = {
 
 export const taskStatusMessage: Record<TaskStatus, string> = {
   proposed: 'Ditugaskan',
-  in_progress: 'Sedang Dikerjakan',
-  pending_approval: 'Menunggu Persetujuan',
+  in_progress: 'Sedang dikerjakan',
+  pending_approval: 'Menunggu persetujuan',
   completed: 'Selesai',
   cancelled: 'Dibatalkan',
 }

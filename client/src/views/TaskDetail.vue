@@ -117,7 +117,7 @@
         <div class="flex flex-col gap-2">
           <!-- Accept -->
           <v-btn class="bg-gray-600 text-gray-50" elevation="0"
-            >Terima Penugasan</v-btn
+            >Terima penugasan</v-btn
           >
 
           <!-- Verify -->
@@ -135,7 +135,7 @@
               class="flex flex-1 bg-red-200 text-red-800"
               elevation="0"
             >
-              Batalkan Penugasan
+              Batalkan penugasan
               <CriticalDialog
                 text="Batalkan penugasan?"
                 color="red"
@@ -187,7 +187,6 @@ import InputTask from '@/components/InputTask.vue'
 import SubmissionPanel from '@/components/SubmissionPanel.vue'
 import SubtaskItem from '@/components/SubtaskItem.vue'
 import { taskStatusColor, taskStatusMessage, type Task } from '@/schemas/task'
-import { useSubmissionsStore } from '@/stores/submissions'
 import { useTasksStore } from '@/stores/tasks'
 import { formatDate } from '@/utils/formatDateTime'
 import { onUnmounted, ref } from 'vue'

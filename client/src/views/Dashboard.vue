@@ -14,6 +14,10 @@
           clearable
           label="Status"
           variant="outlined"
+          :items="filterStatusItems"
+          item-title="value"
+          item-value="status"
+          v-model="filterStatus"
         ></v-select>
 
         <!-- Deadline -->
@@ -24,6 +28,7 @@
           hide-details
           density="compact"
           prepend-icon=""
+          v-model="filterDate"
         />
 
         <!-- Search -->
@@ -34,8 +39,11 @@
           placeholder="Cari tugas"
           variant="outlined"
           append-inner-icon="mdi-magnify"
+          v-model="search"
         />
       </v-card>
+
+      <!-- <p>{{ filterStatus }} {{ filterDate }} {{ search }}</p> -->
 
       <!-- Tasks container -->
       <div class="flex flex-col gap-2 items-start">
@@ -134,11 +142,24 @@ import InputTask from '@/components/InputTask.vue'
 import TaskItem from '@/components/TaskItem.vue'
 import { useTasksStore } from '@/stores/tasks'
 import { formatDateTime } from '@/utils/formatDateTime'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, shallowRef } from 'vue'
 
 const isCreateTask = ref(false)
 
 const tasks = useTasksStore()
+
+// Filter
+const filterStatusItems = [
+  { status: 'proposed', value: 'Ditugaskan' },
+  { status: 'in_progress', value: 'Sedang Dikerjakan' },
+  { status: 'pending_approval', value: 'Menunggu Persetujuan' },
+  { status: 'completed', value: 'Selesai' },
+  { status: 'cancelled', value: 'Dibatalkan' },
+]
+
+const filterStatus = shallowRef()
+const filterDate = ref('')
+const search = ref('')
 
 onMounted(() => tasks.fetchTasks())
 </script>

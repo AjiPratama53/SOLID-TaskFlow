@@ -38,7 +38,7 @@
       <div class="flex gap-1 items-center">
         <!-- colleagues -->
         <card
-          class="flex bg-indigo-100 pl-1 pr-4 py-1 rounded-4xl"
+          :class="`flex bg-${statusColor}-200 pl-1 pr-4 py-1 rounded-4xl`"
           elevation="0"
         >
           <UserItem v-bind="{ id: 'usr_001', name: 'Cahyo' }" />

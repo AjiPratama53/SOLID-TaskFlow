@@ -58,7 +58,7 @@
                 <v-icon icon="mdi-text" class="text-indigo-600" />
                 <h3>Daftar Lampiran</h3>
               </div>
-              <h5>{{ files.length + links.length }} Lampiran</h5>
+              <h5>{{ files.length + links.length }} lampiran</h5>
             </div>
             <!-- <v-btn
               class="text-indigo-600"
@@ -160,6 +160,7 @@
 </template>
 
 <script setup lang="ts">
+import { submissions } from '@/.local/submissions'
 import AttachmentList from '@/components/AttachmentList.vue'
 import Card from '@/components/Card.vue'
 import CriticalDialog from '@/components/CriticalDialog.vue'
@@ -174,7 +175,7 @@ import {
 import { formatDateTime } from '@/utils/formatDateTime'
 import { ref } from 'vue'
 
-const submission = ref<Submission>()
+const submission = ref<Submission>(submissions[0])
 const files = ref<File[]>([])
 const links = ref<string[]>([])
 
