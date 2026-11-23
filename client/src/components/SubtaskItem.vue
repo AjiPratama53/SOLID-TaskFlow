@@ -11,7 +11,11 @@
         </a>
       </div>
       <div
-        :class="`px-4 py-0.5 bg-${statusColor}-200 text-${statusColor}-800 rounded-2xl`"
+        :class="[
+          'px-4 py-0.5 rounded-2xl',
+          statusClasses.background200,
+          statusClasses.text800,
+        ]"
       >
         <h5>• {{ statusMessage }}</h5>
       </div>
@@ -72,10 +76,12 @@
 <script setup lang="ts">
 import { taskStatusColor, taskStatusMessage, type Task } from '@/schemas/task'
 import { formatDateTime } from '@/utils/formatDateTime'
+import { statusColorClasses } from '@/utils/statusColorClasses'
 import DelegateDialog from './DelegateDialog.vue'
 import UserItem from './UserItem.vue'
 
 const props = defineProps<Task>()
 const statusMessage = taskStatusMessage[props.status]
 const statusColor = taskStatusColor[props.status]
+const statusClasses = statusColorClasses[statusColor]
 </script>

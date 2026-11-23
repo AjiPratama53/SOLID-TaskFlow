@@ -1,3 +1,5 @@
+import type { StatusColor } from '@/utils/statusColorClasses'
+
 export type TaskStatus =
   'proposed' | 'in_progress' | 'pending_approval' | 'completed' | 'cancelled'
 
@@ -19,7 +21,7 @@ export interface InputTask {
   description: string
 }
 
-export const taskStatusColor: Record<TaskStatus, string> = {
+export const taskStatusColor: Record<TaskStatus, StatusColor> = {
   proposed: 'gray',
   in_progress: 'indigo',
   pending_approval: 'yellow',

@@ -1,7 +1,11 @@
 <template>
   <div class="flex items-center gap-4">
     <v-icon
-      :class="`bg-${statusColor}-200 text-${statusColor}-600 rounded-2xl p-4`"
+      :class="[
+        'rounded-2xl p-4',
+        statusClasses.background200,
+        statusClasses.text600,
+      ]"
       :icon="`mdi-${statusIcon}`"
       size="xsmall"
     />
@@ -28,10 +32,12 @@ import {
   submissionStatusMessage,
 } from '@/schemas/submission'
 import { formatDateTime } from '@/utils/formatDateTime'
+import { statusColorClasses } from '@/utils/statusColorClasses'
 
 const props = defineProps<Submission>()
 
 const statusMessage = submissionStatusMessage[props.status]
 const statusColor = submissionStatusColor[props.status]
+const statusClasses = statusColorClasses[statusColor]
 const statusIcon = submissionStatusIcon[props.status]
 </script>

@@ -1,3 +1,5 @@
+import type { StatusColor } from '@/utils/statusColorClasses'
+
 export type SubmissionStatus =
   // | 'created'
   'pending_approval' | 'accepted' | 'rejected'
@@ -15,7 +17,7 @@ export const submissionStatusMessage: Record<SubmissionStatus, string> = {
   rejected: 'Ditolak',
 }
 
-export const submissionStatusColor: Record<SubmissionStatus, string> = {
+export const submissionStatusColor: Record<SubmissionStatus, StatusColor> = {
   pending_approval: 'yellow',
   accepted: 'green',
   rejected: 'red',

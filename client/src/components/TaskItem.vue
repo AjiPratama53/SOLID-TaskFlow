@@ -1,5 +1,5 @@
 <template>
-  <Card :class="`flex flex-col gap-2 border-l-6 border-${statusColor}-600`">
+  <Card :class="['flex flex-col gap-2 border-l-6', statusClasses.border600]">
     <!-- Task header -->
     <div class="flex justify-between items-start">
       <div class="flex flex-col">
@@ -14,7 +14,11 @@
 
       <!-- Task status -->
       <div
-        :class="`px-4 py-0.5 bg-${statusColor}-200 text-${statusColor}-600 rounded-2xl`"
+        :class="[
+          'px-4 py-0.5 rounded-2xl',
+          statusClasses.background200,
+          statusClasses.text600,
+        ]"
       >
         <h4>• {{ statusMessage }}</h4>
       </div>
@@ -38,7 +42,10 @@
       <div class="flex gap-1 items-center">
         <!-- colleagues -->
         <card
-          :class="`flex bg-${statusColor}-200 pl-1 pr-4 py-1 rounded-4xl`"
+          :class="[
+            'flex pl-1 pr-4 py-1 rounded-4xl',
+            statusClasses.background200,
+          ]"
           elevation="0"
         >
           <UserItem v-bind="{ id: 'usr_001', name: 'Cahyo' }" />
@@ -84,6 +91,7 @@ import {
   taskStatusMessage,
   type Task,
 } from '@/schemas/task.ts'
+import { statusColorClasses } from '@/utils/statusColorClasses'
 import Card from './Card.vue'
 import { formatDate, formatDateTime } from '@/utils/formatDateTime.ts'
 import UserItem from './UserItem.vue'
@@ -93,4 +101,5 @@ const props = defineProps<Task>()
 
 const statusMessage = taskStatusMessage[props.status]
 const statusColor = taskStatusColor[props.status]
+const statusClasses = statusColorClasses[statusColor]
 </script>

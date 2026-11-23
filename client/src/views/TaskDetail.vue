@@ -34,7 +34,11 @@
 
           <!-- Task status -->
           <div
-            :class="`px-4 py-0.5 bg-${statusColor}-200 text-${statusColor}-800 rounded-2xl`"
+            :class="[
+              'px-4 py-0.5 rounded-2xl',
+              statusClasses.background200,
+              statusClasses.text800,
+            ]"
           >
             <h4>• {{ statusMessage }}</h4>
           </div>
@@ -189,6 +193,7 @@ import SubtaskItem from '@/components/SubtaskItem.vue'
 import { taskStatusColor, taskStatusMessage, type Task } from '@/schemas/task'
 import { useTasksStore } from '@/stores/tasks'
 import { formatDate } from '@/utils/formatDateTime'
+import { statusColorClasses } from '@/utils/statusColorClasses'
 import { onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -204,6 +209,7 @@ const links = ref<string[]>([])
 
 const statusMessage = taskStatusMessage[task.value?.status || 'proposed']
 const statusColor = taskStatusColor[task.value?.status || 'proposed']
+const statusClasses = statusColorClasses[statusColor]
 
 function handleCancelTask() {
   alert('Penugasan dibatalkan')

@@ -24,7 +24,11 @@
 
           <!-- Task status -->
           <h4
-            :class="`px-4 py-0.5 bg-${statusColor}-200 text-${statusColor}-800 rounded-2xl`"
+            :class="[
+              'px-4 py-0.5 rounded-2xl',
+              statusClasses.background200,
+              statusClasses.text800,
+            ]"
           >
             • {{ statusMessage }}
           </h4>
@@ -173,6 +177,7 @@ import {
   type Submission,
 } from '@/schemas/submission'
 import { formatDateTime } from '@/utils/formatDateTime'
+import { statusColorClasses } from '@/utils/statusColorClasses'
 import { ref } from 'vue'
 
 const submission = ref<Submission>(submissions[0])
@@ -183,6 +188,7 @@ const statusMessage =
   submissionStatusMessage[submission.value?.status ?? 'pending_approval']
 const statusColor =
   submissionStatusColor[submission.value?.status ?? 'pending_approval']
+const statusClasses = statusColorClasses[statusColor]
 
 function handleAccept() {
   alert('Accepted')
