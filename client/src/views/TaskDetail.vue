@@ -4,7 +4,7 @@
     class="bg-indigo-600 text-indigo-50"
     elevation="0"
     prepend-icon="mdi-arrow-left"
-    text="Kembali ke dasbor"
+    text="Kembali"
     @click="$router.back()"
   />
 
@@ -73,6 +73,15 @@
           <p>{{ task?.description }}</p>
 
           <!-- Attachments -->
+          <AttachmentList :files :links />
+          <!-- <v-btn
+            >file
+            <InputFileDialog activator="parent" v-model="files" />
+          </v-btn>
+          <v-btn
+            >link
+            <InputLinkDialog activator="parent" v-model="links" />
+          </v-btn> -->
         </div>
 
         <!-- Subtasks -->
@@ -122,7 +131,7 @@
               <CriticalDialog
                 text="Batalkan penugasan?"
                 color="red"
-                :action="handleCancelTask"
+                @proceed="handleCancelTask"
               />
             </v-btn>
             <!-- <DialogButton text="Batalkan Penugasan" bg-color="red-200" text-color="red-800" elevation="0"/> -->
@@ -154,10 +163,13 @@ import Card from '@/components/Card.vue'
 import CriticalDialog from '@/components/CriticalDialog.vue'
 import DelegateDialog from '@/components/DelegateDialog.vue'
 import Header from '@/components/Header.vue'
+import InputFileDialog from '@/components/InputFileDialog.vue'
+import InputLinkDialog from '@/components/InputLinkDialog.vue'
 import InputTask from '@/components/InputTask.vue'
 import SubmissionPanel from '@/components/SubmissionPanel.vue'
 import SubtaskItem from '@/components/SubtaskItem.vue'
 import { taskStatusColor, taskStatusMessage, type Task } from '@/schemas/task'
+import { useSubmissionsStore } from '@/stores/submissions'
 import { useTasksStore } from '@/stores/tasks'
 import { formatDate } from '@/utils/formatDateTime'
 import { onUnmounted, ref } from 'vue'
@@ -170,6 +182,8 @@ const route = useRouter()
 const tasks = useTasksStore()
 
 const task = ref<Task>()
+const files = ref<File[]>([])
+const links = ref<string[]>([])
 
 const statusMessage = taskStatusMessage[task.value?.status || 'proposed']
 const statusColor = taskStatusColor[task.value?.status || 'proposed']

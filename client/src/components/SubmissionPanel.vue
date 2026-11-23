@@ -34,20 +34,21 @@
         </v-btn>
 
         <!-- Submit -->
-        <v-btn
-          class="bg-indigo-600 text-indigo-50"
-          variant="text"
-          elevation="0"
-          @click="handleSubmit"
-          >Kumpulkan</v-btn
-        >
+        <v-btn class="bg-indigo-600 text-indigo-50" variant="text" elevation="0"
+          >Kumpulkan
+          <CriticalDialog
+            text="Kumpulkan?"
+            color="indigo"
+            @proceed="handleSubmit"
+          />
+        </v-btn>
 
         <!-- Cancel submission -->
         <v-btn class="bg-red-200 text-red-800" elevation="0"
           >Batalkan Pengumpulan
           <CriticalDialog
             text="Batalkan pengumpulan?"
-            :action="handleCancelSubmission"
+            @proceed="handleCancelSubmission"
             color="red"
           />
         </v-btn>
@@ -107,6 +108,7 @@ function handleCancelSubmission() {
 }
 
 function handleSubmit() {
+  alert('Tugas dikumpulkan')
   submissions.postSubmission({
     id: `sbm_${Math.floor(Math.random() * 1000)}`,
     date: new Date(),

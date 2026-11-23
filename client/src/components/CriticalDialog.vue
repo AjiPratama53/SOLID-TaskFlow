@@ -14,7 +14,7 @@
           elevation="0"
           @click="
             () => {
-              action()
+              $emit('proceed')
               isActive.value = false
             }
           "
@@ -35,8 +35,9 @@
 <script setup lang="ts">
 defineProps<{
   text: string
-  action: Function
   inverseAction?: boolean
   color: string
 }>()
+
+defineEmits(['proceed'])
 </script>

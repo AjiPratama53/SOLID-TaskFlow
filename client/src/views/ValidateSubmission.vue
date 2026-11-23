@@ -4,7 +4,7 @@
     class="bg-indigo-600 text-indigo-50"
     elevation="0"
     prepend-icon="mdi-arrow-left"
-    text="Kembali ke detail tugas"
+    text="Kembali"
     @click="$router.back()"
   />
 
@@ -130,7 +130,7 @@
             <CriticalDialog
               activator="#accept-submission"
               text="Terima pengumpulan?"
-              :action="() => console.log('Accepted')"
+              @proceed="handleAccept"
               color="green"
               inverse-action
             />
@@ -140,8 +140,13 @@
               prepend-icon="mdi-close-circle-outline"
               class="flex-1 bg-red-600 text-red-50"
               elevation="0"
-              >Minta Revisi</v-btn
-            >
+              >Tolak
+              <CriticalDialog
+                text="Tolak pengumpulan?"
+                @proceed="handleReject"
+                color="red"
+              />
+            </v-btn>
             <!-- <DialogButton text="Batalkan Pengumpulan" bg-color="red-200" text-color="red-800" elevation="0" block>
               <v-card elevation="0">
                 hello
@@ -177,4 +182,12 @@ const statusMessage =
   submissionStatusMessage[submission.value?.status ?? 'pending_approval']
 const statusColor =
   submissionStatusColor[submission.value?.status ?? 'pending_approval']
+
+function handleAccept() {
+  alert('Accepted')
+}
+
+function handleReject() {
+  alert('Rejected')
+}
 </script>

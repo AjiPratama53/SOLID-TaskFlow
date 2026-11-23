@@ -3,7 +3,10 @@
     <!-- header -->
     <div class="flex items-center justify-between">
       <div class="flex gap-1 items-center">
-        <a :href="`/tasks/${id}`">
+        <a
+          class="self-start cursor-pointer"
+          @click="$router.push(`/tasks/${id}`)"
+        >
           <h4>{{ title }}</h4>
         </a>
       </div>
@@ -32,7 +35,19 @@
           <!-- <UserItem name="[Rekan 1]" /> -->
         </card>
 
-        <!-- action -->
+        <!-- actions -->
+
+        <!-- Delegate -->
+        <v-btn
+          prepend-icon="mdi-account-plus-outline"
+          class="bg-gray-600 text-gray-50"
+          elevation="0"
+          rounded
+          >Delegasikan
+          <DelegateDialog />
+        </v-btn>
+
+        <!-- Alternate -->
         <v-btn
           prepend-icon="mdi-swap-horizontal"
           class="bg-indigo-600 text-indigo-50"
@@ -40,6 +55,15 @@
           rounded
           >Alihkan
           <DelegateDialog />
+        </v-btn>
+        <!-- Verify -->
+        <v-btn
+          prepend-icon="mdi-check-circle-outline"
+          class="bg-yellow-600 text-yellow-50"
+          elevation="0"
+          rounded
+          @click="$router.push('/submissions/sbm_001')"
+          >Verifikasi
         </v-btn>
       </div>
     </div>
@@ -49,6 +73,7 @@
 <script setup lang="ts">
 import { taskStatusColor, taskStatusMessage, type Task } from '@/schemas/task'
 import { formatDateTime } from '@/utils/formatDateTime'
+import DelegateDialog from './DelegateDialog.vue'
 
 const props = defineProps<Task>()
 const statusMessage = taskStatusMessage[props.status]
