@@ -120,6 +120,14 @@
             >Terima Penugasan</v-btn
           >
 
+          <!-- Verify -->
+          <v-btn
+            class="bg-yellow-600 text-yellow-50"
+            elevation="0"
+            prepend-icon="mdi-check-circle-outline"
+            @click="$router.push('/submissions/sbm_001')"
+            >Verifikasi</v-btn
+          >
           <div class="flex gap-2 w-full">
             <!-- Cancel -->
             <v-btn
@@ -144,6 +152,16 @@
               prepend-icon="mdi-account-plus-outline"
               >Delegasikan
               <DelegateDialog />
+            </v-btn>
+
+            <!-- Altenate -->
+            <v-btn
+              id="delegate"
+              class="delegate flex flex-1 bg-indigo-600 text-indigo-50"
+              elevation="0"
+              prepend-icon="mdi-swap-horizontal"
+              >Alihkan
+              <DelegateDialog is-alternate />
             </v-btn>
           </div>
         </div>

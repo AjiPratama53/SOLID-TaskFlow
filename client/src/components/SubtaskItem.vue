@@ -31,11 +31,9 @@
       <!-- detail & action -->
       <div class="flex gap-1 items-center">
         <!-- colleagues -->
-        <card class="flex px-2.5 py-1 rounded-2xl" elevation="0">
-          <!-- <UserItem name="[Rekan 1]" /> -->
+        <card class="flex bg-white pl-1 pr-4 py-1 rounded-4xl" elevation="0">
+          <UserItem v-bind="{ id: 'usr_001', name: 'Cahyo' }" />
         </card>
-
-        <!-- actions -->
 
         <!-- Delegate -->
         <v-btn
@@ -54,8 +52,9 @@
           elevation="0"
           rounded
           >Alihkan
-          <DelegateDialog />
+          <DelegateDialog is-alternate />
         </v-btn>
+
         <!-- Verify -->
         <v-btn
           prepend-icon="mdi-check-circle-outline"
@@ -74,6 +73,7 @@
 import { taskStatusColor, taskStatusMessage, type Task } from '@/schemas/task'
 import { formatDateTime } from '@/utils/formatDateTime'
 import DelegateDialog from './DelegateDialog.vue'
+import UserItem from './UserItem.vue'
 
 const props = defineProps<Task>()
 const statusMessage = taskStatusMessage[props.status]
