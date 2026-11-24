@@ -151,8 +151,8 @@ const tasks = useTasksStore()
 // Filter
 const filterStatusItems = [
   { status: 'proposed', value: 'Ditugaskan' },
-  { status: 'in_progress', value: 'Sedang Dikerjakan' },
-  { status: 'pending_approval', value: 'Menunggu Persetujuan' },
+  { status: 'in_progress', value: 'Sedang dikerjakan' },
+  { status: 'pending_approval', value: 'Menunggu persetujuan' },
   { status: 'completed', value: 'Selesai' },
   { status: 'cancelled', value: 'Dibatalkan' },
 ]

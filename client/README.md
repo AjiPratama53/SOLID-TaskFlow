@@ -36,6 +36,13 @@ Scaffolded with Vuetify CLI.
 
 - Tailwind CSS
 
+## 🔐 Solid Authentication
+
+- Sign in from `/login` with an HTTPS Solid provider URL.
+- The app restores the Inrupt browser session before navigation. Unauthenticated visits to `/` and other private routes redirect to `/login`.
+- After session restoration, the client fetches the WebID profile as RDF using the authenticated session fetch, including the profile name, avatar, and `pim:storage` Pod URLs.
+- Users, tasks, and submissions still use local mock data; they are not yet stored in a Solid Pod.
+
 ## 💿 Install
 
 Use your selected package manager (npm) to install dependencies:

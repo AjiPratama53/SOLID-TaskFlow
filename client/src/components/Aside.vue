@@ -3,14 +3,25 @@
     <div class="flex flex-col gap-4">
       <!-- Account -->
       <div class="flex flex-col gap-2 items-start">
-        <user-item v-bind="user" />
+        <user-item
+          v-bind="
+            {
+              id: user?.webId ?? '',
+              name: user?.name ?? '',
+              avatar: user?.avatarUrl,
+            } as User
+          "
+        />
         <v-btn
           prepend-icon="mdi-logout"
           text="Keluar"
           variant="text"
           density="compact"
-          @click="$router.push('/login')"
+          @click="handleSignOut"
         />
+        <v-alert v-if="session.error" type="error" density="compact">
+          {{ session.error }}
+        </v-alert>
       </div>
       <v-divider />
 
@@ -50,17 +61,26 @@ import { useUsersStore } from '@/stores/users.ts'
 import InviteCard from './InviteCard.vue'
 import UserItem from './UserItem.vue'
 import type { User } from '@/schemas/user.ts'
-import { onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
+import { useSessionStore } from '@/stores/session.ts'
+import { useRouter } from 'vue-router'
 
+const session = useSessionStore()
 const colleagues = useUsersStore()
+const router = useRouter()
+const user = computed(() => session.getProfile)
 
-const user: User = {
-  id: 'usr_001',
-  name: 'Admin',
-  // avatar: 'logo.svg',
+async function handleSignOut() {
+  try {
+    await session.signOut()
+    await router.push('/login')
+  } catch (err) {
+    session.error =
+      err instanceof Error ? err.message : 'Gagal mengakhiri sesi Solid.'
+  }
 }
 
-onMounted(() => {
-  colleagues.fetchUsers()
+onMounted(async () => {
+  await colleagues.fetchUsers()
 })
 </script>

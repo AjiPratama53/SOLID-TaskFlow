@@ -7,12 +7,15 @@
       class="flex gap-8 px-4 py-2 justify-between items-center bg-indigo-100 w-full"
       elevation="0"
     >
-      <div class="flex flex-col">
-        <a @click="openFile(index)" class="cursor-pointer">
-          <h4>{{ file.name }}</h4>
-        </a>
-        <!-- File size (kin B, MB, or GB) -->
-        <p>{{ formatFileSize(file.size) }}</p>
+      <div class="flex gap-2 items-center">
+        <v-icon icon="mdi-file" />
+        <div class="flex flex-col">
+          <a @click="openFile(index)" class="cursor-pointer">
+            <h4>{{ file.name }}</h4>
+          </a>
+          <!-- File size (kin B, MB, or GB) -->
+          <p>{{ formatFileSize(file.size) }}</p>
+        </div>
       </div>
       <v-icon-btn
         v-if="removable"
@@ -23,7 +26,7 @@
       <v-icon-btn
         v-if="downloadable"
         @click="downloadFile(index)"
-        icon="mdi-download"
+        icon="mdi-tray-arrow-down"
         variant="text"
       />
     </v-card>
@@ -35,9 +38,13 @@
       class="flex gap-8 px-4 py-2 justify-between items-center bg-indigo-100 w-full"
       elevation="0"
     >
-      <a :href="link" target="_blank" rel="noopener noreferrer">
-        <h4>{{ link }}</h4>
-      </a>
+      <div class="flex gap-2 items-center">
+        <v-icon icon="mdi-link" />
+        <a :href="link" target="_blank" rel="noopener noreferrer">
+          <h4>{{ link }}</h4>
+        </a>
+      </div>
+
       <v-icon-btn
         v-if="removable"
         @click="removeLink(index)"

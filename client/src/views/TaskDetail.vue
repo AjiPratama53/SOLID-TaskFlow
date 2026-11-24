@@ -89,7 +89,7 @@
         </div>
 
         <!-- Subtasks -->
-        <div class="flex flex-col gap-2">
+        <div v-if="task?.userId" class="flex flex-col gap-2">
           <!-- Header -->
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-1">
@@ -182,8 +182,8 @@
       </Card>
     </div>
 
-    <!-- Subnission panel -->
-    <div class="flex flex-1 flex-col gap-4">
+    <!-- Submission panel -->
+    <div v-if="task?.userId" class="flex flex-1 flex-col gap-4">
       <SubmissionPanel />
     </div>
   </div>
@@ -215,8 +215,8 @@ const tasks = useTasksStore()
 
 const task = ref<Task>({
   id: 'tsk_001',
-  userId: 'usr_001',
-  proposerId: 'usr_001',
+  userId: 'usr_002',
+  proposerId: 'usr_002',
   createdAt: new Date(),
   status: 'proposed',
   title: 'Testing',

@@ -52,16 +52,21 @@
               id="provider"
               v-model="input"
               placeholder="https://solidcommunity.net"
+              @keyup.enter="handleLogin()"
             />
             <v-btn
               rounded="none"
               elevation="0"
               class="bg-indigo-600 text-indigo-50"
               icon="mdi-login"
-              @click="handleInput"
+              :disabled="isLoggingIn"
+              @click="handleLogin()"
             />
           </div>
         </div>
+        <v-alert v-if="session.error" type="error" density="compact">
+          {{ session.error }}
+        </v-alert>
         <!-- Provider options -->
         <div class="flex flex-col gap-1">
           <v-btn
@@ -70,7 +75,8 @@
             size="large"
             elevation="0"
             v-for="provider in solidProviders"
-            @click="input = `https://${provider}`"
+            :disabled="isLoggingIn"
+            @click="handleLogin(`https://${provider}`)"
             >{{ provider }}</v-btn
           >
         </div>
@@ -80,9 +86,9 @@
 </template>
 
 <script setup lang="ts">
-import debounce from 'debounce'
-import { ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
+import { useSessionStore } from '@/stores/session'
+import { ref } from 'vue'
+import { useRoute } from 'vue-router'
 
 const features = [
   { icon: 'share-variant', text: 'Pembagian Subtugas' },
@@ -98,19 +104,29 @@ const solidProviders = [
 ]
 
 const input = ref('')
-const router = useRouter()
+const session = useSessionStore()
+const route = useRoute()
+const isLoggingIn = ref(false)
 
-const handleInput = debounce(() => {
+async function handleLogin(issuer = input.value) {
+  if (isLoggingIn.value) return
+  isLoggingIn.value = true
+
   try {
-    if (!input.value) throw Error('Input is empty')
+    const redirect = route.query.redirect
+    const callbackPath =
+      typeof redirect === 'string' &&
+      redirect.startsWith('/') &&
+      !redirect.startsWith('//')
+        ? redirect
+        : '/dashboard'
 
-    // Handle input here
-    // alert(`Input ${input.value}`)
-    router.push('/dashboard')
-  } catch (error) {
-    alert(error)
+    await session.signIn(issuer.trim(), callbackPath)
+  } catch (err) {
+    session.error =
+      err instanceof Error ? err.message : 'Gagal memulai login Solid.'
+  } finally {
+    isLoggingIn.value = false
   }
-}, 1000)
-
-watch(() => input.value, handleInput)
+}
 </script>
