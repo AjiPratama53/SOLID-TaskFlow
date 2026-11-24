@@ -59,7 +59,7 @@
               elevation="0"
               class="bg-indigo-600 text-indigo-50"
               icon="mdi-login"
-              :disabled="isLoggingIn"
+              :loading="isLoggingIn"
               @click="handleLogin()"
             />
           </div>
@@ -76,7 +76,7 @@
             elevation="0"
             v-for="provider in solidProviders"
             :disabled="isLoggingIn"
-            @click="handleLogin(`https://${provider}`)"
+            @click="input = `https://${provider}`"
             >{{ provider }}</v-btn
           >
         </div>
@@ -87,7 +87,8 @@
 
 <script setup lang="ts">
 import { useSessionStore } from '@/stores/session'
-import { ref } from 'vue'
+import debounce from 'debounce'
+import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 const features = [
@@ -129,4 +130,9 @@ async function handleLogin(issuer = input.value) {
     isLoggingIn.value = false
   }
 }
+
+watch(
+  () => input.value,
+  debounce(() => handleLogin(input.value), 1000),
+)
 </script>

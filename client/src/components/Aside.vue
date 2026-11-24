@@ -27,6 +27,14 @@
 
       <!-- Colleagues -->
       <div class="flex flex-col gap-4">
+        <v-alert v-if="colleagues.error" type="warning" density="compact">
+          {{ colleagues.error }}
+        </v-alert>
+        <v-progress-linear
+          v-if="colleagues.isLoading"
+          indeterminate
+          color="indigo"
+        />
         <!-- Colleagues list -->
         <div v-if="colleagues.getUsers.length > 0" class="flex flex-col gap-2">
           <p>Rekan anda</p>
@@ -37,6 +45,9 @@
             v-bind="colleague"
           />
         </div>
+        <p v-else-if="!colleagues.isLoading && !colleagues.error">
+          Belum ada teman di profil Solid.
+        </p>
         <invite-card
           @invite="
             (e) =>

@@ -19,8 +19,29 @@ import {
   getStringNoLocale,
   getUrl,
   getUrlAll,
+  type SolidDataset,
 } from '@inrupt/solid-client'
 import { FOAF, VCARD } from '@inrupt/vocab-common-rdf'
+
+function getProfileDetails(profileDataset: SolidDataset, webId: string) {
+  const profileThing = getThing(profileDataset, webId)
+
+  if (!profileThing) {
+    throw new Error(`Dokumen profil tidak ditemukan untuk WebID: ${webId}`)
+  }
+
+  return {
+    profileThing,
+    name:
+      getStringNoLocale(profileThing, FOAF.name) ??
+      getStringNoLocale(profileThing, VCARD.fn) ??
+      null,
+    avatarUrl:
+      getUrl(profileThing, VCARD.hasPhoto) ??
+      getUrl(profileThing, FOAF.img) ??
+      null,
+  }
+}
 
 export const api = {
   session: {
@@ -35,25 +56,10 @@ export const api = {
 
       // 1. Ambil dataset dari URL WebID (klien otomatis menangani fragment #me)
       const profileDataset = await getSolidDataset(webId, { fetch: fetchFn })
-
-      // 2. Ambil Thing yang merepresentasikan subjek WebID itu sendiri
-      const profileThing = getThing(profileDataset, webId)
-
-      if (!profileThing) {
-        throw new Error(`Dokumen profil tidak ditemukan untuk WebID: ${webId}`)
-      }
-
-      // 3. Baca nama (cek beberapa kosakata umum karena tiap Pod server bisa berbeda)
-      const name =
-        getStringNoLocale(profileThing, FOAF.name) ??
-        getStringNoLocale(profileThing, VCARD.fn) ??
-        null
-
-      // 4. Baca foto profil / avatar
-      const avatarUrl =
-        getUrl(profileThing, VCARD.hasPhoto) ??
-        getUrl(profileThing, FOAF.img) ??
-        null
+      const { profileThing, name, avatarUrl } = getProfileDetails(
+        profileDataset,
+        webId,
+      )
 
       // 5. Ambil URL root Pod (pim:storage) untuk keperluan CRUD data selanjutnya
       const podUrls = getUrlAll(profileThing, PIM.storage)
@@ -67,6 +73,52 @@ export const api = {
     },
   },
   user: {
+    getFriends: async (
+      webId: string,
+    ): Promise<{ users: User[]; failedCount: number }> => {
+      const session = getDefaultSession()
+      if (!session.info.isLoggedIn || session.info.webId !== webId) {
+        throw new Error('Sesi Solid aktif tidak cocok dengan WebID pengguna.')
+      }
+
+      const profileDataset = await getSolidDataset(webId, {
+        fetch: session.fetch,
+      })
+      const { profileThing } = getProfileDetails(profileDataset, webId)
+      const friendWebIds = [
+        ...new Set(getUrlAll(profileThing, FOAF.knows)),
+      ].filter((friendWebId) => friendWebId !== webId)
+
+      const results = await Promise.allSettled(
+        friendWebIds.map(async (friendWebId): Promise<User> => {
+          const friendDataset = await getSolidDataset(friendWebId, {
+            fetch: session.fetch,
+          })
+          const friendProfile = getProfileDetails(friendDataset, friendWebId)
+
+          return {
+            id: friendWebId,
+            name: friendProfile.name ?? friendWebId,
+            ...(friendProfile.avatarUrl
+              ? { avatar: friendProfile.avatarUrl }
+              : {}),
+          }
+        }),
+      )
+
+      const users: User[] = []
+      let failedCount = 0
+
+      for (const result of results) {
+        if (result.status === 'fulfilled') {
+          users.push(result.value)
+        } else {
+          failedCount += 1
+        }
+      }
+
+      return { users, failedCount }
+    },
     get: async (): Promise<User[]> => {
       // GET users
       try {

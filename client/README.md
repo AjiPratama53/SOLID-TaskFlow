@@ -41,7 +41,8 @@ Scaffolded with Vuetify CLI.
 - Sign in from `/login` with an HTTPS Solid provider URL.
 - The app restores the Inrupt browser session before navigation. Unauthenticated visits to `/` and other private routes redirect to `/login`.
 - After session restoration, the client fetches the WebID profile as RDF using the authenticated session fetch, including the profile name, avatar, and `pim:storage` Pod URLs.
-- Users, tasks, and submissions still use local mock data; they are not yet stored in a Solid Pod.
+- Friend WebIDs are read from `foaf:knows` in the signed-in user's WebID profile; each friend's public WebID profile supplies the displayed name and avatar. Friends that cannot be fetched are omitted with a warning.
+- Tasks and submissions still use local mock data. Invited users remain local and are not written to a Solid Pod.
 
 ## 💿 Install
 
