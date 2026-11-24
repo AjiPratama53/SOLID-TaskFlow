@@ -8,43 +8,70 @@
     <p class="font-light text-sm">
       Delegasikan subtugas lebih cepat dengan follow rekan Anda.
     </p>
-    <v-text-field
-      v-if="isInputting"
-      autofocus
-      density="compact"
-      class="bg-white"
-      hide-details
-      clearable
-      placeholder="WebID"
-      variant="outlined"
-      v-model="input"
-      @keyup.enter="handleInput"
-    />
 
-    <v-btn
-      elevation="0"
-      class="bg-indigo-600 text-indigo-50"
-      @click="handleInput"
-      >Undang</v-btn
-    >
+    <v-btn elevation="0" class="bg-indigo-600 text-indigo-50"
+      >Undang
+      <v-dialog
+        activator="parent"
+        max-width="640"
+        v-slot:default="{ isActive = false }"
+      >
+        <v-card class="flex flex-col p-4 gap-4 w-full" v-if="isActive">
+          <!-- <div> -->
+          <h4>Undang Rekan</h4>
+          <v-text-field
+            density="compact"
+            autofocus
+            hide-details="auto"
+            class="w-full"
+            clearable
+            placeholder="WebID"
+            variant="outlined"
+            v-model="input"
+            @keyup.enter="handleInvite(true, () => (isActive.value = false))"
+          />
+          <v-alert type="error" v-if="error">{{ error }}</v-alert>
+          <!-- </div> -->
+          <div class="flex justify-end">
+            <v-btn
+              @click="handleInvite(false, () => (isActive.value = false))"
+              class="text-indigo-600"
+              variant="text"
+              density="compact"
+              >Batal</v-btn
+            >
+            <v-btn
+              @click="handleInvite(true, () => (isActive.value = false))"
+              class="text-indigo-600"
+              variant="text"
+              density="compact"
+              >Undang</v-btn
+            >
+          </div>
+        </v-card>
+      </v-dialog>
+    </v-btn>
   </v-card>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 
-const isInputting = ref(false)
 const input = ref('')
+const error = ref('')
 
-const emit = defineEmits<{
-  invite: [value: string]
-}>()
+function handleInvite(proceed = true, cb: Function) {
+  try {
+    if (proceed && !input.value) throw new Error('Masukkan WebID rekanmu')
 
-function handleInput() {
-  isInputting.value = !isInputting.value
+    // Post to friends in solid pod
+    if (proceed) alert(`${input.value} telah diundang`)
 
-  if (!input.value) return
-  emit('invite', input.value)
-  input.value = ''
+    input.value = ''
+    error.value = ''
+    cb()
+  } catch (e) {
+    error.value = e.message
+  }
 }
 </script>

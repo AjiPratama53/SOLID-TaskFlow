@@ -48,20 +48,12 @@
         <p v-else-if="!colleagues.isLoading && !colleagues.error">
           Belum ada teman di profil Solid.
         </p>
-        <invite-card
-          @invite="
-            (e) =>
-              colleagues.postUser({
-                id: `usr_${Math.round(Math.random() * 1000)}`,
-                name: e,
-              })
-          "
-        />
+        <invite-card />
       </div>
     </div>
 
     <!-- Brand -->
-    <a href="">
+    <a @click="$router.push('/')">
       <img src="@/assets/brand.svg" alt="SOLID TaskFlow" />
     </a>
   </aside>
