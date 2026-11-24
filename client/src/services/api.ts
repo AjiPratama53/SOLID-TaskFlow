@@ -1,7 +1,4 @@
 // @ts-ignore -- this local data module is intentionally outside the app project's file list.
-import { users } from '@/.local/users'
-
-// @ts-ignore -- this local data module is intentionally outside the app project's file list.
 import { tasks } from '@/.local/tasks'
 
 // @ts-ignore -- this local data module is intentionally outside the app project's file list.
@@ -14,9 +11,13 @@ import type { SolidUserProfile } from '@/schemas/session'
 
 import { getDefaultSession } from '@inrupt/solid-client-authn-browser'
 import {
+  addUrl,
   getSolidDataset,
+  getSourceUrl,
   getThing,
   getStringNoLocale,
+  saveSolidDatasetAt,
+  setThing,
   getUrl,
   getUrlAll,
   type SolidDataset,
@@ -43,6 +44,26 @@ function getProfileDetails(profileDataset: SolidDataset, webId: string) {
   }
 }
 
+function validateWebId(webId: string) {
+  const value = webId.trim()
+  let url: URL
+  try {
+    url = new URL(value)
+  } catch {
+    throw new Error('Masukkan WebID rekanmu.')
+  }
+
+  if (
+    (url.protocol !== 'https:' && url.protocol !== 'http:') ||
+    url.username ||
+    url.password
+  ) {
+    throw new Error('WebID tidak valid.')
+  }
+
+  return { value, normalized: url.toString() }
+}
+
 export const api = {
   session: {
     get: async (webId: string): Promise<SolidUserProfile> => {
@@ -61,7 +82,7 @@ export const api = {
         webId,
       )
 
-      // 5. Ambil URL root Pod (pim:storage) untuk keperluan CRUD data selanjutnya
+      // Ambil URL root Pod (pim:storage) untuk keperluan CRUD data selanjutnya
       const podUrls = getUrlAll(profileThing, PIM.storage)
 
       return {
@@ -73,7 +94,7 @@ export const api = {
     },
   },
   user: {
-    getFriends: async (
+    get: async (
       webId: string,
     ): Promise<{ users: User[]; failedCount: number }> => {
       const session = getDefaultSession()
@@ -119,23 +140,45 @@ export const api = {
 
       return { users, failedCount }
     },
-    get: async (): Promise<User[]> => {
-      // GET users
-      try {
-        await new Promise((resolve) => setTimeout(resolve, 3000))
-        return users
-      } catch (error) {
-        throw error
+    post: async (ownerWebId: string, inputWebId: string): Promise<void> => {
+      const session = getDefaultSession()
+      const owner = validateWebId(ownerWebId)
+      const friend = validateWebId(inputWebId)
+
+      if (
+        !session.info.isLoggedIn ||
+        !session.info.webId ||
+        validateWebId(session.info.webId).normalized !== owner.normalized
+      ) {
+        throw new Error('Sesi Solid aktif tidak cocok dengan WebID pengguna.')
       }
-    },
-    post: async (user: User) => {
-      // POST user
-      try {
-        await new Promise((resolve) => setTimeout(resolve, 3000))
-        users.push(user)
-      } catch (error) {
-        throw error
+
+      if (friend.normalized === owner.normalized) {
+        throw new Error(
+          'WebID Anda sendiri tidak dapat ditambahkan sebagai teman.',
+        )
       }
+
+      const profileDataset = await getSolidDataset(owner.value, {
+        fetch: session.fetch,
+      })
+      const { profileThing } = getProfileDetails(profileDataset, owner.value)
+
+      if (getUrlAll(profileThing, FOAF.knows).includes(friend.value)) return
+
+      const updatedDataset = setThing(
+        profileDataset,
+        addUrl(profileThing, FOAF.knows, friend.value),
+      )
+      const profileDocumentUrl = getSourceUrl(profileDataset)
+
+      if (!profileDocumentUrl) {
+        throw new Error('URL dokumen profil Solid tidak ditemukan.')
+      }
+
+      await saveSolidDatasetAt(profileDocumentUrl, updatedDataset, {
+        fetch: session.fetch,
+      })
     },
   },
 
