@@ -114,23 +114,30 @@
               downloadable
             />
             <!-- <v-btn
-               >Link
-               <InputLinkDialog activator="parent" v-model="links" />
-             </v-btn>
-             <v-btn
-               >File
-               <InputFileDialog activator="parent" v-model="files" />
-             </v-btn> -->
+              >Link
+              <InputLinkDialog activator="parent" v-model="links" />
+            </v-btn>
+            <v-btn
+              >File
+              <InputFileDialog activator="parent" v-model="files" />
+            </v-btn> -->
           </div>
         </div>
       </Card>
     </div>
 
     <!-- Side panel -->
-    <div v-if="submission" class="flex flex-1 flex-col gap-4">
-      <!-- Verification card -->
+    <div class="flex flex-1 flex-col gap-4">
       <Card>
-        <div class="flex flex-col gap-4">
+        <!-- Verification card - Loading -->
+        <v-skeleton-loader v-if="isLoading">
+          <v-skeleton-loader type="paragraph"> </v-skeleton-loader>
+          <v-skeleton-loader type="image"> </v-skeleton-loader>
+          <v-skeleton-loader type="actions"> </v-skeleton-loader>
+        </v-skeleton-loader>
+
+        <!-- Verification card - content -->
+        <div v-else-if="submission" class="flex flex-col gap-4">
           <!-- Header -->
           <div class="flex flex-col">
             <div class="flex gap-1 items-center">

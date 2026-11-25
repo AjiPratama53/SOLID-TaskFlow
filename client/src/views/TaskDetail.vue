@@ -160,29 +160,19 @@
               />
             </div>
           </div>
-          <!-- Actions -->
-          <div class="flex flex-col gap-2">
-            <!-- Accept -->
-            <v-btn
-              v-if="!task?.userId"
-              class="bg-gray-600 text-gray-50"
-              elevation="0"
-              >Terima penugasan</v-btn
-            >
 
+          <!-- Actions -->
+          <div v-if="isOwner" class="flex flex-col gap-2">
             <!-- Verify -->
             <v-btn
-              v-if="task?.status === 'pending_approval'"
+              v-if="isOwner && task?.status === 'pending_approval'"
               class="bg-yellow-600 text-yellow-50"
               elevation="0"
               prepend-icon="mdi-check-circle-outline"
               @click="$router.push('/submissions/sbm_001')"
               >Verifikasi</v-btn
             >
-            <div
-              v-if="task?.userId === task?.proposerId"
-              class="flex gap-2 w-full"
-            >
+            <div class="flex gap-2 w-full">
               <!-- Cancel -->
               <v-btn
                 v-if="
@@ -227,8 +217,13 @@
     </div>
 
     <!-- Submission panel -->
-    <div v-if="task?.status !== 'proposed'" class="flex flex-1 flex-col gap-4">
-      <SubmissionPanel :task-status="task?.status ?? 'proposed'" />
+    <div class="flex flex-1 flex-col gap-4">
+      <SubmissionPanel
+        @accept-task="handleAcceptTask"
+        :task-status="task?.status ?? 'proposed'"
+        :is-loading
+        :is-executor
+      />
     </div>
   </div>
 </template>
@@ -248,6 +243,7 @@ import SubmissionPanel from '@/components/SubmissionPanel.vue'
 import SubtaskItem from '@/components/SubtaskItem.vue'
 import { taskStatusColor, taskStatusMessage, type Task } from '@/schemas/task'
 import { api } from '@/services/api'
+import { useSessionStore } from '@/stores/session'
 import { useTasksStore } from '@/stores/tasks'
 import { formatDate } from '@/utils/formatDateTime'
 import { statusColorClasses } from '@/utils/statusColorClasses'
@@ -272,6 +268,10 @@ const statusColor = ref<keyof typeof statusColorClasses>(
 )
 const statusClasses = ref(statusColorClasses[statusColor.value])
 
+const session = useSessionStore()
+const isOwner = ref(false)
+const isExecutor = ref(false)
+
 async function loadTask() {
   isLoading.value = true
   error.value = null
@@ -282,16 +282,21 @@ async function loadTask() {
     await subTasks.fetchTasks()
 
     // throw new Error('Uji Error State')
+
+    // mock data
     task.value = {
       id: 'tsk_001',
-      userId: 'usr_002',
+      userId: session.webId ?? '',
       proposerId: 'usr_002',
       createdAt: new Date(),
-      status: 'in_progress',
+      status: 'completed',
       title: 'Testing',
       description: 'blablabla',
       deadline: new Date(),
     }
+
+    isOwner.value = session.webId === task.value.proposerId
+    isExecutor.value = session.webId === task.value.userId
 
     statusMessage.value = taskStatusMessage[task.value?.status || 'proposed']
     statusColor.value = taskStatusColor[task.value?.status || 'proposed']
@@ -302,6 +307,10 @@ async function loadTask() {
   } finally {
     isLoading.value = false
   }
+}
+
+function handleAcceptTask() {
+  alert('Penugasan diterima')
 }
 
 function handleCancelTask() {

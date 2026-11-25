@@ -39,7 +39,8 @@
         </p>
       </div>
 
-      <div class="flex gap-1 items-center">
+      <!-- Actions -->
+      <div v-if="isOwner" class="flex gap-1 items-center">
         <!-- colleagues -->
         <card
           :class="[
@@ -99,8 +100,12 @@ import Card from './Card.vue'
 import { formatDate, formatDateTime } from '@/utils/formatDateTime.ts'
 import UserItem from './UserItem.vue'
 import DelegateDialog from './DelegateDialog.vue'
+import { useSessionStore } from '@/stores/session.ts'
 
+const session = useSessionStore()
 const props = defineProps<Task>()
+
+const isOwner = props.proposerId === session.webId
 
 const statusMessage = taskStatusMessage[props.status]
 const statusColor = taskStatusColor[props.status]
