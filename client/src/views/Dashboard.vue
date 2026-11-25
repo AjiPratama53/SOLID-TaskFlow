@@ -71,24 +71,15 @@
           />
         </Card>
 
-        <!-- Task error -->
+        <!-- Tasks - error -->
         <div
           v-if="tasks.error"
           class="flex flex-1 w-full items-center justify-center"
         >
-          <div class="flex flex-col gap-1 items-center">
-            <p>Ada masalah.</p>
-            <v-btn
-              elevation="0"
-              class="bg-indigo-600 text-indigo-50"
-              text="Coba lagi"
-              prepend-icon="mdi-refresh"
-              @click="tasks.fetchTasks"
-            />
-          </div>
+          <ErrorState @retry="tasks.fetchTasks" />
         </div>
 
-        <!-- Task loader -->
+        <!-- Tasks - loading -->
         <Card v-else-if="tasks.isLoading" v-for="item in 3">
           <div class="flex flex-col w-full">
             <div class="flex justify-between items-start">
@@ -105,24 +96,20 @@
             <v-skeleton-loader class="bg-transparent w-1/5" type="text" />
           </div>
         </Card>
-        <!-- Task empty -->
+        <!-- Tasks-  empty -->
         <div
           v-else-if="tasks.isEmpty"
           class="flex flex-1 w-full items-center justify-center"
         >
-          <div class="flex flex-col gap-1 items-center">
-            <p>Belum ada tugas untuk dikerjakan.</p>
-            <v-btn
-              elevation="0"
-              class="bg-indigo-600 text-indigo-50"
-              text="Buat tugas baru"
-              prepend-icon="mdi-plus"
-              @click="isCreateTask = !isCreateTask"
-            />
-          </div>
+          <EmptyState
+            prepend-icon="mdi-plus"
+            text="Belum ada tugas untuk dikerjakan."
+            button-text="Buat tugas baru"
+            @proceed="isCreateTask = !isCreateTask"
+          />
         </div>
 
-        <!-- Tasks items -->
+        <!-- Tasks - content -->
         <TaskItem v-else v-for="task in tasks.getTasks" v-bind="task" />
       </div>
     </div>
@@ -212,6 +199,8 @@
 
 <script setup lang="ts">
 import Card from '@/components/Card.vue'
+import EmptyState from '@/components/EmptyState.vue'
+import ErrorState from '@/components/ErrorState.vue'
 import Header from '@/components/Header.vue'
 import InputTask from '@/components/InputTask.vue'
 import TaskItem from '@/components/TaskItem.vue'
