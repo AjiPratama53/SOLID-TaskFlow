@@ -22,14 +22,12 @@
         Error: {{ error }}
       </v-alert>
 
-      <!-- Task - error -->
-      <Card v-if="error" class="flex-1 flex flex-col justify-center">
-        <ErrorState @retry="loadTask" />
-      </Card>
+      <Card>
+        <!-- Task - error -->
+        <ErrorState v-if="error" @retry="loadTask" />
 
-      <!-- Task - Loading -->
-      <Card v-else-if="isLoading">
-        <div class="flex flex-col w-full">
+        <!-- Task - Loading -->
+        <div v-else-if="isLoading" class="flex flex-col w-full">
           <div class="flex justify-between items-start">
             <v-skeleton-loader
               class="bg-transparent m-0 w-1/5"
@@ -44,21 +42,19 @@
           <v-skeleton-loader class="bg-transparent w-1/5" type="text" />
           <v-skeleton-loader class="bg-transparent" type="paragraph" />
         </div>
-      </Card>
 
-      <!-- Task - empty -->
-      <Card v-else-if="!task" class="flex-1 flex flex-col justify-center">
+        <!-- Task - empty -->
         <EmptyState
+          v-else-if="!task"
           text="Tugas tidak ditemukan"
+          has-action
           prepend-icon="mdi-arrow-left"
           button-text="Kembali"
           @proceed="$router.back()"
         />
-      </Card>
 
-      <!-- Task - content -->
-      <Card v-else>
-        <div class="flex flex-col gap-4">
+        <!-- Task - content -->
+        <div v-else class="flex flex-col gap-4">
           <!-- Task header -->
           <div class="flex justify-between items-start">
             <div class="flex flex-col">
@@ -228,8 +224,8 @@
     </div>
 
     <!-- Submission panel -->
-    <div v-if="task?.userId" class="flex flex-1 flex-col gap-4">
-      <SubmissionPanel />
+    <div v-if="task?.status !== 'proposed'" class="flex flex-1 flex-col gap-4">
+      <SubmissionPanel :task-status="task?.status ?? 'proposed'" />
     </div>
   </div>
 </template>
@@ -267,9 +263,9 @@ const task = ref<Task | null>(null)
 const files = ref<File[]>([])
 const links = ref<string[]>([])
 
-const statusMessage = taskStatusMessage[task.value?.status || 'proposed']
-const statusColor = taskStatusColor[task.value?.status || 'proposed']
-const statusClasses = statusColorClasses[statusColor]
+const statusMessage = ref('')
+const statusColor = ref('')
+const statusClasses = ref('')
 
 async function loadTask() {
   isLoading.value = true
@@ -290,6 +286,10 @@ async function loadTask() {
       title: 'Testing',
       description: 'blablabla',
     }
+
+    statusMessage.value = taskStatusMessage[task.value?.status || 'proposed']
+    statusColor.value = taskStatusColor[task.value?.status || 'proposed']
+    statusClasses.value = statusColorClasses[statusColor.value]
   } catch (err) {
     error.value =
       err instanceof Error ? err.message : 'Gagal memuat data dari Solid Pod.'

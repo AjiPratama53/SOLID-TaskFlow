@@ -15,7 +15,20 @@
       <AttachmentList v-model:files="files" v-model:links="links" removable />
 
       <!-- Actions -->
-      <div class="flex flex-col gap-2">
+      <!-- Cancel submission -->
+      <v-btn
+        v-if="taskStatus === 'pending_approval'"
+        class="bg-red-200 text-red-800"
+        elevation="0"
+        >Batalkan pengumpulan
+        <CriticalDialog
+          text="Batalkan pengumpulan?"
+          @proceed="handleCancelSubmission"
+          color="red"
+        />
+      </v-btn>
+
+      <div v-else-if="taskStatus === 'in_progress'" class="flex flex-col gap-2">
         <!-- Add file -->
         <v-btn prepend-icon="mdi-plus" class="text-indigo-600" variant="text"
           >Lampirkan file
@@ -42,21 +55,6 @@
             @proceed="handleSubmit"
           />
         </v-btn>
-
-        <!-- Cancel submission -->
-        <v-btn class="bg-red-200 text-red-800" elevation="0"
-          >Batalkan pengumpulan
-          <CriticalDialog
-            text="Batalkan pengumpulan?"
-            @proceed="handleCancelSubmission"
-            color="red"
-          />
-        </v-btn>
-        <!-- <DialogButton text="Batalkan Pengumpulan" bg-color="red-200" text-color="red-800" elevation="0" block>
-              <v-card elevation="0">
-                hello
-              </v-card>
-            </DialogButton> -->
       </div>
     </div>
   </Card>
@@ -122,7 +120,11 @@ import InputLinkDialog from './InputLinkDialog.vue'
 import AttachmentList from './AttachmentList.vue'
 import InputFileDialog from './InputFileDialog.vue'
 import ErrorState from './ErrorState.vue'
-import EmptyState from './EmptyState.vue'
+import type { TaskStatus } from '@/schemas/task.ts'
+
+defineProps<{
+  taskStatus: TaskStatus
+}>()
 
 const submissions = useSubmissionsStore()
 
