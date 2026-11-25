@@ -27,16 +27,28 @@
 
       <!-- Colleagues -->
       <div class="flex flex-col gap-4">
-        <v-alert v-if="colleagues.error" type="warning" density="compact">
-          {{ colleagues.error }}
-        </v-alert>
-        <v-progress-linear
-          v-if="colleagues.isLoading"
-          indeterminate
-          color="indigo"
+        <template v-if="colleagues.error">
+          <v-alert type="warning" density="compact" max-height="4em">
+            Error: {{ colleagues.error }}
+          </v-alert>
+          <v-btn
+            elevation="0"
+            class="bg-indigo-600 text-indigo-50"
+            text="Coba lagi"
+            prepend-icon="mdi-refresh"
+            @click="colleagues.fetchUsers"
+          />
+        </template>
+        <v-skeleton-loader
+          v-else-if="colleagues.isLoading"
+          v-for="item in 3"
+          class="bg-transparent"
+          type="list-item-avatar"
         />
+        <!-- Colleagues empty -->
+        <p v-else-if="colleagues.isEmpty">Belum ada teman di profil Solid.</p>
         <!-- Colleagues list -->
-        <div v-if="colleagues.getUsers.length > 0" class="flex flex-col gap-2">
+        <div v-else class="flex flex-col gap-2">
           <p>Rekan anda</p>
 
           <!-- Colleagues item -->
@@ -45,10 +57,7 @@
             v-bind="colleague"
           />
         </div>
-        <p v-else-if="!colleagues.isLoading && !colleagues.error">
-          Belum ada teman di profil Solid.
-        </p>
-        <invite-card />
+        <invite-card v-if="!colleagues.isLoading" />
       </div>
     </div>
 

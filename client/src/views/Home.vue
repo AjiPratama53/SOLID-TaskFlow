@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-start p-8 gap-8 w-full h-full">
+  <div class="flex p-8 gap-8 w-full h-full">
     <!-- Page Aside -->
     <Aside />
     <!-- Main page -->

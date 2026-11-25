@@ -2,7 +2,7 @@
   <!-- Header -->
   <Header title="Dasbor Tugas" subtitle="Buat dan kelola tugas-tugasmu." />
 
-  <div class="flex gap-4 w-full">
+  <div class="flex flex-1 gap-4 w-full">
     <!-- Content -->
     <div class="flex flex-2 flex-col gap-4">
       <!-- Filter -->
@@ -46,7 +46,15 @@
       <!-- <p>{{ filterStatus }} {{ filterDate }} {{ search }}</p> -->
 
       <!-- Tasks container -->
-      <div class="flex flex-col gap-2 items-start">
+      <v-alert
+        v-if="tasks.error"
+        type="warning"
+        density="default"
+        max-height="4em"
+      >
+        Error: {{ tasks.error }}
+      </v-alert>
+      <div class="flex flex-1 flex-col gap-2 items-start">
         <!-- New task -->
         <v-btn
           elevation="0"
@@ -62,8 +70,60 @@
             :action="() => console.log('Task created')"
           />
         </Card>
+
+        <!-- Task error -->
+        <div
+          v-if="tasks.error"
+          class="flex flex-1 w-full items-center justify-center"
+        >
+          <div class="flex flex-col gap-1 items-center">
+            <p>Ada masalah.</p>
+            <v-btn
+              elevation="0"
+              class="bg-indigo-600 text-indigo-50"
+              text="Coba lagi"
+              prepend-icon="mdi-refresh"
+              @click="tasks.fetchTasks"
+            />
+          </div>
+        </div>
+
+        <!-- Task loader -->
+        <Card v-else-if="tasks.isLoading" v-for="item in 3">
+          <div class="flex flex-col w-full">
+            <div class="flex justify-between items-start">
+              <v-skeleton-loader
+                class="bg-transparent m-0 w-1/5"
+                type="sentences"
+              />
+              <v-skeleton-loader
+                class="bg-transparent m-0 w-1/5"
+                type="heading"
+              />
+            </div>
+            <v-skeleton-loader class="bg-transparent w-1/2" type="heading" />
+            <v-skeleton-loader class="bg-transparent w-1/5" type="text" />
+          </div>
+        </Card>
+        <!-- Task empty -->
+        <div
+          v-else-if="tasks.isEmpty"
+          class="flex flex-1 w-full items-center justify-center"
+        >
+          <div class="flex flex-col gap-1 items-center">
+            <p>Belum ada tugas untuk dikerjakan.</p>
+            <v-btn
+              elevation="0"
+              class="bg-indigo-600 text-indigo-50"
+              text="Buat tugas baru"
+              prepend-icon="mdi-plus"
+              @click="isCreateTask = !isCreateTask"
+            />
+          </div>
+        </div>
+
         <!-- Tasks items -->
-        <TaskItem v-for="task in tasks.getTasks" v-bind="task" />
+        <TaskItem v-else v-for="task in tasks.getTasks" v-bind="task" />
       </div>
     </div>
 
@@ -84,7 +144,15 @@
 
             <!-- Incoming task items -->
             <div class="flex flex-col gap-2">
+              <p v-if="tasks.error">Ada masalah.</p>
+              <v-skeleton-loader v-else-if="tasks.isLoading" type="sentences">
+              </v-skeleton-loader>
+
+              <p v-else-if="tasks.incomingTasks.length === 0">
+                Hore, tidak ada tugas yang perlu segera diselesaikan!
+              </p>
               <div
+                v-else
                 v-for="task in tasks.incomingTasks"
                 v-bind="task"
                 class="flex flex-col gap-0.5"
@@ -116,7 +184,14 @@
 
             <!-- No deadline task items -->
             <div class="flex flex-col gap-2">
+              <p v-if="tasks.error">Ada masalah.</p>
+              <v-skeleton-loader v-else-if="tasks.isLoading" type="text">
+              </v-skeleton-loader>
+              <p v-else-if="tasks.noDeadlineTasks.length === 0">
+                Hore, tidak ada tugas!
+              </p>
               <div
+                v-else
                 v-for="task in tasks.noDeadlineTasks"
                 v-bind="task"
                 class="flex flex-col gap-0.5"

@@ -13,6 +13,7 @@ export const useUsersStore = defineStore('users', () => {
 
   // Getters
   const getUsers = computed(() => users.value)
+  const isEmpty = computed(() => users.value.length === 0)
 
   // Actions
   async function fetchUsers() {
@@ -27,6 +28,7 @@ export const useUsersStore = defineStore('users', () => {
 
     try {
       const result = await api.user.get(session.webId)
+      // throw new Error('Uji error state')
       users.value = result.users
 
       if (result.failedCount > 0) {
@@ -72,6 +74,7 @@ export const useUsersStore = defineStore('users', () => {
   return {
     getUsers,
     error,
+    isEmpty,
     isLoading,
     isAdding,
     fetchUsers,
