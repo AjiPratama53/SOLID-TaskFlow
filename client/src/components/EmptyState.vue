@@ -4,6 +4,7 @@
 
     <p>{{ text }}</p>
     <v-btn
+      v-if="hasAction"
       elevation="0"
       class="text-indigo-600"
       :text="buttonText ?? ''"
@@ -17,8 +18,9 @@
 <script setup lang="ts">
 defineEmits(['proceed'])
 defineProps<{
-  prependIcon: string
+  prependIcon?: string
   text: string
-  buttonText: string
+  buttonText?: string
+  hasAction?: boolean
 }>()
 </script>

@@ -70,14 +70,38 @@
         <h3>Riwayat Pengumpulan</h3>
       </div>
 
+      <!-- Error alert -->
+      <v-alert
+        v-if="submissions.error"
+        type="warning"
+        density="default"
+        max-height="4em"
+      >
+        Error: {{ submissions.error }}
+      </v-alert>
+
+      <!-- Submissions - error -->
+      <ErrorState
+        v-if="submissions.error"
+        @retry="submissions.fetchSubmissions"
+      />
+      <!-- Submissions - loading -->
+      <v-skeleton-loader
+        v-else-if="submissions.isLoading"
+        v-for="item in 3"
+        type="sentences"
+      />
+      <!-- Submissions - empty -->
+      <p v-else-if="submissions.isEmpty">Belum ada pengumpulan.</p>
+
       <!-- History -->
-      <div class="flex gap-2">
+      <div v-else class="flex gap-2">
         <!-- Timeline -->
         <div class="bg-gray-200 w-0.5 rounded-2xl" />
 
         <!-- History container -->
         <div class="flex flex-col gap-4 w-full">
-          <!-- History item -->
+          <!-- Submissions - content -->
           <SubmissionItem
             v-for="submission in submissions.getSubmissions"
             v-bind="submission"
@@ -91,12 +115,14 @@
 <script setup lang="ts">
 import SubmissionItem from '@/components/SubmissionItem.vue'
 import { useSubmissionsStore } from '@/stores/submissions'
-import { onUnmounted, ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import Card from './Card.vue'
 import CriticalDialog from './CriticalDialog.vue'
 import InputLinkDialog from './InputLinkDialog.vue'
 import AttachmentList from './AttachmentList.vue'
 import InputFileDialog from './InputFileDialog.vue'
+import ErrorState from './ErrorState.vue'
+import EmptyState from './EmptyState.vue'
 
 const submissions = useSubmissionsStore()
 
@@ -121,7 +147,5 @@ function handleSubmit() {
   })
 }
 
-onUnmounted(() => {
-  submissions.fetchSubmissions()
-})
+onMounted(() => submissions.fetchSubmissions())
 </script>

@@ -46,6 +46,8 @@
       <!-- <p>{{ filterStatus }} {{ filterDate }} {{ search }}</p> -->
 
       <!-- Tasks container -->
+
+      <!-- Error alert -->
       <v-alert
         v-if="tasks.error"
         type="warning"
@@ -54,6 +56,7 @@
       >
         Error: {{ tasks.error }}
       </v-alert>
+
       <div class="flex flex-1 flex-col gap-2 items-start">
         <!-- New task -->
         <v-btn
