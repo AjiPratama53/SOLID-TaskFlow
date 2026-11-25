@@ -17,82 +17,115 @@
   <div class="flex gap-4 flex-1 w-full">
     <!-- Content -->
     <div class="flex flex-2 flex-col gap-4">
-      <Card class="flex flex-col gap-4">
-        <!-- Task header -->
-        <div class="flex justify-between items-start">
-          <h5>Dikirim oleh <strong>[proposer.name]</strong></h5>
+      <v-alert v-if="error" type="warning" density="default" max-height="4em">
+        Error: {{ error }}
+      </v-alert>
 
-          <!-- Task status -->
-          <h4
-            :class="[
-              'px-4 py-0.5 rounded-2xl',
-              statusClasses.background200,
-              statusClasses.text800,
-            ]"
-          >
-            • {{ statusMessage }}
-          </h4>
+      <Card>
+        <!-- Submission - error -->
+        <ErrorState v-if="error" @retry="loadSubmission" />
+
+        <!-- Submission - loading -->
+        <div v-else-if="isLoading" class="flex flex-col w-full">
+          <div class="flex justify-between items-start">
+            <v-skeleton-loader class="bg-transparent m-0 w-1/5" type="text" />
+            <v-skeleton-loader
+              class="bg-transparent m-0 w-1/5"
+              type="heading"
+            />
+          </div>
+          <v-skeleton-loader class="bg-transparent w-1/2" type="text" />
+          <v-skeleton-loader class="bg-transparent w-1/5" type="sentences" />
         </div>
 
-        <!-- Title -->
-        <!-- <h2>{{ submission. }}</h2> -->
+        <!-- Submission - empty -->
+        <EmptyState
+          v-else-if="!submission"
+          text="Pengumpulan tidak ditemukan"
+          has-action
+          prepend-icon="mdi-arrow-left"
+          button-text="Kembali"
+          @proceed="$router.back"
+        />
 
-        <!-- Deadline -->
-        <div class="flex gap-1">
-          <v-icon icon="mdi-clock-outline" />
-          <span class="flex gap-1 items-center">
-            <p>Waktu Pengumpulan: <strong>Tepat Waktu</strong></p>
-            <h5>(Diserahkan pada {{ formatDateTime(submission?.date) }})</h5>
-          </span>
-        </div>
-
-        <!-- Description -->
-        <!-- <p>
-          Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean
-          commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus
-          et.
-        </p> -->
-
-        <!-- Attachments -->
-        <div class="flex flex-col gap-2">
+        <!-- Submission - content -->
+        <div v-else class="flex flex-col gap-4">
           <!-- Header -->
-          <div class="flex items-center justify-between">
-            <div class="flex flex-col">
-              <div class="flex items-center gap-1">
-                <v-icon icon="mdi-text" class="text-indigo-600" />
-                <h3>Daftar Lampiran</h3>
-              </div>
-              <h5>{{ files.length + links.length }} lampiran</h5>
-            </div>
-            <!-- <v-btn
-              class="text-indigo-600"
-              prepend-icon="mdi-check-underline"
-              text="Unduh semua (.zip)"
-              variant="text"
-            /> -->
+          <div class="flex justify-between items-start">
+            <h5>Dikirim oleh <strong>[proposer.name]</strong></h5>
+
+            <!-- status -->
+            <h4
+              :class="[
+                'px-4 py-0.5 rounded-2xl',
+                statusClasses.background200,
+                statusClasses.text800,
+              ]"
+            >
+              • {{ statusMessage }}
+            </h4>
           </div>
 
-          <!-- Attachment list -->
-          <AttachmentList
-            v-if="files.length > 0 || links.length > 0"
-            :files
-            :links
-            downloadable
-          />
-          <!-- <v-btn
-            >Link
-            <InputLinkDialog activator="parent" v-model="links" />
-          </v-btn>
-          <v-btn
-            >File
-            <InputFileDialog activator="parent" v-model="files" />
-          </v-btn> -->
+          <!-- Title -->
+          <!-- <h2>{{ submission. }}</h2> -->
+
+          <!-- Deadline -->
+          <div class="flex gap-1">
+            <v-icon icon="mdi-clock-outline" />
+            <span class="flex gap-1 items-center">
+              <p>Waktu Pengumpulan: <strong>Tepat Waktu</strong></p>
+              <h5>(Diserahkan pada {{ formatDateTime(submission?.date) }})</h5>
+            </span>
+          </div>
+
+          <!-- Description -->
+          <!-- <p>
+             Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean
+             commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus
+             et.
+           </p> -->
+
+          <!-- Attachments -->
+          <div class="flex flex-col gap-2">
+            <!-- Header -->
+            <div class="flex items-center justify-between">
+              <div class="flex flex-col">
+                <div class="flex items-center gap-1">
+                  <v-icon icon="mdi-text" class="text-indigo-600" />
+                  <h3>Daftar Lampiran</h3>
+                </div>
+                <h5>{{ files.length + links.length }} lampiran</h5>
+              </div>
+              <!-- <v-btn
+                 class="text-indigo-600"
+                 prepend-icon="mdi-check-underline"
+                 text="Unduh semua (.zip)"
+                 variant="text"
+               /> -->
+            </div>
+
+            <!-- Attachment list -->
+            <AttachmentList
+              v-if="files.length > 0 || links.length > 0"
+              :files
+              :links
+              downloadable
+            />
+            <!-- <v-btn
+               >Link
+               <InputLinkDialog activator="parent" v-model="links" />
+             </v-btn>
+             <v-btn
+               >File
+               <InputFileDialog activator="parent" v-model="files" />
+             </v-btn> -->
+          </div>
         </div>
       </Card>
     </div>
 
     <!-- Side panel -->
-    <div class="flex flex-1 flex-col gap-4">
+    <div v-if="submission" class="flex flex-1 flex-col gap-4">
       <!-- Verification card -->
       <Card>
         <div class="flex flex-col gap-4">
@@ -168,6 +201,8 @@ import { submissions } from '@/.local/submissions'
 import AttachmentList from '@/components/AttachmentList.vue'
 import Card from '@/components/Card.vue'
 import CriticalDialog from '@/components/CriticalDialog.vue'
+import EmptyState from '@/components/EmptyState.vue'
+import ErrorState from '@/components/ErrorState.vue'
 import Header from '@/components/Header.vue'
 import InputFileDialog from '@/components/InputFileDialog.vue'
 import InputLinkDialog from '@/components/InputLinkDialog.vue'
@@ -176,11 +211,15 @@ import {
   submissionStatusMessage,
   type Submission,
 } from '@/schemas/submission'
+import { api } from '@/services/api'
 import { formatDateTime } from '@/utils/formatDateTime'
 import { statusColorClasses } from '@/utils/statusColorClasses'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
-const submission = ref<Submission>(submissions[0])
+const submission = ref<Submission | null>(null)
+const error = ref<string | null>(null)
+const isLoading = ref(false)
+
 const files = ref<File[]>([])
 const links = ref<string[]>([])
 
@@ -190,6 +229,28 @@ const statusColor =
   submissionStatusColor[submission.value?.status ?? 'pending_approval']
 const statusClasses = statusColorClasses[statusColor]
 
+async function loadSubmission() {
+  isLoading.value = true
+  error.value = null
+
+  try {
+    // API call here
+    await api.submission.get()
+
+    // throw new Error('Uji Error State')
+    // submission.value = {
+    //   id: 'sbm_001',
+    //   date: new Date(),
+    //   status: 'pending_approval',
+    // }
+  } catch (err) {
+    error.value =
+      err instanceof Error ? err.message : 'Gagal memuat data dari Solid Pod.'
+  } finally {
+    isLoading.value = false
+  }
+}
+
 function handleAccept() {
   alert('Accepted')
 }
@@ -197,4 +258,6 @@ function handleAccept() {
 function handleReject() {
   alert('Rejected')
 }
+
+onMounted(() => loadSubmission())
 </script>
