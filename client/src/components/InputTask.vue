@@ -32,6 +32,7 @@
 
     <!-- Attachments -->
     <AttachmentList v-model:files="files" v-model:links="links" removable />
+
     <!-- Actions -->
     <div class="flex w-full items-end justify-between">
       <div class="flex gap-1">
@@ -78,22 +79,20 @@
 import DateTimePicker from './DateTimePicker.vue'
 import InputLinkDialog from './InputLinkDialog.vue'
 import { useTasksStore } from '@/stores/tasks.ts'
-import { ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import InputFileDialog from './InputFileDialog.vue'
 import AttachmentList from './AttachmentList.vue'
-import type { Task } from '@/schemas/task.ts'
+import type { InputTask, Task } from '@/schemas/task.ts'
 
 const props = defineProps<{
   isEdit?: boolean
   task?: Task
 }>()
 
-const task = defineModel<Task>('task')
-
 // Input task data
-const title = ref('')
-const description = ref('')
-const deadline = ref('')
+const title = ref<string>('')
+const description = ref<string>('')
+const deadline = ref<string>('')
 
 const files = ref<File[]>([])
 const links = ref<string[]>([])
@@ -111,10 +110,30 @@ function handlePost() {
   )
     return
 
-  tasks.postTask({
+  const newTask: InputTask = {
     title: title.value,
     description: description.value,
     deadline: deadline.value !== '' ? new Date(deadline.value) : undefined,
-  })
+  }
+
+  if (props.task && props.isEdit) {
+    tasks.editTask(props.task.id, newTask)
+  } else {
+    tasks.postTask(newTask)
+  }
 }
+
+onMounted(() => {
+  if (!props.isEdit || !props.task) return
+
+  title.value = props.task.title
+  description.value = props.task.description
+  deadline.value = props.task.deadline?.toString() ?? ''
+})
+
+onUnmounted(() => {
+  title.value = ''
+  description.value = ''
+  deadline.value = ''
+})
 </script>

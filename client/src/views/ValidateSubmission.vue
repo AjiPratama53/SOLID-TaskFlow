@@ -1,7 +1,9 @@
 <template>
   <!-- Back button -->
   <v-btn
-    class="bg-indigo-600 text-indigo-50"
+    class="text-indigo-600"
+    variant="text"
+    density="compact"
     elevation="0"
     prepend-icon="mdi-arrow-left"
     text="Kembali"
@@ -238,11 +240,11 @@ async function loadSubmission() {
     await api.submission.get()
 
     // throw new Error('Uji Error State')
-    // submission.value = {
-    //   id: 'sbm_001',
-    //   date: new Date(),
-    //   status: 'pending_approval',
-    // }
+    submission.value = {
+      id: 'sbm_001',
+      date: new Date(),
+      status: 'pending_approval',
+    }
   } catch (err) {
     error.value =
       err instanceof Error ? err.message : 'Gagal memuat data dari Solid Pod.'

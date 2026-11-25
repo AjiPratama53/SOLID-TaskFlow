@@ -1,7 +1,9 @@
 <template>
   <!-- Back button -->
   <v-btn
-    class="bg-indigo-600 text-indigo-50"
+    class="text-indigo-600"
+    variant="text"
+    density="compact"
     elevation="0"
     prepend-icon="mdi-arrow-left"
     text="Kembali"
@@ -83,6 +85,7 @@
           <!-- Edit field -->
           <InputTask
             v-if="isEditing"
+            :task
             is-edit
             @close="isEditing = false"
             :action="() => console.log('Edited')"
@@ -264,8 +267,10 @@ const files = ref<File[]>([])
 const links = ref<string[]>([])
 
 const statusMessage = ref('')
-const statusColor = ref('')
-const statusClasses = ref('')
+const statusColor = ref<keyof typeof statusColorClasses>(
+  taskStatusColor.proposed,
+)
+const statusClasses = ref(statusColorClasses[statusColor.value])
 
 async function loadTask() {
   isLoading.value = true
@@ -282,9 +287,10 @@ async function loadTask() {
       userId: 'usr_002',
       proposerId: 'usr_002',
       createdAt: new Date(),
-      status: 'proposed',
+      status: 'in_progress',
       title: 'Testing',
       description: 'blablabla',
+      deadline: new Date(),
     }
 
     statusMessage.value = taskStatusMessage[task.value?.status || 'proposed']

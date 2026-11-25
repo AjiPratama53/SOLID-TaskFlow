@@ -23,10 +23,10 @@ export const useSubmissionsStore = defineStore('submissions', () => {
     try {
       const data = await api.submission.get()
 
-      //   throw new Error('Uji Error State')
+      // throw new Error('Uji Error State')
 
-      //   if (!data) return
-      //   submissions.value = [...data]
+      if (!data) return
+      submissions.value = [...data]
     } catch (err) {
       error.value =
         err instanceof Error ? err.message : 'Gagal memuat data dari Solid Pod.'

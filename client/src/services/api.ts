@@ -119,7 +119,9 @@ export const api = {
 
           return {
             id: friendWebId,
-            name: friendProfile.name ?? friendWebId,
+            name:
+              friendProfile.name ??
+              friendWebId.replace('https://', '').split('.')[0],
             ...(friendProfile.avatarUrl
               ? { avatar: friendProfile.avatarUrl }
               : {}),

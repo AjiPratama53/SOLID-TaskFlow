@@ -90,7 +90,9 @@
         type="sentences"
       />
       <!-- Submissions - empty -->
-      <p v-else-if="submissions.isEmpty">Belum ada pengumpulan.</p>
+      <p v-else-if="submissions.isEmpty">
+        Belum ada pengumpulan untuk tugas ini.
+      </p>
 
       <!-- History -->
       <div v-else class="flex gap-2">
