@@ -28,7 +28,7 @@
           hide-details
           density="compact"
           prepend-icon=""
-          v-model="filterDate"
+          v-model="filterDeadline"
         />
 
         <!-- Search -->
@@ -105,10 +105,21 @@
           class="flex flex-1 w-full items-center justify-center"
         >
           <EmptyState
+            v-if="!filterStatus && !filterDeadline && !search"
             prepend-icon="mdi-plus"
             text="Belum ada tugas untuk dikerjakan."
             button-text="Buat tugas baru"
             @proceed="isCreateTask = !isCreateTask"
+            has-action
+          />
+
+          <EmptyState
+            v-else
+            prepend-icon=""
+            text="Tugas tidak ditemukan."
+            has-action
+            button-text="Hapus filter"
+            @proceed="clearFilter"
           />
         </div>
 
@@ -128,22 +139,23 @@
               <div
                 class="flex px-2 py-0.5 rounded-2xl gap-1 bg-amber-200 text-amber-800 text-sm"
               >
-                {{ tasks.incomingTasks.length }} Tugas
+                {{ incomingTasks.length }} Tugas
               </div>
             </div>
 
             <!-- Incoming task items -->
             <div class="flex flex-col gap-2">
-              <p v-if="tasks.error">Ada masalah.</p>
-              <v-skeleton-loader v-else-if="tasks.isLoading" type="sentences">
+              <ErrorState v-if="error" @retry="loadSideTasks" />
+              <v-skeleton-loader v-else-if="isLoading" type="sentences">
               </v-skeleton-loader>
 
-              <p v-else-if="tasks.incomingTasks.length === 0">
+              <p v-else-if="incomingTasks.length === 0">
                 Hore, tidak ada tugas yang perlu segera diselesaikan!
               </p>
+
               <div
                 v-else
-                v-for="task in tasks.incomingTasks"
+                v-for="task in incomingTasks"
                 v-bind="task"
                 class="flex flex-col gap-0.5"
               >
@@ -168,21 +180,21 @@
               <div
                 class="flex px-2 py-0.5 rounded-2xl gap-1 bg-amber-200 text-amber-800 text-sm"
               >
-                {{ tasks.noDeadlineTasks.length }} Tugas
+                {{ noDeadlineTasks.length }} Tugas
               </div>
             </div>
 
             <!-- No deadline task items -->
             <div class="flex flex-col gap-2">
-              <p v-if="tasks.error">Ada masalah.</p>
-              <v-skeleton-loader v-else-if="tasks.isLoading" type="text">
+              <ErrorState v-if="error" @retry="loadSideTasks" />
+              <v-skeleton-loader v-else-if="isLoading" type="text">
               </v-skeleton-loader>
-              <p v-else-if="tasks.noDeadlineTasks.length === 0">
+              <p v-else-if="noDeadlineTasks.length === 0">
                 Hore, tidak ada tugas!
               </p>
               <div
                 v-else
-                v-for="task in tasks.noDeadlineTasks"
+                v-for="task in noDeadlineTasks"
                 v-bind="task"
                 class="flex flex-col gap-0.5"
               >
@@ -207,13 +219,20 @@ import ErrorState from '@/components/ErrorState.vue'
 import Header from '@/components/Header.vue'
 import InputTask from '@/components/InputTask.vue'
 import TaskItem from '@/components/TaskItem.vue'
+import type { Task } from '@/schemas/task'
 import { useTasksStore } from '@/stores/tasks'
 import { formatDateTime } from '@/utils/formatDateTime'
-import { onMounted, ref, shallowRef } from 'vue'
+import debounce from 'debounce'
+import { onMounted, ref, shallowRef, watch } from 'vue'
 
+const isLoading = ref(false)
 const isCreateTask = ref(false)
 
 const tasks = useTasksStore()
+const incomingTasks = ref<Task[]>([])
+const noDeadlineTasks = ref<Task[]>([])
+
+const error = ref<string | null>(null)
 
 // Filter
 const filterStatusItems = [
@@ -225,8 +244,44 @@ const filterStatusItems = [
 ]
 
 const filterStatus = shallowRef()
-const filterDate = ref('')
+const filterDeadline = ref('')
 const search = ref('')
 
-onMounted(() => tasks.fetchTasks())
+function clearFilter() {
+  filterStatus.value = null
+  filterDeadline.value = ''
+  search.value = ''
+}
+
+async function loadSideTasks() {
+  isLoading.value = true
+  error.value = null
+
+  try {
+    incomingTasks.value = await tasks.fetchIncomingTasks()
+    noDeadlineTasks.value = await tasks.fetchNoDeadlineTasks()
+  } catch (err) {
+    error.value =
+      err instanceof Error ? err.message : 'Gagal memuat data dari Solid Pod.'
+  } finally {
+    isLoading.value = false
+  }
+}
+
+watch(
+  [filterStatus, filterDeadline, search],
+  debounce(
+    async () =>
+      await tasks.fetchTasks({
+        status: filterStatus.value,
+        deadlineTo: new Date(filterDeadline.value),
+        query: search.value,
+      }),
+  ),
+)
+
+onMounted(() => {
+  tasks.fetchTasks({})
+  loadSideTasks()
+})
 </script>

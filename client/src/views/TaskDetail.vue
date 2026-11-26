@@ -253,7 +253,7 @@ import { useRouter } from 'vue-router'
 const isEditing = ref(false)
 const isCreateSubtask = ref(false)
 
-const route = useRouter()
+const router = useRouter()
 const error = ref<string | null>(null)
 const isLoading = ref(false)
 const subTasks = useTasksStore()
@@ -278,8 +278,8 @@ async function loadTask() {
 
   try {
     // API call here
-    await api.task.get()
-    await subTasks.fetchTasks()
+    const data = await api.task.get({})
+    await subTasks.fetchTasks({})
 
     // throw new Error('Uji Error State')
 

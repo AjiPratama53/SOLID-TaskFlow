@@ -5,7 +5,7 @@ import { tasks } from '@/.local/tasks'
 import { submissions } from '@/.local/submissions'
 
 import type { User } from '@/schemas/user'
-import type { InputTask, Task } from '@/schemas/task'
+import type { InputTask, Task, TaskQuery, TaskStatus } from '@/schemas/task'
 import type { Submission } from '@/schemas/submission'
 import type { SolidUserProfile } from '@/schemas/session'
 
@@ -185,11 +185,46 @@ export const api = {
   },
 
   task: {
-    get: async () => {
+    get: async (filter: TaskQuery): Promise<Task[]> => {
       // GET tasks
       try {
         await new Promise((resolve) => setTimeout(resolve, 3000))
-        return tasks
+
+        let data = tasks
+        const { id, status, deadlineFrom, deadlineTo, query, limit } = filter
+
+        // Get by id
+        if (id) data = data.filter((task) => task.id === id)
+
+        // Filter by status
+        if (status) data = data.filter((task) => task.status === status)
+
+        // No deadline
+        if (deadlineFrom === null && deadlineTo === null)
+          data = data.filter((task) => !task.deadline)
+
+        // Deadline from
+        if (deadlineFrom)
+          data = data.filter(
+            (task) =>
+              task.deadline &&
+              new Date(task.deadline) >= new Date(deadlineFrom),
+          )
+
+        // Deadline until
+        if (deadlineTo)
+          data = data.filter(
+            (task) =>
+              task.deadline && new Date(task.deadline) <= new Date(deadlineTo),
+          )
+
+        // Seaech query
+        if (query) data = data.filter((task) => task.title.includes(query))
+
+        // Limit
+        if (limit) data = data.slice(0, limit)
+
+        return data
       } catch (error) {
         throw error
       }

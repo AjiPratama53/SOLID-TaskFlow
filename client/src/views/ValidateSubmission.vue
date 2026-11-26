@@ -206,7 +206,6 @@
 </template>
 
 <script setup lang="ts">
-import { submissions } from '@/.local/submissions'
 import AttachmentList from '@/components/AttachmentList.vue'
 import Card from '@/components/Card.vue'
 import CriticalDialog from '@/components/CriticalDialog.vue'

@@ -21,6 +21,15 @@ export interface InputTask {
   description: string
 }
 
+export interface TaskQuery {
+  id?: string
+  status?: TaskStatus
+  deadlineFrom?: Date | null
+  deadlineTo?: Date | null
+  query?: string
+  limit?: number
+}
+
 export const taskStatusColor: Record<TaskStatus, StatusColor> = {
   proposed: 'gray',
   in_progress: 'indigo',
