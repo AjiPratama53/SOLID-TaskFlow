@@ -61,7 +61,8 @@
           <div class="flex justify-between items-start">
             <div class="flex flex-col">
               <h5>
-                Diposting oleh <strong>{{ task?.proposerId }}</strong>
+                Diposting oleh
+                <strong>{{ isOwner ? 'Anda' : proposer?.name }}</strong>
               </h5>
               <h5>
                 {{ formatDate(task?.createdAt)
@@ -84,7 +85,7 @@
           </div>
           <!-- Edit field -->
           <InputTask
-            v-if="isEditing"
+            v-if="isOwner && isEditing"
             :task
             is-edit
             @close="isEditing = false"
@@ -97,6 +98,11 @@
             <div v class="flex items-center justify-between gap-4">
               <h2>{{ task?.title }}</h2>
               <v-btn
+                v-if="
+                  isOwner &&
+                  (task?.status === 'proposed' ||
+                    task?.status === 'in_progress')
+                "
                 icon="mdi-square-edit-outline"
                 variant="text"
                 density="compact"
@@ -143,7 +149,7 @@
             <div class="flex flex-col items-start gap-2 w-full">
               <!-- New subtask -->
               <v-btn
-                v-if="task.status = 'in_progress'"
+                v-if="task.status === 'in_progress'"
                 elevation="0"
                 class="bg-indigo-600 text-indigo-50"
                 text="Subtugas baru"
@@ -243,9 +249,11 @@ import InputTask from '@/components/InputTask.vue'
 import SubmissionPanel from '@/components/SubmissionPanel.vue'
 import SubtaskItem from '@/components/SubtaskItem.vue'
 import { taskStatusColor, taskStatusMessage, type Task } from '@/schemas/task'
+import type { User } from '@/schemas/user'
 import { api } from '@/services/api'
 import { useSessionStore } from '@/stores/session'
 import { useTasksStore } from '@/stores/tasks'
+import { useUsersStore } from '@/stores/users'
 import { formatDate } from '@/utils/formatDateTime'
 import { statusColorClasses } from '@/utils/statusColorClasses'
 import { computed, onMounted, ref, watch } from 'vue'
@@ -276,6 +284,9 @@ const statusColor = ref<keyof typeof statusColorClasses>(
 const statusClasses = ref(statusColorClasses[statusColor.value])
 
 const session = useSessionStore()
+const users = useUsersStore()
+
+const proposer = ref<User>()
 const isOwner = ref(false)
 const isExecutor = ref(false)
 
@@ -303,6 +314,7 @@ async function loadTask() {
     //   deadline: new Date(),
     // }
 
+    proposer.value = users.getUser(task.value.proposerId)
     isOwner.value = session.webId === task.value.proposerId
     isExecutor.value = session.webId === task.value.userId
 

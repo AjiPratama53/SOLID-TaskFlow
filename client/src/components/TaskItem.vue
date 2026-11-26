@@ -4,7 +4,8 @@
     <div class="flex justify-between items-start">
       <div class="flex flex-col">
         <h5>
-          Diposting oleh <strong>{{ proposerId }}</strong>
+          Diposting oleh
+          <strong>{{ isOwner ? 'Anda' : proposer?.name }}</strong>
         </h5>
         <h5>
           {{ formatDate(createdAt)
@@ -29,7 +30,7 @@
       <h2>{{ title }}</h2>
     </a>
 
-    <div class="flex justify-between gap-8">
+    <div class="flex justify-between items-end gap-8">
       <!-- Deadline -->
       <div class="flex gap-1">
         <v-icon icon="mdi-clock-outline" />
@@ -81,12 +82,13 @@
           class="bg-yellow-600 text-yellow-50"
           elevation="0"
           rounded
-          @click="$router.push(`/submissions/${props.submissionId}`)"
+          @click="$router.push(`/submissions/${submissionId}`)"
           >Verifikasi
         </v-btn>
       </div>
     </div>
   </Card>
+  <p>{{ submissionId }}</p>
 </template>
 
 <script setup lang="ts">
@@ -101,13 +103,24 @@ import { formatDate, formatDateTime } from '@/utils/formatDateTime.ts'
 import UserItem from './UserItem.vue'
 import DelegateDialog from './DelegateDialog.vue'
 import { useSessionStore } from '@/stores/session.ts'
+import { onMounted, ref } from 'vue'
+import type { User } from '@/schemas/user.ts'
+import { useUsersStore } from '@/stores/users.ts'
+
+const props = defineProps<Task>()
 
 const session = useSessionStore()
-const props = defineProps<Task>()
+const users = useUsersStore()
+
+const proposer = ref<User>()
 
 const isOwner = props.proposerId === session.webId
 
 const statusMessage = taskStatusMessage[props.status]
 const statusColor = taskStatusColor[props.status]
 const statusClasses = statusColorClasses[statusColor]
+
+onMounted(() => {
+  proposer.value = users.getUser(props.proposerId)
+})
 </script>

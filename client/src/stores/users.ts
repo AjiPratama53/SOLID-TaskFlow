@@ -16,6 +16,10 @@ export const useUsersStore = defineStore('users', () => {
   const isEmpty = computed(() => users.value.length === 0)
 
   // Actions
+  function getUser(id: string) {
+    return users.value.find((u) => u.id === id)
+  }
+
   async function fetchUsers() {
     const session = useSessionStore()
     if (!session.isAuthenticated || !session.webId) {
@@ -77,6 +81,7 @@ export const useUsersStore = defineStore('users', () => {
     isEmpty,
     isLoading,
     isAdding,
+    getUser,
     fetchUsers,
     post,
   }
