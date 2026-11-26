@@ -35,8 +35,12 @@
       <!-- detail & action -->
       <div class="flex gap-1 items-center">
         <!-- colleagues -->
-        <card class="flex bg-white pl-1 pr-4 py-1 rounded-4xl" elevation="0">
-          <UserItem v-bind="{ id: 'usr_001', name: 'Cahyo' }" />
+        <card
+          v-if="userId"
+          class="flex bg-white pl-1 pr-4 py-1 rounded-4xl"
+          elevation="0"
+        >
+          <UserItem v-bind="users.getUser(userId)" />
         </card>
 
         <!-- Delegate -->
@@ -71,6 +75,17 @@
           @click="$router.push(`/submissions/${props.submissionId}`)"
           >Verifikasi
         </v-btn>
+
+        <!-- Review -->
+        <v-btn
+          v-if="status === 'completed'"
+          prepend-icon="mdi-file-document-check-outline"
+          class="bg-green-600 text-green-50"
+          elevation="0"
+          rounded
+          @click="$router.push(`/submissions/${props.submissionId}`)"
+          >Review
+        </v-btn>
       </div>
     </div>
   </v-card>
@@ -82,9 +97,12 @@ import { formatDateTime } from '@/utils/formatDateTime'
 import { statusColorClasses } from '@/utils/statusColorClasses'
 import DelegateDialog from './DelegateDialog.vue'
 import UserItem from './UserItem.vue'
+import { useUsersStore } from '@/stores/users.ts'
 
 const props = defineProps<Task>()
 const statusMessage = taskStatusMessage[props.status]
 const statusColor = taskStatusColor[props.status]
 const statusClasses = statusColorClasses[statusColor]
+
+const users = useUsersStore()
 </script>

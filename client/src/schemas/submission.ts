@@ -6,6 +6,8 @@ export type SubmissionStatus =
 
 export interface Submission {
   id: string
+  submitterId: string
+  taskDeadline?: Date
   date: Date
   status: SubmissionStatus
   comment?: string

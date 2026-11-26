@@ -133,16 +133,6 @@
       <card>
         <ErrorState v-if="error" @retry="loadSideTasks" />
 
-        <v-skeleton-loader v-else-if="isLoading">
-          <v-skeleton-loader type="heading"> </v-skeleton-loader>
-          <v-skeleton-loader type="sentences" v-for="item in 3">
-          </v-skeleton-loader>
-          <v-skeleton-loader type="divider"> </v-skeleton-loader>
-          <v-skeleton-loader type="heading"> </v-skeleton-loader>
-          <v-skeleton-loader type="sentences" v-for="item in 3">
-          </v-skeleton-loader>
-        </v-skeleton-loader>
-
         <div v-else class="flex flex-col gap-6">
           <!-- Incoming tasks -->
           <div class="flex flex-col gap-4">
@@ -157,7 +147,13 @@
 
             <!-- Incoming task items -->
             <div class="flex flex-col gap-2">
-              <p v-if="incomingTasks.length === 0">
+              <v-skeleton-loader
+                v-if="isLoading"
+                v-for="item in 3"
+                type="sentences"
+              >
+              </v-skeleton-loader>
+              <p v-else-if="incomingTasks.length === 0">
                 Hore, tidak ada tugas yang perlu segera diselesaikan!
               </p>
 
@@ -194,7 +190,16 @@
 
             <!-- No deadline task items -->
             <div class="flex flex-col gap-2">
-              <p v-if="noDeadlineTasks.length === 0">Hore, tidak ada tugas!</p>
+              <v-skeleton-loader
+                v-if="isLoading"
+                v-for="item in 3"
+                type="sentences"
+              >
+              </v-skeleton-loader>
+
+              <p v-else-if="noDeadlineTasks.length === 0">
+                Hore, tidak ada tugas!
+              </p>
               <div
                 v-else
                 v-for="task in noDeadlineTasks"

@@ -54,7 +54,10 @@
         <div v-else class="flex flex-col gap-4">
           <!-- Header -->
           <div class="flex justify-between items-start">
-            <h5>Dikirim oleh <strong>[proposer.name]</strong></h5>
+            <h5>
+              Dikirim oleh
+              <strong>{{ users.getUser(submission.submitterId)?.name }}</strong>
+            </h5>
 
             <!-- status -->
             <h4
@@ -75,7 +78,10 @@
           <div class="flex gap-1">
             <v-icon icon="mdi-clock-outline" />
             <span class="flex gap-1 items-center">
-              <p>Waktu Pengumpulan: <strong>Tepat Waktu</strong></p>
+              <p>
+                Waktu Pengumpulan:
+                <strong>{{ isLate ? 'Terlambat' : 'Tepat waktu' }}</strong>
+              </p>
               <h5>(Diserahkan pada {{ formatDateTime(submission?.date) }})</h5>
             </span>
           </div>
@@ -160,7 +166,11 @@
               clearable
               placeholder="Tulis catatan review atau instruksi revisi"
               variant="outlined"
+              v-model="comment"
             />
+            <v-alert v-if="isInvalid" type="error">
+              Beri komentar jika pengumpulan ditolak
+            </v-alert>
           </div>
 
           <!-- Actions -->
@@ -220,6 +230,7 @@ import {
   type Submission,
 } from '@/schemas/submission'
 import { api } from '@/services/api'
+import { useUsersStore } from '@/stores/users'
 import { formatDateTime } from '@/utils/formatDateTime'
 import { statusColorClasses } from '@/utils/statusColorClasses'
 import { computed, onMounted, ref } from 'vue'
@@ -234,16 +245,26 @@ const submissionId = computed<string | undefined>(() => {
 
 const submission = ref<Submission | null>(null)
 const error = ref<string | null>(null)
+const isInvalid = ref(false)
 const isLoading = ref(false)
 
 const files = ref<File[]>([])
 const links = ref<string[]>([])
+const comment = ref('')
+
+const users = useUsersStore()
 
 const statusMessage = ref('')
 const statusColor = ref<keyof typeof statusColorClasses>(
   submissionStatusColor.pending_approval,
 )
 const statusClasses = ref(statusColorClasses[statusColor.value])
+
+const isLate = computed(
+  () =>
+    submission.value?.taskDeadline &&
+    submission.value.date > submission.value.taskDeadline,
+)
 
 async function loadSubmission() {
   isLoading.value = true
@@ -275,11 +296,21 @@ async function loadSubmission() {
 }
 
 function handleAccept() {
+  isInvalid.value = false
   alert('Accepted')
+
+  comment.value = ''
 }
 
 function handleReject() {
+  if (comment.value === '') {
+    isInvalid.value = true
+    return
+  }
+
   alert('Rejected')
+
+  comment.value = ''
 }
 
 onMounted(() => loadSubmission())

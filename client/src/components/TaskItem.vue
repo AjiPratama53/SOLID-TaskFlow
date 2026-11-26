@@ -5,7 +5,9 @@
       <div class="flex flex-col">
         <h5>
           Diposting oleh
-          <strong>{{ isOwner ? 'Anda' : proposer?.name }}</strong>
+          <strong>{{
+            isOwner ? 'Anda' : users.getUser(proposerId)?.name
+          }}</strong>
         </h5>
         <h5>
           {{ formatDate(createdAt)
@@ -44,13 +46,17 @@
       <div v-if="isOwner" class="flex gap-1 items-center">
         <!-- colleagues -->
         <card
+          v-if="userId"
           :class="[
             'flex pl-1 pr-4 py-1 rounded-4xl',
             statusClasses.background200,
           ]"
           elevation="0"
         >
-          <UserItem v-bind="{ id: 'usr_001', name: 'Cahyo' }" />
+          <UserItem
+            v-if="userId"
+            v-bind="users.getUser(userId) ?? { id: '', name: '' }"
+          />
         </card>
 
         <!-- Delegate -->
@@ -85,10 +91,20 @@
           @click="$router.push(`/submissions/${submissionId}`)"
           >Verifikasi
         </v-btn>
+
+        <!-- Review -->
+        <v-btn
+          v-if="props.status === 'completed'"
+          prepend-icon="mdi-file-document-check-outline"
+          class="bg-green-600 text-green-50"
+          elevation="0"
+          rounded
+          @click="$router.push(`/submissions/${submissionId}`)"
+          >Review
+        </v-btn>
       </div>
     </div>
   </Card>
-  <p>{{ submissionId }}</p>
 </template>
 
 <script setup lang="ts">
@@ -103,8 +119,6 @@ import { formatDate, formatDateTime } from '@/utils/formatDateTime.ts'
 import UserItem from './UserItem.vue'
 import DelegateDialog from './DelegateDialog.vue'
 import { useSessionStore } from '@/stores/session.ts'
-import { onMounted, ref } from 'vue'
-import type { User } from '@/schemas/user.ts'
 import { useUsersStore } from '@/stores/users.ts'
 
 const props = defineProps<Task>()
@@ -112,15 +126,9 @@ const props = defineProps<Task>()
 const session = useSessionStore()
 const users = useUsersStore()
 
-const proposer = ref<User>()
-
 const isOwner = props.proposerId === session.webId
 
 const statusMessage = taskStatusMessage[props.status]
 const statusColor = taskStatusColor[props.status]
 const statusClasses = statusColorClasses[statusColor]
-
-onMounted(() => {
-  proposer.value = users.getUser(props.proposerId)
-})
 </script>
