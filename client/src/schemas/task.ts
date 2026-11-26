@@ -30,6 +30,14 @@ export interface TaskQuery {
   limit?: number
 }
 
+export const taskPriority: Record<TaskStatus, number> = {
+  proposed: 1,
+  in_progress: 2,
+  pending_approval: 3,
+  completed: 4,
+  cancelled: 5,
+}
+
 export const taskStatusColor: Record<TaskStatus, StatusColor> = {
   proposed: 'gray',
   in_progress: 'indigo',

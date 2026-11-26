@@ -1,4 +1,10 @@
-import type { InputTask, Task, TaskQuery, TaskStatus } from '@/schemas/task'
+import {
+  taskPriority,
+  type InputTask,
+  type Task,
+  type TaskQuery,
+  type TaskStatus,
+} from '@/schemas/task'
 import { api } from '@/services/api'
 import { defineStore } from 'pinia'
 import { computed, ref, type Ref } from 'vue'
@@ -26,18 +32,26 @@ export const useTasksStore = defineStore('tasks', () => {
     error.value = null
 
     try {
-      const data = await api.task.get(query)
+      let data = await api.task.get(query)
 
       //   throw new Error('Uji error state')
       // if (!data) return
 
-      tasks.value = data.sort((a, b) => {
+      // Sort by status
+      data = data.sort(
+        (a, b) => taskPriority[a.status] - taskPriority[b.status],
+      )
+
+      // Sort by deadline
+      data = data.sort((a, b) => {
         if (!a.deadline && !b.deadline) return 0
         if (!a.deadline) return 1
         if (!b.deadline) return -1
 
-        return new Date(b.deadline).getTime() - new Date(a.deadline).getTime()
+        return new Date(a.deadline).getTime() - new Date(b.deadline).getTime()
       })
+
+      tasks.value = [...data]
     } catch (err) {
       error.value =
         err instanceof Error ? err.message : 'Gagal memuat data dari Solid Pod.'
