@@ -257,11 +257,17 @@ export const api = {
   },
 
   submission: {
-    get: async () => {
+    get: async (query: { id?: string }) => {
       // GET submissions
       try {
         await new Promise((resolve) => setTimeout(resolve, 3000))
-        return submissions
+
+        let data = submissions
+        const { id } = query
+
+        if (id) data = data.filter((submission) => submission.id === id)
+
+        return data
       } catch (error) {
         throw error
       }

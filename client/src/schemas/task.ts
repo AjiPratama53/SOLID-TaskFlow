@@ -13,6 +13,7 @@ export interface Task {
   title: string
   deadline?: Date
   description: string
+  submissionId?: string
 }
 
 export interface InputTask {

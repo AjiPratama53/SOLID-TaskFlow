@@ -131,7 +131,19 @@
     <!-- Side panel -->
     <div class="flex flex-1 flex-col">
       <card>
-        <div class="flex flex-col gap-6">
+        <ErrorState v-if="error" @retry="loadSideTasks" />
+
+        <v-skeleton-loader v-else-if="isLoading">
+          <v-skeleton-loader type="heading"> </v-skeleton-loader>
+          <v-skeleton-loader type="sentences" v-for="item in 3">
+          </v-skeleton-loader>
+          <v-skeleton-loader type="divider"> </v-skeleton-loader>
+          <v-skeleton-loader type="heading"> </v-skeleton-loader>
+          <v-skeleton-loader type="sentences" v-for="item in 3">
+          </v-skeleton-loader>
+        </v-skeleton-loader>
+
+        <div v-else class="flex flex-col gap-6">
           <!-- Incoming tasks -->
           <div class="flex flex-col gap-4">
             <div class="flex justify-between items-start">
@@ -145,11 +157,7 @@
 
             <!-- Incoming task items -->
             <div class="flex flex-col gap-2">
-              <ErrorState v-if="error" @retry="loadSideTasks" />
-              <v-skeleton-loader v-else-if="isLoading" type="sentences">
-              </v-skeleton-loader>
-
-              <p v-else-if="incomingTasks.length === 0">
+              <p v-if="incomingTasks.length === 0">
                 Hore, tidak ada tugas yang perlu segera diselesaikan!
               </p>
 
@@ -186,12 +194,7 @@
 
             <!-- No deadline task items -->
             <div class="flex flex-col gap-2">
-              <ErrorState v-if="error" @retry="loadSideTasks" />
-              <v-skeleton-loader v-else-if="isLoading" type="text">
-              </v-skeleton-loader>
-              <p v-else-if="noDeadlineTasks.length === 0">
-                Hore, tidak ada tugas!
-              </p>
+              <p v-if="noDeadlineTasks.length === 0">Hore, tidak ada tugas!</p>
               <div
                 v-else
                 v-for="task in noDeadlineTasks"
@@ -260,6 +263,8 @@ async function loadSideTasks() {
   try {
     incomingTasks.value = await tasks.fetchIncomingTasks()
     noDeadlineTasks.value = await tasks.fetchNoDeadlineTasks()
+
+    // throw new Error('Uji Error State')
   } catch (err) {
     error.value =
       err instanceof Error ? err.message : 'Gagal memuat data dari Solid Pod.'
@@ -274,7 +279,9 @@ watch(
     async () =>
       await tasks.fetchTasks({
         status: filterStatus.value,
-        deadlineTo: new Date(filterDeadline.value),
+        deadlineTo: filterDeadline.value
+          ? new Date(filterDeadline.value)
+          : null,
         query: search.value,
       }),
   ),

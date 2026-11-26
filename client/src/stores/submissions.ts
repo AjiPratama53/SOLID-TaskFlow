@@ -21,7 +21,7 @@ export const useSubmissionsStore = defineStore('submissions', () => {
     error.value = null
 
     try {
-      const data = await api.submission.get()
+      const data = await api.submission.get({})
 
       // throw new Error('Uji Error State')
 

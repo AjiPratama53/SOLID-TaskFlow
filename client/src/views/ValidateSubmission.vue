@@ -222,7 +222,15 @@ import {
 import { api } from '@/services/api'
 import { formatDateTime } from '@/utils/formatDateTime'
 import { statusColorClasses } from '@/utils/statusColorClasses'
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
+const submissionId = computed<string | undefined>(() => {
+  const raw: string | string[] | undefined = route.params.id
+  const value: string | undefined = Array.isArray(raw) ? raw[0] : raw
+  return value
+})
 
 const submission = ref<Submission | null>(null)
 const error = ref<string | null>(null)
@@ -243,14 +251,15 @@ async function loadSubmission() {
 
   try {
     // API call here
-    await api.submission.get()
+    const data = await api.submission.get({ id: submissionId.value })
 
     // throw new Error('Uji Error State')
-    submission.value = {
-      id: 'sbm_001',
-      date: new Date(),
-      status: 'pending_approval',
-    }
+    submission.value = data[0]
+    // {
+    //   id: 'sbm_001',
+    //   date: new Date(),
+    //   status: 'pending_approval',
+    // }
   } catch (err) {
     error.value =
       err instanceof Error ? err.message : 'Gagal memuat data dari Solid Pod.'

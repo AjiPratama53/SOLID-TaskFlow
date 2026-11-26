@@ -81,7 +81,7 @@
           class="bg-yellow-600 text-yellow-50"
           elevation="0"
           rounded
-          @click="$router.push('/submissions/sbm_001')"
+          @click="$router.push(`/submissions/${props.submissionId}`)"
           >Verifikasi
         </v-btn>
       </div>

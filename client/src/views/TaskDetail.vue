@@ -169,7 +169,7 @@
               class="bg-yellow-600 text-yellow-50"
               elevation="0"
               prepend-icon="mdi-check-circle-outline"
-              @click="$router.push('/submissions/sbm_001')"
+              @click="$router.push(`/submissions/${task.submissionId}`)"
               >Verifikasi</v-btn
             >
             <div class="flex gap-2 w-full">
@@ -247,13 +247,19 @@ import { useSessionStore } from '@/stores/session'
 import { useTasksStore } from '@/stores/tasks'
 import { formatDate } from '@/utils/formatDateTime'
 import { statusColorClasses } from '@/utils/statusColorClasses'
-import { onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, onMounted, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
+const taskId = computed<string | undefined>(() => {
+  const raw: string | string[] | undefined = route.params.id
+  const value: string | undefined = Array.isArray(raw) ? raw[0] : raw
+  return value
+})
 
 const isEditing = ref(false)
 const isCreateSubtask = ref(false)
 
-const router = useRouter()
 const error = ref<string | null>(null)
 const isLoading = ref(false)
 const subTasks = useTasksStore()
@@ -278,22 +284,23 @@ async function loadTask() {
 
   try {
     // API call here
-    const data = await api.task.get({})
+    const data = await api.task.get({ id: taskId.value })
     await subTasks.fetchTasks({})
 
     // throw new Error('Uji Error State')
 
     // mock data
-    task.value = {
-      id: 'tsk_001',
-      userId: session.webId ?? '',
-      proposerId: 'usr_002',
-      createdAt: new Date(),
-      status: 'completed',
-      title: 'Testing',
-      description: 'blablabla',
-      deadline: new Date(),
-    }
+    task.value = data[0]
+    // task.value = {
+    //   id: 'tsk_001',
+    //   userId: session.webId ?? '',
+    //   proposerId: 'usr_002',
+    //   createdAt: new Date(),
+    //   status: 'completed',
+    //   title: 'Testing',
+    //   description: 'blablabla',
+    //   deadline: new Date(),
+    // }
 
     isOwner.value = session.webId === task.value.proposerId
     isExecutor.value = session.webId === task.value.userId
@@ -316,6 +323,12 @@ function handleAcceptTask() {
 function handleCancelTask() {
   alert('Penugasan dibatalkan')
 }
+
+// watch(taskId, async (id) => {
+//   const data = await api.task.get({ id: id })
+
+//   task.value = data[0]
+// })
 
 onMounted(() => loadTask())
 </script>
