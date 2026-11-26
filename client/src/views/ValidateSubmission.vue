@@ -239,11 +239,11 @@ const isLoading = ref(false)
 const files = ref<File[]>([])
 const links = ref<string[]>([])
 
-const statusMessage =
-  submissionStatusMessage[submission.value?.status ?? 'pending_approval']
-const statusColor =
-  submissionStatusColor[submission.value?.status ?? 'pending_approval']
-const statusClasses = statusColorClasses[statusColor]
+const statusMessage = ref('')
+const statusColor = ref<keyof typeof statusColorClasses>(
+  submissionStatusColor.pending_approval,
+)
+const statusClasses = ref(statusColorClasses[statusColor.value])
 
 async function loadSubmission() {
   isLoading.value = true
@@ -260,6 +260,12 @@ async function loadSubmission() {
     //   date: new Date(),
     //   status: 'pending_approval',
     // }
+
+    statusMessage.value =
+      submissionStatusMessage[submission.value?.status || 'proposed']
+    statusColor.value =
+      submissionStatusColor[submission.value?.status || 'proposed']
+    statusClasses.value = statusColorClasses[statusColor.value]
   } catch (err) {
     error.value =
       err instanceof Error ? err.message : 'Gagal memuat data dari Solid Pod.'

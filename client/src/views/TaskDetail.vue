@@ -129,7 +129,7 @@
           </div>
 
           <!-- Subtasks -->
-          <div v-if="task?.userId" class="flex flex-col gap-2">
+          <div v-if="isExecutor" class="flex flex-col gap-2">
             <!-- Header -->
             <div class="flex items-center justify-between">
               <div class="flex items-center gap-1">
@@ -143,6 +143,7 @@
             <div class="flex flex-col items-start gap-2 w-full">
               <!-- New subtask -->
               <v-btn
+                v-if="task.status = 'in_progress'"
                 elevation="0"
                 class="bg-indigo-600 text-indigo-50"
                 text="Subtugas baru"
