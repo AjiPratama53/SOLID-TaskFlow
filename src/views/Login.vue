@@ -64,8 +64,8 @@
             />
           </div>
         </div>
-        <v-alert v-if="session.error" type="error" density="compact">
-          {{ session.error }}
+        <v-alert v-if="error" type="error" density="compact">
+          {{ error }}
         </v-alert>
         <!-- Provider options -->
         <div class="flex flex-col gap-1">
@@ -86,53 +86,63 @@
 </template>
 
 <script setup lang="ts">
-import { useSessionStore } from '@/stores/session'
-import debounce from 'debounce'
-import { ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { signIn } from "@/services/auth";
+import debounce from "debounce";
+import { ref, watch } from "vue";
+import { useRoute } from "vue-router";
 
 const features = [
-  { icon: 'share-variant', text: 'Pembagian Subtugas' },
-  { icon: 'check-decagram', text: 'Verifikasi Pengumpulan' },
-  { icon: 'shield-check', text: 'Data Milik Pribadi' },
-]
+  { icon: "share-variant", text: "Pembagian Subtugas" },
+  { icon: "check-decagram", text: "Verifikasi Pengumpulan" },
+  { icon: "shield-check", text: "Data Milik Pribadi" },
+];
 
 const solidProviders = [
-  'solidcommunity.net',
-  'solidweb.org',
-  'solidweb.me',
-  'inrupt.com',
-]
+  "solidcommunity.net",
+  "solidweb.org",
+  "solidweb.me",
+  "inrupt.com",
+];
 
-const input = ref('')
-const session = useSessionStore()
-const route = useRoute()
-const isLoggingIn = ref(false)
+const route = useRoute();
+const input = ref("");
+const error = ref<string | null>(null);
+const isLoggingIn = ref(false);
 
-async function handleLogin(issuer = input.value) {
-  if (isLoggingIn.value) return
-  isLoggingIn.value = true
+const POST_LOGIN_REDIRECT_KEY = "solid_post_login_redirect";
+
+function resolveTargetPath(): string {
+  const redirectParam = route.query.redirect;
+  if (typeof redirectParam === "string" && redirectParam.startsWith("/")) {
+    return redirectParam;
+  }
+  return "/home";
+}
+
+async function handleLogin() {
+  if (isLoggingIn.value) return;
+
+  isLoggingIn.value = true;
+  error.value = null;
+  sessionStorage.setItem("POST_LOGIN_REDIRECT_KEY", resolveTargetPath());
 
   try {
-    const redirect = route.query.redirect
-    const callbackPath =
-      typeof redirect === 'string' &&
-      redirect.startsWith('/') &&
-      !redirect.startsWith('//')
-        ? redirect
-        : '/dashboard'
-
-    await session.signIn(issuer.trim(), callbackPath)
+    await signIn(input.value, "/");
   } catch (err) {
-    session.error =
-      err instanceof Error ? err.message : 'Gagal memulai login Solid.'
+    sessionStorage.removeItem(POST_LOGIN_REDIRECT_KEY);
+    error.value =
+      err instanceof Error ? err.message : "Gagal memulai proses login.";
   } finally {
-    isLoggingIn.value = false
+    isLoggingIn.value = false;
   }
 }
 
 watch(
   () => input.value,
-  debounce(() => handleLogin(input.value), 1000),
-)
+  debounce(async (value: string) => {
+    if (value.trim()) {
+      await handleLogin();
+    }
+  }, 1000),
+);
 </script>

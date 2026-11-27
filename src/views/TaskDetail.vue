@@ -251,7 +251,7 @@ import SubtaskItem from '@/components/SubtaskItem.vue'
 import { taskStatusColor, taskStatusMessage, type Task } from '@/schemas/task'
 import type { User } from '@/schemas/user'
 import { api } from '@/services/api'
-import { useSessionStore } from '@/stores/session'
+import { sessionInfo } from '@/services/auth'
 import { useTasksStore } from '@/stores/tasks'
 import { useUsersStore } from '@/stores/users'
 import { formatDate } from '@/utils/formatDateTime'
@@ -283,7 +283,6 @@ const statusColor = ref<keyof typeof statusColorClasses>(
 )
 const statusClasses = ref(statusColorClasses[statusColor.value])
 
-const session = useSessionStore()
 const users = useUsersStore()
 
 const proposer = ref<User>()
@@ -305,7 +304,7 @@ async function loadTask() {
     task.value = data[0]
     // task.value = {
     //   id: 'tsk_001',
-    //   userId: session.webId ?? '',
+    //   userId: sessionInfo().webId ?? '',
     //   proposerId: 'usr_002',
     //   createdAt: new Date(),
     //   status: 'completed',
@@ -314,9 +313,10 @@ async function loadTask() {
     //   deadline: new Date(),
     // }
 
+    const currentWebId = sessionInfo().webId
     proposer.value = users.getUser(task.value.proposerId)
-    isOwner.value = session.webId === task.value.proposerId
-    isExecutor.value = session.webId === task.value.userId
+    isOwner.value = currentWebId === task.value.proposerId
+    isExecutor.value = currentWebId === task.value.userId
 
     statusMessage.value = taskStatusMessage[task.value?.status || 'proposed']
     statusColor.value = taskStatusColor[task.value?.status || 'proposed']

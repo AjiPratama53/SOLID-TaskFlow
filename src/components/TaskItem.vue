@@ -118,15 +118,14 @@ import Card from './Card.vue'
 import { formatDate, formatDateTime } from '@/utils/formatDateTime.ts'
 import UserItem from './UserItem.vue'
 import DelegateDialog from './DelegateDialog.vue'
-import { useSessionStore } from '@/stores/session.ts'
+import { sessionInfo } from '@/services/auth'
 import { useUsersStore } from '@/stores/users.ts'
 
 const props = defineProps<Task>()
 
-const session = useSessionStore()
 const users = useUsersStore()
 
-const isOwner = props.proposerId === session.webId
+const isOwner = props.proposerId === sessionInfo().webId
 
 const statusMessage = taskStatusMessage[props.status]
 const statusColor = taskStatusColor[props.status]

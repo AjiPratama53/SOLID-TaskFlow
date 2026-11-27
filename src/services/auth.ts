@@ -1,16 +1,60 @@
-import { getDefaultSession, handleIncomingRedirect, login, logout } from '@inrupt/solid-client-authn-browser'
+import {
+  getDefaultSession,
+  handleIncomingRedirect,
+  login,
+  logout,
+} from "@inrupt/solid-client-authn-browser";
 
-const session = getDefaultSession()
+const session = getDefaultSession();
+let restorePromise: Promise<void> | null = null;
+let isRestored = false;
 
 export async function restoreSession() {
-  await handleIncomingRedirect({ restorePreviousSession: true })
-  return session.info
+  if (isRestored) {
+    return Promise.resolve();
+  }
+
+  if (!restorePromise) {
+    restorePromise = (async () => {
+      try {
+        await handleIncomingRedirect({ restorePreviousSession: true });
+        isRestored = true;
+      } catch (error) {
+        throw error;
+      } finally {
+        restorePromise = null;
+      }
+    })();
+  }
+
+  return restorePromise;
 }
 
-export function signIn(oidcIssuer: string) {
-  return login({ oidcIssuer, redirectUrl: window.location.href, clientName: 'OTAku' })
+export function authFetch(...args: Parameters<typeof fetch>) {
+  if (!session.info.isLoggedIn) throw new Error("Session is invalid");
+  return session.fetch(...args);
 }
 
-export const signOut = () => logout()
-export const authFetch = (...args: Parameters<typeof fetch>) => session.fetch(...args)
-export const sessionInfo = () => session.info
+export async function resetInvalidSession() {
+  isRestored = false;
+  restorePromise = null;
+  await logout();
+}
+
+export async function signIn(oidcIssuer: string, callbackPath = "/") {
+  const redirectUrl = new URL(callbackPath, window.location.href).toString();
+
+  await login({
+    oidcIssuer,
+    redirectUrl,
+    clientName: "SOLID TaskFlow",
+  });
+}
+
+export async function signOut() {
+  isRestored = false;
+  restorePromise = null;
+  await logout();
+}
+
+export const sessionInfo = () => session.info;
