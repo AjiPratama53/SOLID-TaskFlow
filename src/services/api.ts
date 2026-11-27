@@ -9,7 +9,7 @@ import type { InputTask, Task, TaskQuery, TaskStatus } from '@/schemas/task'
 import type { Submission } from '@/schemas/submission'
 import type { SolidUserProfile } from '@/schemas/session'
 
-import { getDefaultSession } from '@inrupt/solid-client-authn-browser'
+import { authFetch, sessionInfo } from '@/services/auth'
 import {
   addUrl,
   getSolidDataset,
@@ -71,12 +71,15 @@ export const api = {
         storage: 'http://www.w3.org/ns/pim/space#storage',
       } as const
 
-      const session = getDefaultSession()
-      // Gunakan session.fetch jika login agar profil privat (bila ada) ikut terbaca
-      const fetchFn = session.info.isLoggedIn ? session.fetch : fetch
+      const currentSession = sessionInfo()
+      if (!currentSession.isLoggedIn || currentSession.webId !== webId) {
+        throw new Error('Sesi Solid aktif tidak cocok dengan WebID pengguna.')
+      }
 
       // 1. Ambil dataset dari URL WebID (klien otomatis menangani fragment #me)
-      const profileDataset = await getSolidDataset(webId, { fetch: fetchFn })
+      const profileDataset = await getSolidDataset(webId, {
+        fetch: authFetch,
+      })
       const { profileThing, name, avatarUrl } = getProfileDetails(
         profileDataset,
         webId,
@@ -97,13 +100,13 @@ export const api = {
     get: async (
       webId: string,
     ): Promise<{ users: User[]; failedCount: number }> => {
-      const session = getDefaultSession()
-      if (!session.info.isLoggedIn || session.info.webId !== webId) {
+      const session = sessionInfo()
+      if (!session.isLoggedIn || session.webId !== webId) {
         throw new Error('Sesi Solid aktif tidak cocok dengan WebID pengguna.')
       }
 
       const profileDataset = await getSolidDataset(webId, {
-        fetch: session.fetch,
+        fetch: authFetch,
       })
       const { profileThing } = getProfileDetails(profileDataset, webId)
       const friendWebIds = [
@@ -113,7 +116,7 @@ export const api = {
       const results = await Promise.allSettled(
         friendWebIds.map(async (friendWebId): Promise<User> => {
           const friendDataset = await getSolidDataset(friendWebId, {
-            fetch: session.fetch,
+            fetch: authFetch,
           })
           const friendProfile = getProfileDetails(friendDataset, friendWebId)
 
@@ -143,14 +146,14 @@ export const api = {
       return { users, failedCount }
     },
     post: async (ownerWebId: string, inputWebId: string): Promise<void> => {
-      const session = getDefaultSession()
+      const session = sessionInfo()
       const owner = validateWebId(ownerWebId)
       const friend = validateWebId(inputWebId)
 
       if (
-        !session.info.isLoggedIn ||
-        !session.info.webId ||
-        validateWebId(session.info.webId).normalized !== owner.normalized
+        !session.isLoggedIn ||
+        !session.webId ||
+        validateWebId(session.webId).normalized !== owner.normalized
       ) {
         throw new Error('Sesi Solid aktif tidak cocok dengan WebID pengguna.')
       }
@@ -162,7 +165,7 @@ export const api = {
       }
 
       const profileDataset = await getSolidDataset(owner.value, {
-        fetch: session.fetch,
+        fetch: authFetch,
       })
       const { profileThing } = getProfileDetails(profileDataset, owner.value)
 
@@ -179,7 +182,7 @@ export const api = {
       }
 
       await saveSolidDatasetAt(profileDocumentUrl, updatedDataset, {
-        fetch: session.fetch,
+        fetch: authFetch,
       })
     },
   },
