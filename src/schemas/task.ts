@@ -1,34 +1,58 @@
-import type { StatusColor } from '@/utils/statusColorClasses'
+import type { StatusColor } from "@/utils/statusColorClasses";
+import type { Submission, SubmissionRecord } from "./submission";
 
 export type TaskStatus =
-  'proposed' | 'in_progress' | 'pending_approval' | 'completed' | 'cancelled'
+  "proposed" | "in_progress" | "pending_approval" | "completed" | "cancelled";
+
+export interface TaskItem {
+  id: string;
+  userId?: string;
+  proposerId: string;
+  createdAt: Date;
+  editedAt?: Date;
+  status: TaskStatus;
+  title: string;
+  deadline?: Date;
+  activeSubmission?: Submission;
+}
 
 export interface Task {
-  id: string
-  userId?: string
-  proposerId: string
-  createdAt: Date
-  editedAt?: Date
-  status: TaskStatus
-  title: string
-  deadline?: Date
-  description: string
-  submissionId?: string
+  id: string;
+  userId?: string;
+  proposerId: string;
+  createdAt: Date;
+  editedAt?: Date;
+  status: TaskStatus;
+  title: string;
+  deadline?: Date;
+  description: string;
+  files: File[];
+  links: URL[];
+  subtasks: Task[];
+  submissions: Submission[];
+}
+
+export interface TaskRecord extends Omit<Task, "files" | "submissions"> {
+  thingUrl: string;
+  fileUrls: string[];
+  submissions: SubmissionRecord[];
 }
 
 export interface InputTask {
-  title: string
-  deadline?: Date
-  description: string
+  title: string;
+  deadline?: Date;
+  description: string;
+  files: File[];
+  links: URL[];
 }
 
 export interface TaskQuery {
-  id?: string
-  status?: TaskStatus
-  deadlineFrom?: Date | null
-  deadlineTo?: Date | null
-  query?: string
-  limit?: number
+  id?: string;
+  status?: TaskStatus;
+  deadlineFrom?: Date | null;
+  deadlineTo?: Date | null;
+  query?: string;
+  limit?: number;
 }
 
 export const taskPriority: Record<TaskStatus, number> = {
@@ -37,20 +61,20 @@ export const taskPriority: Record<TaskStatus, number> = {
   pending_approval: 3,
   completed: 4,
   cancelled: 5,
-}
+};
 
 export const taskStatusColor: Record<TaskStatus, StatusColor> = {
-  proposed: 'gray',
-  in_progress: 'indigo',
-  pending_approval: 'yellow',
-  completed: 'green',
-  cancelled: 'red',
-}
+  proposed: "gray",
+  in_progress: "indigo",
+  pending_approval: "yellow",
+  completed: "green",
+  cancelled: "red",
+};
 
 export const taskStatusMessage: Record<TaskStatus, string> = {
-  proposed: 'Ditugaskan',
-  in_progress: 'Sedang dikerjakan',
-  pending_approval: 'Menunggu persetujuan',
-  completed: 'Selesai',
-  cancelled: 'Dibatalkan',
-}
+  proposed: "Ditugaskan",
+  in_progress: "Sedang dikerjakan",
+  pending_approval: "Menunggu persetujuan",
+  completed: "Selesai",
+  cancelled: "Dibatalkan",
+};

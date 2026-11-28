@@ -30,9 +30,9 @@ export async function restoreSession() {
   return restorePromise;
 }
 
-export function authFetch(...args: Parameters<typeof fetch>) {
+export function getAuthedFetch(): typeof fetch {
   if (!session.info.isLoggedIn) throw new Error("Session is invalid");
-  return session.fetch(...args);
+  return session.fetch;
 }
 
 export async function resetInvalidSession() {

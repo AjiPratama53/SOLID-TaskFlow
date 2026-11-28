@@ -2,7 +2,7 @@
   <!-- Submission card -->
   <Card>
     <!-- Submission card - loading -->
-    <v-skeleton-loader v-if="isLoading || submissions.isLoading">
+    <v-skeleton-loader v-if="isLoading">
       <v-skeleton-loader type="sentences"> </v-skeleton-loader>
       <v-skeleton-loader type="heading"> </v-skeleton-loader>
     </v-skeleton-loader>
@@ -17,15 +17,19 @@
         </div>
         <p>
           {{
-            taskStatus === 'proposed'
-              ? 'Terima tugas agar dapat dikumpulkan'
-              : 'Kumpulkan tugas sebelum tenggat waktunya'
+            taskStatus === "proposed"
+              ? "Terima tugas agar dapat dikumpulkan"
+              : "Kumpulkan tugas sebelum tenggat waktunya"
           }}.
         </p>
       </div>
 
       <!-- Attachments -->
-      <AttachmentList v-model:files="files" v-model:links="links" removable />
+      <AttachmentList
+        v-model:files="files"
+        v-model:links="links"
+        :removable="taskStatus === 'in_progress'"
+      />
 
       <!-- Actions -->
       <!-- Accept task -->
@@ -104,30 +108,20 @@
       </div>
 
       <!-- Error alert -->
-      <v-alert
-        v-if="submissions.error"
-        type="warning"
-        density="default"
-        max-height="4em"
-      >
-        Error: {{ submissions.error }}
+      <v-alert v-if="error" type="warning" density="default" max-height="4em">
+        Error: {{ error }}
       </v-alert>
 
       <!-- Submissions - loading -->
       <v-skeleton-loader
-        v-if="isLoading || submissions.isLoading"
+        v-if="isLoading || isLoading"
         v-for="item in 3"
         type="sentences"
       />
       <!-- Submissions - error -->
-      <ErrorState
-        v-else-if="submissions.error"
-        @retry="submissions.fetchSubmissions"
-      />
+      <ErrorState v-else-if="error" @retry="$emit('retry')" />
       <!-- Submissions - empty -->
-      <p v-else-if="submissions.isEmpty">
-        Belum ada pengumpulan untuk tugas ini.
-      </p>
+      <p v-else-if="!submissions">Belum ada pengumpulan untuk tugas ini.</p>
 
       <!-- History -->
       <div v-else class="flex gap-2">
@@ -138,7 +132,7 @@
         <div class="flex flex-col gap-4 w-full">
           <!-- Submissions - content -->
           <SubmissionItem
-            v-for="submission in submissions.getSubmissions"
+            v-for="submission in submissions"
             v-bind="submission"
           />
         </div>
@@ -148,48 +142,45 @@
 </template>
 
 <script setup lang="ts">
-import SubmissionItem from '@/components/SubmissionItem.vue'
-import { useSubmissionsStore } from '@/stores/submissions'
-import { onMounted, ref } from 'vue'
-import Card from './Card.vue'
-import CriticalDialog from './CriticalDialog.vue'
-import InputLinkDialog from './InputLinkDialog.vue'
-import AttachmentList from './AttachmentList.vue'
-import InputFileDialog from './InputFileDialog.vue'
-import ErrorState from './ErrorState.vue'
-import type { TaskStatus } from '@/schemas/task.ts'
-import { tasks } from '@/.local/tasks.ts'
+import SubmissionItem from "@/components/SubmissionItem.vue";
+import { useSubmissionsStore } from "@/stores/submissions";
+import { onMounted, ref } from "vue";
+import Card from "./Card.vue";
+import CriticalDialog from "./CriticalDialog.vue";
+import InputLinkDialog from "./InputLinkDialog.vue";
+import AttachmentList from "./AttachmentList.vue";
+import InputFileDialog from "./InputFileDialog.vue";
+import ErrorState from "./ErrorState.vue";
+import type { TaskStatus } from "@/schemas/task.ts";
+import type { Submission } from "@/schemas/submission.ts";
 
 const props = defineProps<{
-  taskStatus: TaskStatus
-  isLoading: boolean
-  isExecutor: boolean
-}>()
+  taskStatus: TaskStatus;
+  submissions: Submission[];
+  error: string | null;
+  isLoading: boolean;
+  isExecutor: boolean;
+}>();
 
-defineEmits(['accept-task'])
+const emit = defineEmits(["accept-task", "retry", "submit", "cancel"]);
 
-const submissions = useSubmissionsStore()
-
-const files = ref<File[]>([])
-const links = ref<string[]>([])
+const files = ref<File[]>([]);
+const links = ref<URL[]>([]);
 
 const submitButtonMessage = () =>
   files.value.length || links.value.length
-    ? 'Kumpulkan'
-    : 'Tandai sebagai selesai'
+    ? "Kumpulkan"
+    : "Tandai sebagai selesai";
 
 function handleCancelSubmission() {
-  alert('Pengumpulan dibatalkan')
+  alert("Pengumpulan dibatalkan");
+  emit("cancel");
 }
 
 function handleSubmit() {
-  alert('Tugas dikumpulkan')
-  submissions.postSubmission({
-    id: `sbm_${Math.floor(Math.random() * 1000)}`,
-    date: new Date(),
-    status: 'pending_approval',
-  })
+  alert("Tugas dikumpulkan");
+  emit("submit");
 }
 
-onMounted(() => submissions.fetchSubmissions())
+// onMounted(() => submissions.fetchSubmissions());
 </script>

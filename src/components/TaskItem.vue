@@ -114,7 +114,7 @@
 import {
   taskStatusColor,
   taskStatusMessage,
-  type Task,
+  type TaskItem,
 } from "@/schemas/task.ts";
 import { statusColorClasses } from "@/utils/statusColorClasses";
 import Card from "./Card.vue";
@@ -124,7 +124,7 @@ import DelegateDialog from "./DelegateDialog.vue";
 import { sessionInfo } from "@/services/auth";
 import { useUsersStore } from "@/stores/users.ts";
 
-const props = defineProps<Task>();
+const props = defineProps<TaskItem>();
 
 const users = useUsersStore();
 

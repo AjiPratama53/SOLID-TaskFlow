@@ -5,11 +5,17 @@ import { tasks } from "@/.local/tasks";
 import { submissions } from "@/.local/submissions";
 
 import type { User } from "@/schemas/user";
-import type { InputTask, Task, TaskQuery, TaskStatus } from "@/schemas/task";
-import type { Submission } from "@/schemas/submission";
+import type {
+  InputTask,
+  Task,
+  TaskQuery,
+  TaskRecord,
+  TaskStatus,
+} from "@/schemas/task";
+import type { Submission, SubmissionRecord } from "@/schemas/submission";
 import type { SolidUserProfile } from "@/schemas/session";
 
-import { authFetch, sessionInfo } from "@/services/auth";
+import { getAuthedFetch, restoreSession, sessionInfo } from "@/services/auth";
 import {
   addUrl,
   getSolidDataset,
@@ -21,8 +27,13 @@ import {
   getUrl,
   getUrlAll,
   type SolidDataset,
+  createSolidDataset,
+  createThing,
+  setStringNoLocale,
+  setDatetime,
 } from "@inrupt/solid-client";
 import { FOAF, VCARD } from "@inrupt/vocab-common-rdf";
+import { RDF_TYPE, VOCAB } from "@/schemas/vocab";
 
 function getProfileDetails(profileDataset: SolidDataset, webId: string) {
   const profileThing = getThing(profileDataset, webId);
@@ -78,7 +89,7 @@ export const api = {
 
       // 1. Ambil dataset dari URL WebID (klien otomatis menangani fragment #me)
       const profileDataset = await getSolidDataset(webId, {
-        fetch: authFetch,
+        fetch: getAuthedFetch,
       });
       const { profileThing, name, avatarUrl } = getProfileDetails(
         profileDataset,
@@ -106,7 +117,7 @@ export const api = {
       }
 
       const profileDataset = await getSolidDataset(webId, {
-        fetch: authFetch,
+        fetch: getAuthedFetch,
       });
       const { profileThing } = getProfileDetails(profileDataset, webId);
       const friendWebIds = [
@@ -116,7 +127,7 @@ export const api = {
       const results = await Promise.allSettled(
         friendWebIds.map(async (friendWebId): Promise<User> => {
           const friendDataset = await getSolidDataset(friendWebId, {
-            fetch: authFetch,
+            fetch: getAuthedFetch,
           });
           const friendProfile = getProfileDetails(friendDataset, friendWebId);
 
@@ -165,7 +176,7 @@ export const api = {
       }
 
       const profileDataset = await getSolidDataset(owner.value, {
-        fetch: authFetch,
+        fetch: getAuthedFetch,
       });
       const { profileThing } = getProfileDetails(profileDataset, owner.value);
 
@@ -182,7 +193,7 @@ export const api = {
       }
 
       await saveSolidDatasetAt(profileDocumentUrl, updatedDataset, {
-        fetch: authFetch,
+        fetch: getAuthedFetch,
       });
     },
   },
@@ -232,14 +243,98 @@ export const api = {
         throw error;
       }
     },
-    post: async (task: Task) => {
-      // POST task
+    // POST task
+    post: async (
+      datasetUrl: string,
+      task: Task,
+      filesContainerUrl?: string,
+    ): Promise<TaskRecord> => {
+      const authFetch = getAuthedFetch();
+
+      let dataset;
       try {
-        await new Promise((resolve) => setTimeout(resolve, 3000));
-        tasks.push(task);
-      } catch (error) {
-        throw error;
+        // await new Promise((resolve) => setTimeout(resolve, 3000));
+        // tasks.push(task);
+
+        dataset = await getSolidDataset(datasetUrl, { fetch: authFetch });
+      } catch {
+        dataset = createSolidDataset();
       }
+
+      const taskFileUrls = filesContainerUrl
+        ? await uploadFiles(filesContainerUrl, task.files)
+        : [];
+
+      const taskSlug = encodeURIComponent(task.id || crypto.randomUUID());
+      let taskThing = createThing({ name: `tasj-${taskSlug}` });
+
+      taskThing = addUrl(taskThing, RDF_TYPE, VOCAB.Task);
+      taskThing = setStringNoLocale(taskThing, VOCAB.id, task.id);
+      taskThing = setStringNoLocale(
+        taskThing,
+        VOCAB.proposerId,
+        task.proposerId,
+      );
+      taskThing = setDatetime(taskThing, VOCAB.createdAt, task.createdAt);
+      taskThing = setStringNoLocale(taskThing, VOCAB.status, task.status);
+      taskThing = setStringNoLocale(taskThing, VOCAB.title, task.title);
+      taskThing = setStringNoLocale(
+        taskThing,
+        VOCAB.description,
+        task.description,
+      );
+
+      if (task.userId)
+        taskThing = setStringNoLocale(taskThing, VOCAB.userId, task.userId);
+      if (task.editedAt)
+        taskThing = setDatetime(taskThing, VOCAB.editedAt, task.editedAt);
+      if (task.deadline)
+        taskThing = setDatetime(taskThing, VOCAB.deadline, task.deadline);
+
+      taskFileUrls.forEach(
+        (fileUrl) => (taskThing = addUrl(taskThing, VOCAB.hasFile, fileUrl)),
+      );
+      task.links.forEach(
+        (link) =>
+          (taskThing = addUrl(taskThing, VOCAB.hasLink, link.toString())),
+      );
+
+      const submissionRecords: SubmissionRecord[] = [];
+
+      task.submissions.forEach((sub) => {
+        const submitterId = sub.submitterId || task.userId || "";
+        const taskDeadline = sub.taskDeadline ?? task.deadline;
+
+        const normalizedSubmission: Submission = {
+          ...sub,
+          submitterId,
+          taskDeadline,
+        };
+
+        const subFileUrls = filesContainerUrl
+          ? await uploadFiles(filesContainerUrl, normalizedSubmission.files)
+          : [];
+
+        const subThing = buildSubmissionThing(
+          normalizedSubmission,
+          subFileUrls,
+          datasetUrl,
+        );
+        dataset = setThing(dataset, subThing);
+        taskThing = addUrl(taskThing, VOCAB.hasSubmission, subThing.url);
+
+        submissionRecords.push({
+          thingUrl: subThing.url,
+          id: normalizedSubmission.id,
+          submitterId: normalizedSubmission.id,
+          taskDeadline: normalizedSubmission.taskDeadline,
+          date: normalizedSubmission.date,
+          status: normalizedSubmission.status,
+          comment: normalizedSubmission.comment,
+          links: normalizedSubmission.links,
+          fileUrls: subFileUrls,
+        });
+      });
     },
     patch: async (id: string, task: InputTask) => {
       // PATCH task

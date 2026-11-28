@@ -22,13 +22,13 @@
     </div>
 
     <!-- body -->
-    <div class="flex items-center justify-between">
+    <div class="flex items-end justify-between">
       <!-- deadline -->
       <div class="flex gap-1 items-center">
         <v-icon icon="mdi-clock-outline" size="small" />
         <p>
           Tenggat:
-          <strong>{{ deadline ? formatDateTime(deadline) : '--' }}</strong>
+          <strong>{{ deadline ? formatDateTime(deadline) : "--" }}</strong>
         </p>
       </div>
 
@@ -40,7 +40,10 @@
           class="flex bg-white pl-1 pr-4 py-1 rounded-4xl"
           elevation="0"
         >
-          <UserItem v-bind="users.getUser(userId)" />
+          <UserItem
+            v-if="userId"
+            v-bind="users.getUser(userId) ?? { id: '', name: '' }"
+          />
         </card>
 
         <!-- Delegate -->
@@ -92,17 +95,21 @@
 </template>
 
 <script setup lang="ts">
-import { taskStatusColor, taskStatusMessage, type Task } from '@/schemas/task'
-import { formatDateTime } from '@/utils/formatDateTime'
-import { statusColorClasses } from '@/utils/statusColorClasses'
-import DelegateDialog from './DelegateDialog.vue'
-import UserItem from './UserItem.vue'
-import { useUsersStore } from '@/stores/users.ts'
+import {
+  taskStatusColor,
+  taskStatusMessage,
+  type TaskItem,
+} from "@/schemas/task";
+import { formatDateTime } from "@/utils/formatDateTime";
+import { statusColorClasses } from "@/utils/statusColorClasses";
+import DelegateDialog from "./DelegateDialog.vue";
+import UserItem from "./UserItem.vue";
+import { useUsersStore } from "@/stores/users.ts";
 
-const props = defineProps<Task>()
-const statusMessage = taskStatusMessage[props.status]
-const statusColor = taskStatusColor[props.status]
-const statusClasses = statusColorClasses[statusColor]
+const props = defineProps<TaskItem>();
+const statusMessage = taskStatusMessage[props.status];
+const statusColor = taskStatusColor[props.status];
+const statusClasses = statusColorClasses[statusColor];
 
-const users = useUsersStore()
+const users = useUsersStore();
 </script>

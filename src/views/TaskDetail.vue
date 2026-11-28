@@ -123,7 +123,7 @@
             <p>{{ task?.description }}</p>
 
             <!-- Attachments -->
-            <AttachmentList :files :links />
+            <AttachmentList :files="task.files" :links="task.links" />
             <!-- <v-btn
                >file
                <InputFileDialog activator="parent" v-model="files" />
@@ -176,7 +176,7 @@
               class="bg-yellow-600 text-yellow-50"
               elevation="0"
               prepend-icon="mdi-check-circle-outline"
-              @click="$router.push(`/submissions/${task.submissionId}`)"
+              @click="$router.push(`/submissions/${activeSubmission?.id}`)"
               >Verifikasi</v-btn
             >
 
@@ -186,7 +186,7 @@
               class="bg-green-600 text-green-50"
               elevation="0"
               prepend-icon="mdi-file-document-check-outline"
-              @click="$router.push(`/submissions/${task.submissionId}`)"
+              @click="$router.push(`/submissions/${activeSubmission?.id}`)"
               >Review</v-btn
             >
 
@@ -240,8 +240,10 @@
     <!-- Submission panel -->
     <div class="flex flex-1 flex-col gap-4">
       <SubmissionPanel
+        :submissions="task?.submissions ?? []"
         @accept-task="handleAcceptTask"
         :task-status="task?.status ?? 'proposed'"
+        :error
         :is-loading
         :is-executor
       />
@@ -262,6 +264,7 @@ import InputLinkDialog from "@/components/InputLinkDialog.vue";
 import InputTask from "@/components/InputTask.vue";
 import SubmissionPanel from "@/components/SubmissionPanel.vue";
 import SubtaskItem from "@/components/SubtaskItem.vue";
+import type { Submission } from "@/schemas/submission";
 import { taskStatusColor, taskStatusMessage, type Task } from "@/schemas/task";
 import type { User } from "@/schemas/user";
 import { api } from "@/services/api";
@@ -288,8 +291,7 @@ const isLoading = ref(false);
 const subTasks = useTasksStore();
 
 const task = ref<Task | null>(null);
-const files = ref<File[]>([]);
-const links = ref<string[]>([]);
+const activeSubmission = ref<Submission | undefined>();
 
 const statusMessage = ref("");
 const statusColor = ref<keyof typeof statusColorClasses>(
@@ -316,16 +318,9 @@ async function loadTask() {
 
     // mock data
     task.value = data[0];
-    // task.value = {
-    //   id: 'tsk_001',
-    //   userId: sessionInfo().webId ?? '',
-    //   proposerId: 'usr_002',
-    //   createdAt: new Date(),
-    //   status: 'completed',
-    //   title: 'Testing',
-    //   description: 'blablabla',
-    //   deadline: new Date(),
-    // }
+    activeSubmission.value = task.value.submissions.find(
+      (submission) => submission.status === "pending_approval",
+    );
 
     const currentWebId = sessionInfo().webId;
     proposer.value = users.getUser(task.value.proposerId);

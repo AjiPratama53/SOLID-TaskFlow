@@ -14,8 +14,8 @@
         v-model="input"
         @keyup.enter="
           () => {
-            handleUpload()
-            isActive.value = false
+            handleUpload();
+            isActive.value = false;
           }
         "
       />
@@ -31,8 +31,8 @@
         <v-btn
           @click="
             () => {
-              handleUpload()
-              isActive.value = false
+              handleUpload();
+              isActive.value = false;
             }
           "
           class="text-indigo-600"
@@ -46,23 +46,25 @@
 </template>
 
 <script setup lang="ts">
-import { ref, type ComponentPublicInstance } from 'vue'
+import { ref, type ComponentPublicInstance } from "vue";
 
-const emit = defineEmits(['upload'])
+const emit = defineEmits(["upload"]);
 
 defineProps<{
-  activator: Element | (string & {}) | 'parent' | ComponentPublicInstance
-}>()
+  activator: Element | (string & {}) | "parent" | ComponentPublicInstance;
+}>();
 
-const input = ref('')
-const links = defineModel<string[]>({ required: true })
+const input = ref("");
+const links = defineModel<URL[]>({ required: true });
 
 function handleUpload() {
-  if (!input.value) return
+  if (!input.value) return;
 
   links.value.push(
-    `${input.value.startsWith('https://') ? '' : 'https://'}${input.value}`,
-  )
-  input.value = ''
+    new URL(
+      `${input.value.startsWith("https://") ? "" : "https://"}${input.value}`,
+    ),
+  );
+  input.value = "";
 }
 </script>
