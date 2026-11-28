@@ -3,20 +3,22 @@
     <v-card>
       <!-- Header -->
       <div class="flex justify-center px-8 py-4">
-        <h3>{{ props.isAlternate ? 'Alihkan' : 'Delegasikan' }}</h3>
+        <h3>{{ props.isAlternate ? "Alihkan" : "Delegasikan" }}</h3>
       </div>
 
       <!-- User list -->
       <v-btn
         rounded="none"
         elevation="0"
-        v-for="user in users.getUsers"
+        v-for="user in users.getUsers.filter(
+          (user) => user !== currentExecutor,
+        )"
         class="flex justify-start px-4 py-6"
         density="default"
         @click="
           () => {
-            handleDelegate(user)
-            isActive.value = false
+            handleDelegate(user);
+            isActive.value = false;
           }
         "
       >
@@ -31,8 +33,8 @@
         prepend-icon="mdi-tray-arrow-up"
         @click="
           () => {
-            handlePublish()
-            isActive.value = false
+            handlePublish();
+            isActive.value = false;
           }
         "
         >Publikasikan</v-btn
@@ -42,21 +44,24 @@
 </template>
 
 <script setup lang="ts">
-import type { User } from '@/schemas/user.ts'
-import UserItem from './UserItem.vue'
-import { useUsersStore } from '@/stores/users.ts'
+import type { User } from "@/schemas/user.ts";
+import UserItem from "./UserItem.vue";
+import { useUsersStore } from "@/stores/users.ts";
 
-const users = useUsersStore()
+const users = useUsersStore();
 
 const props = defineProps<{
-  isAlternate?: boolean
-}>()
+  isAlternate?: boolean;
+  currentExecutor?: User;
+}>();
 
 function handleDelegate(user: User) {
-  alert(`Tugas di${props.isAlternate ? 'alih' : 'delegasi'}kan ke ${user.name}`)
+  alert(
+    `Tugas di${props.isAlternate ? "alih" : "delegasi"}kan ke ${user.name}`,
+  );
 }
 
 function handlePublish() {
-  alert('Tugas dipublikasikan')
+  alert("Tugas dipublikasikan");
 }
 </script>

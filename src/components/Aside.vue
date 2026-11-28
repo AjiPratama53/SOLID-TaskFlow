@@ -7,8 +7,8 @@
           v-bind="
             {
               id: user?.webId ?? '',
-              name: user?.name ?? '',
-              avatar: user?.avatarUrl,
+              name: user?.name ?? user?.webId ?? '',
+              avatar: user?.avatarUrl ?? undefined,
             } as User
           "
         />
@@ -19,8 +19,8 @@
           density="compact"
           @click="handleSignOut"
         />
-        <v-alert v-if="session.error" type="error" density="compact">
-          {{ session.error }}
+        <v-alert v-if="error" type="error" density="compact">
+          {{ error }}
         </v-alert>
       </div>
       <v-divider />
@@ -69,30 +69,48 @@
 </template>
 
 <script setup lang="ts">
-import { useUsersStore } from '@/stores/users.ts'
-import InviteCard from './InviteCard.vue'
-import UserItem from './UserItem.vue'
-import type { User } from '@/schemas/user.ts'
-import { computed, onMounted } from 'vue'
-import { useSessionStore } from '@/stores/session.ts'
-import { useRouter } from 'vue-router'
+import type { SolidUserProfile } from "@/schemas/session";
+import type { User } from "@/schemas/user.ts";
+import { api } from "@/services/api";
+import { sessionInfo, signOut } from "@/services/auth";
+import { useUsersStore } from "@/stores/users.ts";
+import { onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
+import InviteCard from "./InviteCard.vue";
+import UserItem from "./UserItem.vue";
 
-const session = useSessionStore()
-const colleagues = useUsersStore()
-const router = useRouter()
-const user = computed(() => session.getProfile)
+const colleagues = useUsersStore();
+const router = useRouter();
+const user = ref<SolidUserProfile | null>(null);
+const error = ref<string | null>(null);
 
 async function handleSignOut() {
+  error.value = null;
   try {
-    await session.signOut()
-    await router.push('/login')
+    await signOut();
+    await router.push("/login");
   } catch (err) {
-    session.error =
-      err instanceof Error ? err.message : 'Gagal mengakhiri sesi Solid.'
+    error.value =
+      err instanceof Error ? err.message : "Gagal mengakhiri sesi Solid.";
   }
 }
 
 onMounted(async () => {
-  await colleagues.fetchUsers()
-})
+  const session = sessionInfo();
+  if (session.isLoggedIn && session.webId) {
+    try {
+      user.value = await api.session.get(session.webId);
+    } catch (err) {
+      user.value = {
+        webId: session.webId,
+        name: null,
+        avatarUrl: null,
+        podUrls: [],
+      };
+      error.value =
+        err instanceof Error ? err.message : "Gagal memuat profil WebID.";
+    }
+  }
+  await colleagues.fetchUsers();
+});
 </script>

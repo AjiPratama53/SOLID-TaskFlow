@@ -68,10 +68,7 @@
         />
 
         <Card v-if="isCreateTask">
-          <InputTask
-            @close="isCreateTask = false"
-            :action="() => console.log('Task created')"
-          />
+          <InputTask @close="isCreateTask = false" />
         </Card>
 
         <!-- Tasks - error -->
@@ -221,60 +218,60 @@
 </template>
 
 <script setup lang="ts">
-import Card from '@/components/Card.vue'
-import EmptyState from '@/components/EmptyState.vue'
-import ErrorState from '@/components/ErrorState.vue'
-import Header from '@/components/Header.vue'
-import InputTask from '@/components/InputTask.vue'
-import TaskItem from '@/components/TaskItem.vue'
-import type { Task } from '@/schemas/task'
-import { useTasksStore } from '@/stores/tasks'
-import { formatDateTime } from '@/utils/formatDateTime'
-import debounce from 'debounce'
-import { onMounted, ref, shallowRef, watch } from 'vue'
+import Card from "@/components/Card.vue";
+import EmptyState from "@/components/EmptyState.vue";
+import ErrorState from "@/components/ErrorState.vue";
+import Header from "@/components/Header.vue";
+import InputTask from "@/components/InputTask.vue";
+import TaskItem from "@/components/TaskItem.vue";
+import type { Task } from "@/schemas/task";
+import { useTasksStore } from "@/stores/tasks";
+import { formatDateTime } from "@/utils/formatDateTime";
+import debounce from "debounce";
+import { onMounted, ref, shallowRef, watch } from "vue";
 
-const isLoading = ref(false)
-const isCreateTask = ref(false)
+const isLoading = ref(false);
+const isCreateTask = ref(false);
 
-const tasks = useTasksStore()
-const incomingTasks = ref<Task[]>([])
-const noDeadlineTasks = ref<Task[]>([])
+const tasks = useTasksStore();
+const incomingTasks = ref<Task[]>([]);
+const noDeadlineTasks = ref<Task[]>([]);
 
-const error = ref<string | null>(null)
+const error = ref<string | null>(null);
 
 // Filter
 const filterStatusItems = [
-  { status: 'proposed', value: 'Ditugaskan' },
-  { status: 'in_progress', value: 'Sedang dikerjakan' },
-  { status: 'pending_approval', value: 'Menunggu persetujuan' },
-  { status: 'completed', value: 'Selesai' },
-  { status: 'cancelled', value: 'Dibatalkan' },
-]
+  { status: "proposed", value: "Ditugaskan" },
+  { status: "in_progress", value: "Sedang dikerjakan" },
+  { status: "pending_approval", value: "Menunggu persetujuan" },
+  { status: "completed", value: "Selesai" },
+  { status: "cancelled", value: "Dibatalkan" },
+];
 
-const filterStatus = shallowRef()
-const filterDeadline = ref('')
-const search = ref('')
+const filterStatus = shallowRef();
+const filterDeadline = ref("");
+const search = ref("");
 
 function clearFilter() {
-  filterStatus.value = null
-  filterDeadline.value = ''
-  search.value = ''
+  filterStatus.value = null;
+  filterDeadline.value = "";
+  search.value = "";
 }
 
 async function loadSideTasks() {
-  isLoading.value = true
-  error.value = null
+  isLoading.value = true;
+  error.value = null;
 
   try {
-    incomingTasks.value = await tasks.fetchIncomingTasks()
-    noDeadlineTasks.value = await tasks.fetchNoDeadlineTasks()
+    incomingTasks.value = await tasks.fetchIncomingTasks();
+    noDeadlineTasks.value = await tasks.fetchNoDeadlineTasks();
 
     // throw new Error('Uji Error State')
   } catch (err) {
     error.value =
-      err instanceof Error ? err.message : 'Gagal memuat data dari Solid Pod.'
+      err instanceof Error ? err.message : "Gagal memuat data dari Solid Pod.";
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
 }
 
@@ -290,10 +287,10 @@ watch(
         query: search.value,
       }),
   ),
-)
+);
 
 onMounted(() => {
-  tasks.fetchTasks({})
-  loadSideTasks()
-})
+  tasks.fetchTasks({});
+  loadSideTasks();
+});
 </script>

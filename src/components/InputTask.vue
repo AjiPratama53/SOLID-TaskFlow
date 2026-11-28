@@ -57,14 +57,14 @@
         >
         <v-btn
           @click="
-            () => {
-              handlePost()
-              $emit('close')
+            async () => {
+              handlePost();
+              $emit('close');
             }
           "
           elevation="0"
           class="bg-indigo-600 text-indigo-50"
-          >{{ isEdit ? 'Edit' : 'Buat' }}</v-btn
+          >{{ isEdit ? "Edit" : "Buat" }}</v-btn
         >
       </div>
     </div>
@@ -76,64 +76,69 @@
 </template>
 
 <script setup lang="ts">
-import DateTimePicker from './DateTimePicker.vue'
-import InputLinkDialog from './InputLinkDialog.vue'
-import { useTasksStore } from '@/stores/tasks.ts'
-import { onMounted, onUnmounted, ref } from 'vue'
-import InputFileDialog from './InputFileDialog.vue'
-import AttachmentList from './AttachmentList.vue'
-import type { InputTask, Task } from '@/schemas/task.ts'
+import DateTimePicker from "./DateTimePicker.vue";
+import InputLinkDialog from "./InputLinkDialog.vue";
+import { useTasksStore } from "@/stores/tasks.ts";
+import { onMounted, onUnmounted, ref } from "vue";
+import InputFileDialog from "./InputFileDialog.vue";
+import AttachmentList from "./AttachmentList.vue";
+import type { InputTask, Task } from "@/schemas/task.ts";
+import { saveTaskToPod } from "@/services/podService.ts";
 
 const props = defineProps<{
-  isEdit?: boolean
-  task?: Task
-}>()
+  isEdit?: boolean;
+  taskId?: string;
+  task?: Task;
+}>();
 
 // Input task data
-const title = ref<string>('')
-const description = ref<string>('')
-const deadline = ref<string>('')
+const title = ref<string>("");
+const description = ref<string>("");
+const deadline = ref<string>("");
+const files = ref<File[]>([]);
+const links = ref<URL[]>([]);
 
-const files = ref<File[]>([])
-const links = ref<string[]>([])
+const tasks = useTasksStore();
 
-const tasks = useTasksStore()
+defineEmits(["close"]);
 
-defineEmits(['close'])
-
-function handlePost() {
+async function handlePost() {
   // return jika title dan deskripsi kosong, deadline ada tapi tanggal sudah lewat
   if (
     !title.value ||
     !description.value ||
     (deadline.value && new Date(deadline.value) <= new Date())
   )
-    return
+    return;
 
   const newTask: InputTask = {
     title: title.value,
     description: description.value,
-    deadline: deadline.value !== '' ? new Date(deadline.value) : undefined,
-  }
+    deadline: deadline.value !== "" ? new Date(deadline.value) : undefined,
+    files: files.value,
+    links: links.value,
+  };
 
   if (props.task && props.isEdit) {
-    tasks.editTask(props.task.id, newTask)
+    tasks.editTask(props.task.id, newTask);
   } else {
-    tasks.postTask(newTask)
+    tasks.postTask(newTask);
+
+    await saveTaskToPod();
   }
 }
 
 onMounted(() => {
-  if (!props.isEdit || !props.task) return
+  if (!props.isEdit || !props.task) return;
 
-  title.value = props.task.title
-  description.value = props.task.description
-  deadline.value = props.task.deadline?.toString() ?? ''
-})
+  title.value = props.task.title;
+  description.value = props.task.description;
+  deadline.value = props.task.deadline?.toString() ?? "";
+});
 
 onUnmounted(() => {
-  title.value = ''
-  description.value = ''
-  deadline.value = ''
-})
+  title.value = "";
+  description.value = "";
+  deadline.value = "";
+});
 </script>

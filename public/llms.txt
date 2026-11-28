@@ -1,0 +1,8 @@
+# OTAku
+
+OTAku is a decentralized hierarchical task-delegation application. Task data belongs to users and is stored in their Solid Pods.
+
+## Documentation
+
+- [Project README](/README.md)
+- [Solid data model](/docs/solid-data-model.md)
