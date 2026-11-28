@@ -6,12 +6,12 @@
         <h5>
           Diposting oleh
           <strong>{{
-            isOwner ? 'Anda' : users.getUser(proposerId)?.name
+            isOwner ? "Anda" : users.getUser(proposerId)?.name
           }}</strong>
         </h5>
         <h5>
           {{ formatDate(createdAt)
-          }}{{ editedAt ? `, Diedit ${formatDate(editedAt)}` : '' }}
+          }}{{ editedAt ? `, Diedit ${formatDate(editedAt)}` : "" }}
         </h5>
       </div>
 
@@ -38,7 +38,7 @@
         <v-icon icon="mdi-clock-outline" />
         <p>
           Tenggat:
-          <strong>{{ deadline ? formatDateTime(deadline) : '--' }}</strong>
+          <strong>{{ deadline ? formatDateTime(deadline) : "--" }}</strong>
         </p>
       </div>
 
@@ -72,18 +72,21 @@
 
         <!-- Alternate -->
         <v-btn
-          v-if="props.status === 'in_progress'"
+          v-if="userId && props.status === 'in_progress'"
           prepend-icon="mdi-swap-horizontal"
           class="bg-indigo-600 text-indigo-50"
           elevation="0"
           rounded
           >Alihkan
-          <DelegateDialog is-alternate />
+          <DelegateDialog
+            is-alternate
+            :current-executor="users.getUser(userId)"
+          />
         </v-btn>
 
         <!-- Verify -->
         <v-btn
-          v-if="props.status === 'pending_approval'"
+          v-if="userId && props.status === 'pending_approval'"
           prepend-icon="mdi-check-circle-outline"
           class="bg-yellow-600 text-yellow-50"
           elevation="0"
@@ -94,7 +97,7 @@
 
         <!-- Review -->
         <v-btn
-          v-if="props.status === 'completed'"
+          v-if="userId && props.status === 'completed'"
           prepend-icon="mdi-file-document-check-outline"
           class="bg-green-600 text-green-50"
           elevation="0"
@@ -112,22 +115,22 @@ import {
   taskStatusColor,
   taskStatusMessage,
   type Task,
-} from '@/schemas/task.ts'
-import { statusColorClasses } from '@/utils/statusColorClasses'
-import Card from './Card.vue'
-import { formatDate, formatDateTime } from '@/utils/formatDateTime.ts'
-import UserItem from './UserItem.vue'
-import DelegateDialog from './DelegateDialog.vue'
-import { sessionInfo } from '@/services/auth'
-import { useUsersStore } from '@/stores/users.ts'
+} from "@/schemas/task.ts";
+import { statusColorClasses } from "@/utils/statusColorClasses";
+import Card from "./Card.vue";
+import { formatDate, formatDateTime } from "@/utils/formatDateTime.ts";
+import UserItem from "./UserItem.vue";
+import DelegateDialog from "./DelegateDialog.vue";
+import { sessionInfo } from "@/services/auth";
+import { useUsersStore } from "@/stores/users.ts";
 
-const props = defineProps<Task>()
+const props = defineProps<Task>();
 
-const users = useUsersStore()
+const users = useUsersStore();
 
-const isOwner = props.proposerId === sessionInfo().webId
+const isOwner = props.proposerId === sessionInfo().webId;
 
-const statusMessage = taskStatusMessage[props.status]
-const statusColor = taskStatusColor[props.status]
-const statusClasses = statusColorClasses[statusColor]
+const statusMessage = taskStatusMessage[props.status];
+const statusColor = taskStatusColor[props.status];
+const statusClasses = statusColorClasses[statusColor];
 </script>

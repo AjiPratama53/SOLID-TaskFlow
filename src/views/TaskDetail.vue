@@ -62,12 +62,12 @@
             <div class="flex flex-col">
               <h5>
                 Diposting oleh
-                <strong>{{ isOwner ? 'Anda' : proposer?.name }}</strong>
+                <strong>{{ isOwner ? "Anda" : proposer?.name }}</strong>
               </h5>
               <h5>
                 {{ formatDate(task?.createdAt)
                 }}{{
-                  task?.editedAt ? `, Diedit ${formatDate(task?.editedAt)}` : ''
+                  task?.editedAt ? `, Diedit ${formatDate(task?.editedAt)}` : ""
                 }}
               </h5>
             </div>
@@ -172,13 +172,24 @@
           <div v-if="isOwner" class="flex flex-col gap-2">
             <!-- Verify -->
             <v-btn
-              v-if="isOwner && task?.status === 'pending_approval'"
+              v-if="task.userId && task?.status === 'pending_approval'"
               class="bg-yellow-600 text-yellow-50"
               elevation="0"
               prepend-icon="mdi-check-circle-outline"
               @click="$router.push(`/submissions/${task.submissionId}`)"
               >Verifikasi</v-btn
             >
+
+            <!-- Review -->
+            <v-btn
+              v-if="task.userId && task?.status === 'completed'"
+              class="bg-green-600 text-green-50"
+              elevation="0"
+              prepend-icon="mdi-file-document-check-outline"
+              @click="$router.push(`/submissions/${task.submissionId}`)"
+              >Review</v-btn
+            >
+
             <div class="flex gap-2 w-full">
               <!-- Cancel -->
               <v-btn
@@ -210,12 +221,15 @@
 
               <!-- Altenate -->
               <v-btn
-                v-if="task?.status === 'in_progress'"
+                v-if="task.userId && task?.status === 'in_progress'"
                 class="delegate flex flex-1 bg-indigo-600 text-indigo-50"
                 elevation="0"
                 prepend-icon="mdi-swap-horizontal"
                 >Alihkan
-                <DelegateDialog is-alternate />
+                <DelegateDialog
+                  is-alternate
+                  :current-executor="users.getUser(task.userId)"
+                />
               </v-btn>
             </div>
           </div>
@@ -236,72 +250,72 @@
 </template>
 
 <script setup lang="ts">
-import AttachmentList from '@/components/AttachmentList.vue'
-import Card from '@/components/Card.vue'
-import CriticalDialog from '@/components/CriticalDialog.vue'
-import DelegateDialog from '@/components/DelegateDialog.vue'
-import EmptyState from '@/components/EmptyState.vue'
-import ErrorState from '@/components/ErrorState.vue'
-import Header from '@/components/Header.vue'
-import InputFileDialog from '@/components/InputFileDialog.vue'
-import InputLinkDialog from '@/components/InputLinkDialog.vue'
-import InputTask from '@/components/InputTask.vue'
-import SubmissionPanel from '@/components/SubmissionPanel.vue'
-import SubtaskItem from '@/components/SubtaskItem.vue'
-import { taskStatusColor, taskStatusMessage, type Task } from '@/schemas/task'
-import type { User } from '@/schemas/user'
-import { api } from '@/services/api'
-import { sessionInfo } from '@/services/auth'
-import { useTasksStore } from '@/stores/tasks'
-import { useUsersStore } from '@/stores/users'
-import { formatDate } from '@/utils/formatDateTime'
-import { statusColorClasses } from '@/utils/statusColorClasses'
-import { computed, onMounted, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import AttachmentList from "@/components/AttachmentList.vue";
+import Card from "@/components/Card.vue";
+import CriticalDialog from "@/components/CriticalDialog.vue";
+import DelegateDialog from "@/components/DelegateDialog.vue";
+import EmptyState from "@/components/EmptyState.vue";
+import ErrorState from "@/components/ErrorState.vue";
+import Header from "@/components/Header.vue";
+import InputFileDialog from "@/components/InputFileDialog.vue";
+import InputLinkDialog from "@/components/InputLinkDialog.vue";
+import InputTask from "@/components/InputTask.vue";
+import SubmissionPanel from "@/components/SubmissionPanel.vue";
+import SubtaskItem from "@/components/SubtaskItem.vue";
+import { taskStatusColor, taskStatusMessage, type Task } from "@/schemas/task";
+import type { User } from "@/schemas/user";
+import { api } from "@/services/api";
+import { sessionInfo } from "@/services/auth";
+import { useTasksStore } from "@/stores/tasks";
+import { useUsersStore } from "@/stores/users";
+import { formatDate } from "@/utils/formatDateTime";
+import { statusColorClasses } from "@/utils/statusColorClasses";
+import { computed, onMounted, ref, watch } from "vue";
+import { useRoute } from "vue-router";
 
-const route = useRoute()
+const route = useRoute();
 const taskId = computed<string | undefined>(() => {
-  const raw: string | string[] | undefined = route.params.id
-  const value: string | undefined = Array.isArray(raw) ? raw[0] : raw
-  return value
-})
+  const raw: string | string[] | undefined = route.params.id;
+  const value: string | undefined = Array.isArray(raw) ? raw[0] : raw;
+  return value;
+});
 
-const isEditing = ref(false)
-const isCreateSubtask = ref(false)
+const isEditing = ref(false);
+const isCreateSubtask = ref(false);
 
-const error = ref<string | null>(null)
-const isLoading = ref(false)
-const subTasks = useTasksStore()
+const error = ref<string | null>(null);
+const isLoading = ref(false);
+const subTasks = useTasksStore();
 
-const task = ref<Task | null>(null)
-const files = ref<File[]>([])
-const links = ref<string[]>([])
+const task = ref<Task | null>(null);
+const files = ref<File[]>([]);
+const links = ref<string[]>([]);
 
-const statusMessage = ref('')
+const statusMessage = ref("");
 const statusColor = ref<keyof typeof statusColorClasses>(
   taskStatusColor.proposed,
-)
-const statusClasses = ref(statusColorClasses[statusColor.value])
+);
+const statusClasses = ref(statusColorClasses[statusColor.value]);
 
-const users = useUsersStore()
+const users = useUsersStore();
 
-const proposer = ref<User>()
-const isOwner = ref(false)
-const isExecutor = ref(false)
+const proposer = ref<User>();
+const isOwner = ref(false);
+const isExecutor = ref(false);
 
 async function loadTask() {
-  isLoading.value = true
-  error.value = null
+  isLoading.value = true;
+  error.value = null;
 
   try {
     // API call here
-    const data = await api.task.get({ id: taskId.value })
-    await subTasks.fetchTasks({})
+    const data = await api.task.get({ id: taskId.value });
+    await subTasks.fetchTasks({});
 
     // throw new Error('Uji Error State')
 
     // mock data
-    task.value = data[0]
+    task.value = data[0];
     // task.value = {
     //   id: 'tsk_001',
     //   userId: sessionInfo().webId ?? '',
@@ -313,28 +327,28 @@ async function loadTask() {
     //   deadline: new Date(),
     // }
 
-    const currentWebId = sessionInfo().webId
-    proposer.value = users.getUser(task.value.proposerId)
-    isOwner.value = currentWebId === task.value.proposerId
-    isExecutor.value = currentWebId === task.value.userId
+    const currentWebId = sessionInfo().webId;
+    proposer.value = users.getUser(task.value.proposerId);
+    isOwner.value = currentWebId === task.value.proposerId;
+    isExecutor.value = currentWebId === task.value.userId;
 
-    statusMessage.value = taskStatusMessage[task.value?.status || 'proposed']
-    statusColor.value = taskStatusColor[task.value?.status || 'proposed']
-    statusClasses.value = statusColorClasses[statusColor.value]
+    statusMessage.value = taskStatusMessage[task.value?.status || "proposed"];
+    statusColor.value = taskStatusColor[task.value?.status || "proposed"];
+    statusClasses.value = statusColorClasses[statusColor.value];
   } catch (err) {
     error.value =
-      err instanceof Error ? err.message : 'Gagal memuat data dari Solid Pod.'
+      err instanceof Error ? err.message : "Gagal memuat data dari Solid Pod.";
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
 }
 
 function handleAcceptTask() {
-  alert('Penugasan diterima')
+  alert("Penugasan diterima");
 }
 
 function handleCancelTask() {
-  alert('Penugasan dibatalkan')
+  alert("Penugasan dibatalkan");
 }
 
 // watch(taskId, async (id) => {
@@ -343,5 +357,5 @@ function handleCancelTask() {
 //   task.value = data[0]
 // })
 
-onMounted(() => loadTask())
+onMounted(() => loadTask());
 </script>
